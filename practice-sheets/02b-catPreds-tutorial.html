@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michael Franke &amp; Polina Tsvilodub">
+
+<title>Bayesian Regression: Theory &amp; Practice - Bayesian regression: theory &amp; practice</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Bayesian regression: theory &amp; practice</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Regression: Theory &amp; Practice</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">01: Basics</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01-basics.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01a-wrangling-plotting.html" class="sidebar-item-text sidebar-link">Wrangling &amp; plotting</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01b-simple-regression.html" class="sidebar-item-text sidebar-link">Simple linear regression</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">02: Priors, predictions &amp; categorical predictors</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02-priorPredictives-categPredictors.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02a-predictives.html" class="sidebar-item-text sidebar-link">Prior &amp; posterior predictives</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02b-catPreds-tutorial.html" class="sidebar-item-text sidebar-link active">Categorical predictors (tutorial)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02c-catPreds-execises.html" class="sidebar-item-text sidebar-link">Categorical predictors (hands-on)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">03: Generalized linear model</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03a-GLM-tutorial.html" class="sidebar-item-text sidebar-link">GLM (tutorial)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03b-GLM-exercises.html" class="sidebar-item-text sidebar-link">GLM (exercises)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">04: MCMC sampling</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04-MCMC.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04a-MCMC-diagnostics.html" class="sidebar-item-text sidebar-link">MCMC diagnostics (tutorial)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">05: Hierarchical models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05-hierarchical-models.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/05a-hierarchical-models-tutorial.html" class="sidebar-item-text sidebar-link">Hierarchical models (tutorial)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/05b-hierarchical-models-exercises.html" class="sidebar-item-text sidebar-link">Hierarchical models (exercises)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">06: Model comparison</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../06-model-comparison.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/06a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison (practice)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#categorical-variables-coding-schemes" id="toc-categorical-variables-coding-schemes" class="nav-link" data-scroll-target="#categorical-variables-coding-schemes">Categorical Variables Coding Schemes</a></li>
+  <li><a href="#preparing-the-tools" id="toc-preparing-the-tools" class="nav-link" data-scroll-target="#preparing-the-tools">Preparing the tools</a>
+  <ul class="collapse">
+  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#explore-data-visually" id="toc-explore-data-visually" class="nav-link" data-scroll-target="#explore-data-visually">Explore Data visually</a></li>
+  </ul></li>
+  <li><a href="#regression-models" id="toc-regression-models" class="nav-link" data-scroll-target="#regression-models">Regression Models</a></li>
+  <li><a href="#coding-categorical-variables" id="toc-coding-categorical-variables" class="nav-link" data-scroll-target="#coding-categorical-variables">Coding Categorical Variables</a>
+  <ul class="collapse">
+  <li><a href="#dummy-treatment-coding" id="toc-dummy-treatment-coding" class="nav-link" data-scroll-target="#dummy-treatment-coding">Dummy (Treatment) Coding</a></li>
+  <li><a href="#simple-contrast-coding" id="toc-simple-contrast-coding" class="nav-link" data-scroll-target="#simple-contrast-coding">Simple (Contrast) Coding</a></li>
+  <li><a href="#deviation-sum-coding" id="toc-deviation-sum-coding" class="nav-link" data-scroll-target="#deviation-sum-coding">Deviation (Sum) Coding</a></li>
+  <li><a href="#helmert-coding" id="toc-helmert-coding" class="nav-link" data-scroll-target="#helmert-coding">Helmert Coding</a></li>
+  <li><a href="#mixing-coding-schemes" id="toc-mixing-coding-schemes" class="nav-link" data-scroll-target="#mixing-coding-schemes">Mixing Coding Schemes</a></li>
+  </ul></li>
+  <li><a href="#variables-with-three-levels" id="toc-variables-with-three-levels" class="nav-link" data-scroll-target="#variables-with-three-levels">Variables with three levels</a>
+  <ul class="collapse">
+  <li><a href="#dummy-treatment-coding-1" id="toc-dummy-treatment-coding-1" class="nav-link" data-scroll-target="#dummy-treatment-coding-1">Dummy (Treatment) Coding</a></li>
+  <li><a href="#simple-contrast-coding-1" id="toc-simple-contrast-coding-1" class="nav-link" data-scroll-target="#simple-contrast-coding-1">Simple (Contrast) Coding</a></li>
+  <li><a href="#deviation-sum-coding-1" id="toc-deviation-sum-coding-1" class="nav-link" data-scroll-target="#deviation-sum-coding-1">Deviation (Sum) Coding</a></li>
+  <li><a href="#helmert-coding-1" id="toc-helmert-coding-1" class="nav-link" data-scroll-target="#helmert-coding-1">Helmert Coding</a></li>
+  <li><a href="#reverse-helmert-coding" id="toc-reverse-helmert-coding" class="nav-link" data-scroll-target="#reverse-helmert-coding">Reverse Helmert Coding</a></li>
+  <li><a href="#mixed-schemes-dummy-and-deviation-coding" id="toc-mixed-schemes-dummy-and-deviation-coding" class="nav-link" data-scroll-target="#mixed-schemes-dummy-and-deviation-coding">Mixed Schemes: Dummy and Deviation Coding</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Bayesian regression: theory &amp; practice</h1>
+<p class="subtitle lead">02b: Categorical predictors (tutorial)</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Michael Franke &amp; Polina Tsvilodub </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pckgs_needed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"brms"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"remotes"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidybayes"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bridgesampling"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shinystan"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pckgs_installed <span class="ot">&lt;-</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>pckgs_2_install <span class="ot">&lt;-</span> pckgs_needed[<span class="sc">!</span>(pckgs_needed <span class="sc">%in%</span> pckgs_installed)]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(pckgs_2_install)) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pckgs_2_install)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># install additional packages from GitHub (unless installed)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"aida"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/aida-package"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"faintr"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/faintr"</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"cspplot"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CogSciPrag/cspplot"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pckgs_needed, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aida)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faintr)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cspplot)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># these options help Stan run faster</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># use the CSP-theme for plotting</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_csp</span>())</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># global color scheme from CSP</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>project_colors <span class="ot">=</span> cspplot<span class="sc">::</span><span class="fu">list_colors</span>()[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>),<span class="st">"hex"</span>, drop <span class="ot">=</span> <span class="cn">TRUE</span>]</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># setting theme colors globally</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>scale_colour_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>scale_fill_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. This tutorial will provide an overview of different categorical variable coding schemes used in mixed effect models. We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.</p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Whereas models involving continuous predictors like height, weight or reaction time might be interpreted rather intuitively, models involving (very common!) categorical variables like gender or experimental conditions (did the participant read text1 or text2?) are often confusing. However, it is important to understand how to deal with such categorical variables mathematically because different decisions we make about the mathematical procedures influence the interpretation of the regression results.</p>
+<p>This hands-on tutorial should provide an overview of different categorical variable coding schemes and walk you through applying and interpreting the output of a regression model fitted to variables coded in those different schemes. This tutorial presupposes a basic familiarity with R, linear regression and Bayesian data analysis with the <code>brms</code> R package (Buerkner, 2016). However, all the details of Bayesian analysis need not be understood. Avoiding too many mathematical details, the focus of this tutorial is rather conceptual - to convey in intuitive terms how categorical variables are translated to mathematical terms and how differences in this ‘translation’ influence the interpretation of a regression model. These conceptual ideas are also not bound to Bayesian analysis and are directly applicable in frequentist modeling tools (e.g.&nbsp;<code>lmer</code> package in R).</p>
+<p>Most importantly, we should remember: any statistics of the data are just a tool for us to be able to draw conclusions about our research questions. The numbers that R (or any other application) computes don’t tell us anything - it’s our understanding of those tools and the interpretation of the numbers that provides answers to scientific questions!</p>
+<p>First, we will shortly recap how linear regression models look like. Then, we will roughly familiarize ourselves with the data sets. Then, step by step we will look at different coding schemes: how they are applied in R and what a fitted regression model looks like.</p>
+<p><em>Estimated reading time: 1.5h</em></p>
+</section>
+<section id="categorical-variables-coding-schemes" class="level1">
+<h1>Categorical Variables Coding Schemes</h1>
+<p>Why do we need to <em>code</em> categorical variables like gender or experimental conditions? ‘We don’t have to code continuous variables like reaction time!’, you might say. The reason is that categorical variables (also called <strong>factors</strong>) are usually represented in a data set as strings, e.g.&nbsp;the factor <em>gender</em> could contain the <strong>levels</strong> (i.e.&nbsp;distinct categories) <code>female</code> and <code>male</code>. But we cannot represent different strings in a regression model. So we need to numerically indicate that a predictor has different levels - by (implicitly) recoding the levels of a variable to numbers, e.g.&nbsp;a 1 for each occurrence of <code>female</code> and -1 for each occurrence of <code>male</code> in our data set. How we choose these numbers is the focus of this tutorial.</p>
+<p>In common terms, by recoding the levels numerically we indicate the <strong>contrasts</strong> between the levels. Generally, we need <em>N-1</em> numeric variables to represent the contrasts of a categorical variable with <em>N</em> levels.</p>
+<p>To get a better understanding of what this means, we will dive right into an example.</p>
+</section>
+<section id="preparing-the-tools" class="level1">
+<h1>Preparing the tools</h1>
+<p>We will use the following R packages in this tutorial. If you are missing some of them, you can install them by running e.g.&nbsp;<code>install.packages('tidyverse')</code>. <strong>NB</strong>: we will fit the models using <code>brm</code> - this might take some time to compile!</p>
+<div class="cell" data-warnings="false">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyboot)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(languageR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>The first part of this tutorial is based on a data set from an experiment by Winter and Grawunder (2012) You can get the dataset by running:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span> faintr<span class="sc">::</span>politeness</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># get a look at the data set</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(politeness_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  subject gender sentence context pitch
+  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
+1 F1      F      S1       pol      213.
+2 F1      F      S1       inf      204.
+3 F1      F      S2       pol      285.
+4 F1      F      S2       inf      260.
+5 F1      F      S3       pol      204.
+6 F1      F      S3       inf      287.</code></pre>
+</div>
+</div>
+<p>The data contains records of the voice pitch of speakers in different social <code>contexts</code> (polite and informal). They investigated whether the mean voice pitch differs across the <em>factor</em> <code>gender</code> of the speakers (F and M) and across the <em>factor</em> <code>contexts</code> - resulting in four different condition combinations (gender X context). Such a design is called <strong>factorial design</strong> and the single combinations are called design cells.</p>
+</section>
+<section id="explore-data-visually" class="level2">
+<h2 class="anchored" data-anchor-id="explore-data-visually">Explore Data visually</h2>
+<p>Before we dive into any statistical analyses of our dataset it is helpful to get a rough idea of what the data looks like. For example, we can start by exploring the dataset visually.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="02b-catPreds-tutorial_files/figure-html/politeness-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Furthermore, we can compute some basic statistics - e.g.&nbsp;the mean of the different design cells, before we turn to more complex linear models. We can also compute the overall mean pitch across all the conditions - the <strong>grand mean</strong>. These values will be helpful for a sanity check when interpreting the linear models later on.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tibble_means <span class="ot">&lt;-</span> politeness_df <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(context, gender) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(pitch))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tibble_means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+# Groups:   context [2]
+  context gender  mean
+  &lt;chr&gt;   &lt;chr&gt;  &lt;dbl&gt;
+1 inf     F       261.
+2 inf     M       144.
+3 pol     F       233.
+4 pol     M       133.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(tibble_means<span class="sc">$</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 192.8605</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="regression-models" class="level1">
+<h1>Regression Models</h1>
+<p>While this tutorial presupposes some basic understanding of regression models, let us recap what exactly we compute when fitting a regression model. As usual for factorial designs, the regression model works under the assumption that observations in each cell are sampled from a normal distribution with a certain mean - and each design cell has an own mean. Research questions about data from factorial designs are usually about the estimated means of these design cells, e.g.: is this design cell’s mean different from zero, or from that design cell’s mean?</p>
+<p>Let us stick to our example data. We want to estimate the mean pitch (<span class="math inline">\(y\)</span>) depending on gender (<span class="math inline">\(x_1\)</span>), context (<span class="math inline">\(x_2\)</span>) and the interaction of the two factors (<span class="math inline">\(x_1x_2\)</span>). So what we estimate is the regression function described by</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + \beta_3*x_1x_2 + \epsilon\]</span></p>
+<p><span class="math inline">\(\beta_0\)</span> is the intercept and <span class="math inline">\(\beta_1, \beta_2\)</span> and <span class="math inline">\(\beta_3\)</span> are the slopes that are estimated when fitting the model; <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> represent the categorical variables and are exactly what is ‘coded’ when applying different variable coding schemes. For simplicity we will omit the error term <span class="math inline">\(\epsilon\)</span> below. Will will come back to this regression function when interpreting the regression output given respective coding schemes.</p>
+</section>
+<section id="coding-categorical-variables" class="level1">
+<h1>Coding Categorical Variables</h1>
+<p>In our example, gender and context are categorical variables, so they need to be coded numerically. When categorical variables are coded for regression modeling, they are internally set to factors. Let’s do this manually here for explicitness.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span> politeness_df <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">factor</span>(gender),   <span class="co"># you could rename or reorder the levels here</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">context =</span> <span class="fu">factor</span>(context))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(politeness_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  subject gender sentence context pitch
+  &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;    &lt;fct&gt;   &lt;dbl&gt;
+1 F1      F      S1       pol      213.
+2 F1      F      S1       inf      204.
+3 F1      F      S2       pol      285.
+4 F1      F      S2       inf      260.
+5 F1      F      S3       pol      204.
+6 F1      F      S3       inf      287.</code></pre>
+</div>
+</div>
+<section id="dummy-treatment-coding" class="level2">
+<h2 class="anchored" data-anchor-id="dummy-treatment-coding">Dummy (Treatment) Coding</h2>
+<p>Dummy coding, or <strong>treatment coding</strong>, is the default coding scheme used by R. Understanding the name ‘treatment coding’ helps understanding what this coding scheme does: imagine a medical experiment with a single control group (who obtain a placebo) and different experimental groups each of which gets a different treatment (e.g., different drugs), and where we want to compare each treatment group to the single, pivotal control group. Consequently, dummy coded variables are estimated by comparing all levels of the variable to a reference level. The intercept of a linear model containing dummy-coded variables is the mean of the reference level.</p>
+<p>Our variables only have two levels, so the effect of <em>gender</em> could be estimated by treating <code>female</code> as the reference level and estimating the effect of being <code>male</code> compared to the reference level – so basically estimating the difference in pitch it takes to “get from female to male”. Similarly, we can estimate the effect of <em>context</em>: the <code>informal</code> context can be treated as the reference level and the effect of <code>polite</code>ness can be estimated against it. By default, the first level of a factor is treated as the reference level (for unordered factors that is the first string in alphanumeric order) - but principally, there is no difference as to which level should be used as the reference level. It makes sense to choose the level which is in some sense the ‘control’ in your experimental design.</p>
+<p>Because R uses dummy-coding by default, we can look at the default numerical coding right away. The function <code>contrasts()</code> displays the contrast matrix for the respective variable:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  M
+F 0
+M 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    pol
+inf   0
+pol   1</code></pre>
+</div>
+</div>
+<p>But if we wish to explicitly assign a dummy (treatment) coding to a variable, we may do so by a built-in R function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender) <span class="ot">&lt;-</span> <span class="fu">contr.treatment</span>(<span class="dv">2</span>) <span class="co"># insert the number of levels here</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  2
+F 0
+M 1</code></pre>
+</div>
+</div>
+<p>So both variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> can take either the value 0 or 1 (because we dummy-code both categorical variables; see below for more). We already defined the referenc levels of the single variables, now we can define the overall reference level of our model (by combining the two individual reference levels) – it is the mean pitch of female speakers in informal contexts.</p>
+<p>Having set all the basics, we can now turn to computing a linear model of the mean pitch as predicted by the factors gender and context:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here, we only use fixed effects</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>lm.dummy.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  pitch <span class="sc">~</span> gender <span class="sc">*</span> context,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> politeness_df,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">1000</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>lm.dummy.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.dummy.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="co"># get the estimated coefficients</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.dummy.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: pitch ~ gender * context 
+   Data: politeness_df (Number of observations: 83) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                   Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept            260.96      7.95   245.63   276.88 1.00     1077     1346
+gender2             -116.44     11.38  -138.76   -94.49 1.00      941     1502
+contextpol           -27.77     11.33   -49.84    -5.88 1.00     1011     1217
+gender2:contextpol    16.38     15.88   -14.91    47.14 1.01      809     1108
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    36.12      2.91    30.93    42.29 1.01     2098     1593
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Now how do we interpret the estimated coefficients?</p>
+<p>Let us recall the regression equation that is hidden behind this output: <span class="math display">\[y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + \beta_3*x_1x_2\]</span></p>
+<p>In order to help us interpret the output, R assigns string names to the estimated coefficients using the names we used in the generic formula. The <code>(Intercept)</code> corresponds to <span class="math inline">\(\beta_0\)</span>, <code>genderM</code> corresponds to <span class="math inline">\(\beta_1\)</span>, <code>contextpol</code> corresponds to <span class="math inline">\(\beta_2\)</span> and <code>genderM:contextpol</code> (the interaction term) to <span class="math inline">\(\beta_3\)</span>.</p>
+<p>Further, let us recall the numerical coding of our variables: for <span class="math inline">\(x_1\)</span> (gender) a 0 means <code>female</code>, a 1 means <code>male</code>; for <span class="math inline">\(x_2\)</span> (context) a 0 means <code>informal</code>, a 1 means <code>polite</code>. So the computed values are the estimates for conditions differing from the respective reference conditions - i.e.&nbsp;when the respective <span class="math inline">\(x\)</span> is a 1.</p>
+<p>To get an estimate of a certain design cell (<span class="math inline">\(y_i\)</span>) - let’s start with the mean pitch of female speakers (0 for <span class="math inline">\(x_1\)</span>) in informal contexts (0 for <span class="math inline">\(x_2\)</span>) - we just insert the corresponding numeric values for the corresponding <span class="math inline">\(x\)</span> and the estimated value for the corresponding <span class="math inline">\(\beta\)</span>. Thus we get:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.dummy.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  lm.dummy.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="dv">0</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260.9607</code></pre>
+</div>
+</div>
+<p>Hence, the mean pitch of female speakers in informal context corresponds to the intercept. As a sanity check, we can recall that for dummy coded variables the model intercept is just the mean of the reference cell (in our case, female speakers in informal contexts!).</p>
+<p>Let’s now calculate the mean pitch of male speakers (1 for <span class="math inline">\(x_1\)</span>) in informal contexts (0 for <span class="math inline">\(x_2\)</span>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">=</span> lm.dummy.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  lm.dummy.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="dv">1</span><span class="sc">*</span><span class="dv">0</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 144.5167</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-contrast-coding" class="level2">
+<h2 class="anchored" data-anchor-id="simple-contrast-coding">Simple (Contrast) Coding</h2>
+<p>Another common coding scheme is the simple coding (also called contrast coding). Simple coded variables are also compared to a reference level (just like dummy-coded ones). However, the intercept of a simple coded model is the grand mean – the mean of all cells (i.e.&nbsp;the mean of female-informal &amp; female-polite &amp; male-informal &amp; male-polite cells).</p>
+<p>Generally, this kind of coding can be created by subtracting <span class="math inline">\(1/k\)</span> from the dummy coding contrast matrix, where <span class="math inline">\(k\)</span> is the number of levels a variable has (in our case, both have two). Hence, the reference level will always only have negative values in the contrast matrix. The general rule is that the contrasts within a column have to add up to 0. R does not provide a built-in function for simple coding, but we can easily create the respective matrix ourselves by subtracting <span class="math inline">\(1/k\)</span> (i.e.&nbsp;1/2) from the dummy coding matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manual creation of contrasts</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>contr.matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">2</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>dummy.matrix <span class="ot">&lt;-</span> <span class="fu">contr.treatment</span>(<span class="dv">2</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>contr.coding <span class="ot">&lt;-</span> dummy.matrix <span class="sc">-</span> contr.matrix</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># we should duplicate the values to not overwrite previous contrasts</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span> politeness_df <span class="sc">%&gt;%</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">context_contr =</span> context,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender_contr =</span> gender)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_contr) <span class="ot">&lt;-</span> contr.coding</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_contr)  <span class="ot">&lt;-</span> contr.coding</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hence now the <code>gender</code> is coded as -0.5 for <code>female</code> and 0.5 for <code>male</code>; <code>context</code> is coded as -0.5 for <code>informal</code> and 0.5 for <code>polite</code>.</p>
+<p>Let’s again look at our regression model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lm.contr.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  pitch <span class="sc">~</span> gender_contr <span class="sc">*</span> context_contr,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> politeness_df,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span>  <span class="dv">1000</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>lm.contr.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.contr.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="co"># get vector of estimated coefficients</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.contr.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: pitch ~ gender_contr * context_contr 
+   Data: politeness_df (Number of observations: 83) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                      192.87      3.98   185.01   200.72 1.00     3023
+gender_contr2                 -108.16      7.88  -123.42   -92.57 1.01     2740
+context_contr2                 -19.36      7.94   -34.33    -3.73 1.00     2468
+gender_contr2:context_contr2    15.84     15.48   -14.97    47.13 1.00     2953
+                             Tail_ESS
+Intercept                        1464
+gender_contr2                    1199
+context_contr2                   1405
+gender_contr2:context_contr2     1438
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    36.07      2.85    30.92    42.18 1.00     2599     1642
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>In order to compute the mean pitch of a specific cell, we proceed just as with dummy-coded variables and insert the respective estimates and values for <span class="math inline">\(x\)</span>. Let us start with female speakers (<span class="math inline">\(x_1\)</span> is -0.5) in informal contexts (<span class="math inline">\(x_2\)</span> is -0.5):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.contr.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>)<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260.5951</code></pre>
+</div>
+</div>
+<p>We get the same result as before (as we should - the estimates should not depend on a coding scheme but only on the data). As a sanity check, we can again look at the intercept – it matches the grand mean we computed in the beginning of this tutorial – as it should.</p>
+<p>Your turn! Compute the pitch means for the other three conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="deviation-sum-coding" class="level2">
+<h2 class="anchored" data-anchor-id="deviation-sum-coding">Deviation (Sum) Coding</h2>
+<p>Deviation coding (also called sum coding) is the most popular coding scheme and is often considered the best choice to get a clear picture of presence (or absence) of an effect and a clear random effects interpretation.</p>
+<p>It is slightly different from the previous schemes. It compares the mean of the predicted variable for a specific condition to the grand mean. So the estimates do not tell you the difference between the reference level and another level anymore. The intercept of linear models with sum coded variables is the grand mean.</p>
+<p>R has a built-in function for creating sum coded variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># again create a new variable</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">context_dev =</span> context,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender_dev =</span> gender) <span class="ot">-&gt;</span> politeness_df</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">2</span>) <span class="co"># insert number of levels</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_dev)  <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now the <code>gender</code> is coded as s 1 for <code>female</code> and -1 for <code>male</code>; <code>context</code> is coded as 1 for <code>informal</code> and -1 for <code>polite</code>.</p>
+<p>Below we fit a model with the sum-coded variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>lm.dev.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context_dev <span class="sc">*</span> gender_dev,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>lm.dev.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.dev.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.dev.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: pitch ~ context_dev * gender_dev 
+   Data: politeness_df (Number of observations: 83) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                         Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                  192.93      3.98   184.83   200.91 1.00     2369
+context_dev1                 9.71      4.10     1.39    17.87 1.00     2587
+gender_dev1                 53.97      3.87    46.42    61.50 1.01     2770
+context_dev1:gender_dev1     4.06      4.16    -3.86    12.03 1.00     2255
+                         Tail_ESS
+Intercept                    1608
+context_dev1                 1598
+gender_dev1                  1491
+context_dev1:gender_dev1     1445
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    36.23      2.98    30.96    42.62 1.00     1955     1537
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>The coefficients denote now the difference between the grand mean (i.e.&nbsp;intercept) and the mean of the respective condition.</p>
+<p>We apply the same idea to estimate the pitch means for specific cases: E.g. for female speakers in informal contexts we do:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">1</span><span class="sc">*</span><span class="dv">1</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260.6811</code></pre>
+</div>
+</div>
+<p>Since the intercept is now the grand mean and not a specific reference level, let us think about the interpretation of the single estimates. The estimate of e.g.&nbsp;the context effect now denotes the value by which the mean pitch in informal (estimate * 1, remember our coding!) or polite contexts (estimate * -1) differs from the grand mean. So if we wish to calculate the mean pitch in polite contexts (across genders), we would do:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>yPol <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">2</span>] <span class="sc">*</span> (<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>yPol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 183.2212</code></pre>
+</div>
+</div>
+<p>This means that the single estimates are in some sense ‘independent’ of each other (in contrast to e.g.&nbsp;dummy-coded variables where the estimates are bound to the reference levels of two variables) and give us insight if a specific factor is credibly different from 0. Similarly, if we wish to calculate the mean pitch of male speakers, we would calculate:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>yM <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">3</span>] <span class="sc">*</span> (<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>yM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 138.9629</code></pre>
+</div>
+</div>
+</section>
+<section id="helmert-coding" class="level2">
+<h2 class="anchored" data-anchor-id="helmert-coding">Helmert Coding</h2>
+<p>In this coding scheme, a level of a variable is compared to its subsequent levels. In our dataset, e.g.&nbsp;for <code>gender</code> the level <code>female</code> is compared to the subsequent level <code>male</code>.</p>
+<p>Generally, to create such a coding, in order to compare the first level to the subsequent levels you would assign <span class="math inline">\((k-1)/k\)</span> to the first level and <span class="math inline">\(-1/k\)</span> to all subsequent levels where <span class="math inline">\(k\)</span> is the total number of levels. To compare the second level to the subsequent levels you would assign 0 to the first level, <span class="math inline">\((i-1)/i\)</span> to the second level and <span class="math inline">\(-i/1\)</span> to all subsequent levels where <span class="math inline">\(i = k-1\)</span> and so on. The difference of this coding scheme to previous ones is more clear for variales with &gt;2 levels (see below). The intercept of a linear model corresponds to the grand mean.</p>
+<p>R does not have a built-in function for standard Helmert coding, so we do it manually:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with politeness data</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>helm.matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a> politeness_df <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">gender_helm =</span> gender,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">context_helm =</span> context)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_helm)  <span class="ot">&lt;-</span> helm.matrix</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_helm) <span class="ot">&lt;-</span> helm.matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The linear model looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>lm.helmert.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context_helm <span class="sc">*</span> gender_helm,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>lm.helmert.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.helmert.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.helmert.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: pitch ~ context_helm * gender_helm 
+   Data: politeness_df (Number of observations: 83) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                    192.93      4.06   185.01   201.08 1.00     2085
+context_helm1                 19.22      8.05     3.06    35.15 1.00     2048
+gender_helm1                 108.21      7.75    92.33   123.53 1.00     2094
+context_helm1:gender_helm1    15.41     16.09   -16.81    47.08 1.00     2194
+                           Tail_ESS
+Intercept                      1516
+context_helm1                  1413
+gender_helm1                   1333
+context_helm1:gender_helm1     1454
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    36.28      3.03    31.02    42.85 1.00     2081     1616
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>The contrast estimate for the first level and the remaining levels is calculated by taking the mean of the dependent variable for the first level and subtracting the mean of the dependent variable for the remaining levels (in our case, just the mean of the second level). In other words, if we look at the <code>context</code> coefficient it denotes the difference between the mean of the <code>polite</code> and <code>informal</code> context means.</p>
+</section>
+<section id="mixing-coding-schemes" class="level2">
+<h2 class="anchored" data-anchor-id="mixing-coding-schemes">Mixing Coding Schemes</h2>
+<p>If you have several categorical predictor variables, it is also possible (and often useful!) to use different coding schemes for the different variables. It might, for example, make sense to use dummy coding for a variable which has a control and a treatment condition, and to use e.g.&nbsp;simple coding for a variable which has two ‘equal’ levels.</p>
+<p>For example, we could use <strong>dummy-coding</strong> for <code>context</code> and <strong>simple-coding</strong> for <code>gender</code>.</p>
+<p>When you mix coding schemes or define your own schemes there might be no pre-defined answers to questions as to what the sigle coefficients or the intercept mean. But knowing how the different schemes work, you can easily find this out!</p>
+<p>Let us explore how the interpretation of the model changes if we mix coding schemes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>lm.mixedCode.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context <span class="sc">*</span> gender_contr,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>lm.mixedCode.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.mixedCode.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.mixedCode.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: pitch ~ context * gender_contr 
+   Data: politeness_df (Number of observations: 83) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                         Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                  202.86      5.63   192.34   213.92 1.00     2434
+contextpol                 -19.77      8.24   -35.64    -3.57 1.00     2242
+gender_contr2             -115.75     10.86  -137.77   -94.63 1.00     1442
+contextpol:gender_contr2    15.45     15.83   -14.92    46.28 1.00     1688
+                         Tail_ESS
+Intercept                    1622
+contextpol                   1582
+gender_contr2                1190
+contextpol:gender_contr2     1423
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    36.14      3.02    30.94    42.60 1.00     2163     1580
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Generally, the interpretation is just the combination of what we have learned about the individual coding schemes. Recall that the intercept of a dummy-coded model is the mean of the reference level – since we dummy-coded <code>context</code>, the refernce level would be <code>informal</code> context. But it is not the intercept yet! We have the second predictor in our model – the simple coded gender. In simple coded models the intercept is the mean across the levels of the variable. Now the intercept of our model with the two different predictors is the mean pitch in informal contexts - across genders.</p>
+<p>Following this logic, the context estimate denotes the difference between the <code>informal</code> and <code>polite</code> contexts - still across genders. The gender estimate denoted the difference between the mean pitch and female speakers if multiplied by the value -0.5 (recall our coding above); and the mean pitch and male speakers if multiplied by the value 0.5.</p>
+</section>
+</section>
+<section id="variables-with-three-levels" class="level1">
+<h1>Variables with three levels</h1>
+<p>In order to see the differences yielded by the different coding schemes more clearly, it is usefut to look at an example datas et containing predictors with three levels. But don’t worry, all the concepts we have learned so far work just the same way - independently of the number of levels a predictor has.</p>
+<p>The data set <code>latinsquare</code> is provided in the package <code>languageR</code> which you need to install in order to access it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># alternative dataset with a three-level variable</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(languageR)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(latinsquare)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(latinsquare_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  Group Subject Word     RT SOA   List 
+  &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt; &lt;int&gt; &lt;fct&gt; &lt;fct&gt;
+1 G1    S1      W1      532 short L1   
+2 G1    S2      W1      542 short L1   
+3 G1    S3      W1      615 short L1   
+4 G1    S4      W1      547 short L1   
+5 G2    S5      W9      553 short L3   
+6 G2    S6      W9      464 short L3   </code></pre>
+</div>
+</div>
+<p>In this example data set, the reaction time (<code>RT</code>) of subjects in a lexical decision experiment was simulated. The predictors are, among others, the stimulus-onset asynchrony (<code>SOA</code>) (with the levels long, medium, short) and different <code>lists</code> of prime-target pairs of words (L1, L2, L3) that are presented to the participants. Without going into the details of the experimental paradign, let’s imagine we would like to predict the participants’ mean reaction time given the list type, the SOA type and their interaction.</p>
+<p>Again, it is helpful to start by trying to get a rough idea of what the data looks like.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> List, <span class="at">y =</span> RT)) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="at">color =</span> SOA),</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">position_jitterdodge</span>(<span class="at">dodge.width=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02b-catPreds-tutorial_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can also look at the empirical means of the different conditions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(List, SOA) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(RT)) <span class="ot">-&gt;</span> tibble_baseStats</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>tibble_baseStats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+# Groups:   List [3]
+  List  SOA     mean
+  &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt;
+1 L1    long    530.
+2 L1    medium  537.
+3 L1    short   544.
+4 L2    long    543.
+5 L2    medium  556.
+6 L2    short   534.
+7 L3    long    529.
+8 L3    medium  515.
+9 L3    short   522.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(tibble_baseStats<span class="sc">$</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 534.5139</code></pre>
+</div>
+</div>
+<p>Now we can turn to modelling!</p>
+<section id="dummy-treatment-coding-1" class="level2">
+<h2 class="anchored" data-anchor-id="dummy-treatment-coding-1">Dummy (Treatment) Coding</h2>
+<p>Generally, the coding schemes work in the very same way independently of the number of levels. The only difference to our old data set is that now we need two numeric variables coding the contrasts between the levels of one variable. If we look at the default (dummy) coding of e.g.&nbsp;the variable <code>List</code> we see a contrast matrix with two columns, each denoting the comparisons between two levels:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare<span class="sc">$</span>SOA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       medium short
+long        0     0
+medium      1     0
+short       0     1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   L2 L3
+L1  0  0
+L2  1  0
+L3  0  1</code></pre>
+</div>
+</div>
+<p>So now the recoding of the categorical variable takes two numeric variables: e.g.&nbsp;<span class="math inline">\(x_{1_2}\)</span> and <span class="math inline">\(x_{1_3}\)</span>, where both can take the values 0 or 1; the single levels are denoted by the combination of the two numeric variables. Again there is a reference level - <code>List 1</code> - described by <span class="math inline">\(x_{1_2}\)</span> and <span class="math inline">\(x_{1_3}\)</span> being 0. <span class="math inline">\(x_{1_2}\)</span> being 1 describes the difference between the reference level and <code>List 2</code>; <span class="math inline">\(x_{1_3}\)</span> being 1 describes the difference between the reference level and <code>List 3</code>. Correspondingly, there is and individual <span class="math inline">\(\beta\)</span> for each numeric variable estimated in the regression model. The coding of the <code>SOA</code> factor works just the same way. The interactions between specific levels are described by combining the respective numeric variables <span class="math inline">\(x\)</span>. So the model we are fitting is described by:</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1 * x_{1_2} + \beta_2 * x_{1_3} + \beta_3 * x_{2_2} + \beta_4 * x{2_3} + \beta_5 * x_{1_2}x_{2_2} + \beta_6 * x_{1_3}x_{2_2} + \beta_7 * x_{1_2}x_{2_3}  + \beta8 * x_{1_3}x_{2_3}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>lm3.dummy.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List <span class="sc">*</span> SOA,</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>lm3.dummy.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.dummy.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.dummy.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List * SOA 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept          530.54     11.48   508.11   552.33 1.00     1006     1343
+ListL2              12.31     16.31   -19.95    45.20 1.00     1036     1161
+ListL3              -1.18     15.83   -31.23    30.00 1.00      975     1141
+SOAmedium            6.45     15.84   -24.71    37.80 1.00     1017     1383
+SOAshort            13.46     15.77   -17.46    44.50 1.01     1137     1323
+ListL2:SOAmedium     7.02     22.86   -36.66    52.38 1.00     1109     1264
+ListL3:SOAmedium   -20.72     22.52   -64.19    23.98 1.00     1027     1089
+ListL2:SOAshort    -21.98     23.08   -69.09    20.36 1.00     1218     1361
+ListL3:SOAshort    -20.67     22.18   -64.06    22.78 1.00     1198     1117
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.57      2.85    41.41    52.59 1.00     2067     1465
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Since both predictors are dummy-coded the intercept represents the reference level - the mean RT for <code>List 1</code> and a <code>long</code> SOA. Following the same procedure as for the two-level variables you could calculate the estimated mean RTs for specific conditions.</p>
+</section>
+<section id="simple-contrast-coding-1" class="level2">
+<h2 class="anchored" data-anchor-id="simple-contrast-coding-1">Simple (Contrast) Coding</h2>
+<p>Simple coding only slightly differs from dummy-coding – the intercept of the model is the grand mean, not the mean RT of the reference level. Otherwise, the coefficients still denote the difference between the reference level and other specific levels.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_contr =</span> <span class="fu">factor</span>(List),</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_contr =</span> <span class="fu">factor</span>(SOA)) <span class="ot">-&gt;</span> latinsquare_df</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>dummy.matrix3 <span class="ot">&lt;-</span> <span class="fu">contr.treatment</span>(<span class="dv">3</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>contr.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_contr) <span class="ot">&lt;-</span> dummy.matrix3 <span class="sc">-</span> contr.matrix3</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_contr) <span class="ot">&lt;-</span>  dummy.matrix3 <span class="sc">-</span> contr.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>lm3.simple.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_contr <span class="sc">*</span> SOA_contr,</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>lm3.simple.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.simple.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.simple.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List_contr * SOA_contr 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                534.65      3.86   527.10   542.28 1.00     2318
+List_contr2                7.71      9.82   -11.91    26.51 1.00     1832
+List_contr3              -14.77      9.67   -33.59     3.92 1.00     1636
+SOA_contr2                 1.92      9.51   -16.71    20.01 1.00     2282
+SOA_contr3                -0.51      9.62   -19.41    18.01 1.00     2362
+List_contr2:SOA_contr2     4.56     23.51   -41.17    49.62 1.00     1547
+List_contr3:SOA_contr2   -22.79     23.39   -68.03    22.43 1.00     1413
+List_contr2:SOA_contr3   -24.04     23.99   -69.89    23.34 1.00     1550
+List_contr3:SOA_contr3   -22.53     23.87   -68.93    26.21 1.00     1529
+                       Tail_ESS
+Intercept                  1447
+List_contr2                1661
+List_contr3                1626
+SOA_contr2                 1811
+SOA_contr3                 1872
+List_contr2:SOA_contr2     1750
+List_contr3:SOA_contr2     1421
+List_contr2:SOA_contr3     1395
+List_contr3:SOA_contr3     1671
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.63      2.91    41.09    52.66 1.00     1819     1386
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section id="deviation-sum-coding-1" class="level2">
+<h2 class="anchored" data-anchor-id="deviation-sum-coding-1">Deviation (Sum) Coding</h2>
+<p>With increasing number of levels within the factors the complexity and messiness of interpreting the differences between levels against each other increases considerably. Hence it might make a lot of sense to use the deviation coding scheme which provides estimates of effects comapred to the grand mean. We again can use the R built-in function to assign deviation coding to our three-level factors:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_dev =</span> List,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_dev =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>) <span class="co"># insert number of levels</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For e.g.&nbsp;<code>SOA</code> our numeric variables now denote the effect of <code>long</code> SOA compared to the grand mean when <span class="math inline">\(x_{2_2}\)</span> is a 1 and <span class="math inline">\(x_{2_3}\)</span> is a 0; they denote the effect of <code>medium</code> SOA compared to the grand mean when <span class="math inline">\(x_{2_2}\)</span> is a 0 and <span class="math inline">\(x_{2_3}\)</span> is a 1; the effect of <code>short</code> SOA is never compared to the grand mean since it is always assigned a -1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>lm3.dev.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_dev <span class="sc">*</span> SOA_dev,</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>lm3.dev.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.dev.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.dev.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List_dev * SOA_dev 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                   Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept            534.49      3.89   526.82   542.23 1.00     2524     1510
+List_dev1              2.33      5.46    -8.37    12.89 1.00     1474     1352
+List_dev2             10.05      5.34    -0.63    20.62 1.00     1465     1553
+SOA_dev1              -0.62      5.45   -11.47     9.92 1.00     1932     1500
+SOA_dev2               1.50      5.63   -10.18    12.63 1.00     1968     1396
+List_dev1:SOA_dev1    -6.51      7.68   -21.18     9.19 1.00     1666     1631
+List_dev2:SOA_dev1    -1.14      7.93   -16.86    14.54 1.00     1425     1525
+List_dev1:SOA_dev2    -1.78      7.55   -16.56    12.70 1.00     1804     1710
+List_dev2:SOA_dev2    10.58      7.83    -4.29    25.85 1.00     1592     1264
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.49      2.80    41.40    52.37 1.00     2219     1445
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Think about what the single estimates mean!</p>
+</section>
+<section id="helmert-coding-1" class="level2">
+<h2 class="anchored" data-anchor-id="helmert-coding-1">Helmert Coding</h2>
+<p>For recap: In this coding scheme, a level of a variable is compared to its subsequent levels. What does this mean for the three-level factors?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_helm =</span> List,</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_helm =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>helm.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span> ), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_helm) <span class="ot">&lt;-</span> helm.matrix3</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_helm) <span class="ot">&lt;-</span> helm.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>lm3.helm.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_helm <span class="sc">*</span> SOA_helm,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>lm3.helm.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.helm.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.helm.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List_helm * SOA_helm 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept              534.62      4.02   527.08   542.37 1.00     4337
+List_helm1               3.38      8.71   -14.06    21.29 1.00     4153
+List_helm2              22.49      9.43     3.90    41.67 1.00     4177
+SOA_helm1               -0.93      8.08   -16.40    15.48 1.00     4516
+SOA_helm2                2.98      9.08   -15.17    20.05 1.00     4569
+List_helm1:SOA_helm1   -14.94     17.32   -48.48    19.96 1.00     4332
+List_helm2:SOA_helm1   -13.04     20.49   -53.46    27.64 1.00     4377
+List_helm1:SOA_helm2   -14.19     20.36   -53.70    25.11 1.00     5201
+List_helm2:SOA_helm2    28.50     23.11   -16.79    71.97 1.00     3660
+                     Tail_ESS
+Intercept                1493
+List_helm1               1257
+List_helm2               1621
+SOA_helm1                1565
+SOA_helm2                1467
+List_helm1:SOA_helm1     1375
+List_helm2:SOA_helm1     1589
+List_helm1:SOA_helm2     1508
+List_helm2:SOA_helm2     1453
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.57      2.75    41.54    52.49 1.00     3405     1546
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>The main effect estimates denote the differences between the mean of <code>List1</code> and the mean of (<code>List2</code> + <code>List3</code>); and between the mean of <code>List2</code> and the mean of <code>List3</code>. Respectively, they denote the differences between the mean of SOA <code>long</code> and the mean of (<code>medium</code> + <code>short</code>); and between the mean of SOA <code>medium</code> and the mean of <code>short</code>. The intercept is the grand mean.</p>
+</section>
+<section id="reverse-helmert-coding" class="level2">
+<h2 class="anchored" data-anchor-id="reverse-helmert-coding">Reverse Helmert Coding</h2>
+<p>The reverse Helmert coding scheme (also called difference coding) is quite similar to the Helmert coding, but compares the mean of a level to its previous levels. Since we basically reverse the coding we used in the previous scheme, we also ‘reverse’ the contrast matrix to create such a coding.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_rhelm =</span> List,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_rhelm =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>rhelm.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span> ), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_rhelm) <span class="ot">&lt;-</span> rhelm.matrix3</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_rhelm) <span class="ot">&lt;-</span> rhelm.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>lm3.rhelm.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_rhelm <span class="sc">*</span> SOA_rhelm,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>,</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>lm3.rhelm.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.rhelm.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.rhelm.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List_rhelm * SOA_rhelm 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                534.55      3.76   527.17   541.83 1.00     4673
+List_rhelm1                7.79      9.67   -10.73    27.07 1.00     4045
+List_rhelm2              -18.53      8.03   -34.91    -2.09 1.00     3392
+SOA_rhelm1                 2.14      9.09   -15.65    19.54 1.00     4343
+SOA_rhelm2                -1.47      8.30   -16.98    14.77 1.00     4341
+List_rhelm1:SOA_rhelm1     6.12     22.93   -39.70    50.41 1.00     4243
+List_rhelm2:SOA_rhelm1   -24.63     20.38   -64.38    13.86 1.00     4589
+List_rhelm1:SOA_rhelm2   -25.76     19.54   -62.98    14.41 1.00     3873
+List_rhelm2:SOA_rhelm2     2.13     16.72   -30.49    36.18 1.00     5767
+                       Tail_ESS
+Intercept                  1516
+List_rhelm1                1336
+List_rhelm2                1229
+SOA_rhelm1                 1353
+SOA_rhelm2                 1383
+List_rhelm1:SOA_rhelm1     1644
+List_rhelm2:SOA_rhelm1     1509
+List_rhelm1:SOA_rhelm2     1141
+List_rhelm2:SOA_rhelm2     1426
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.42      2.82    41.24    52.44 1.00     3219     1627
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>In our example, the first estimate denotes the difference between the mean of <code>List2</code> and the mean of <code>List1</code>; the second - the difference between the mean of <code>List3</code> and the mean of (<code>List1</code> + <code>List2</code>). The main effects of SOA can be interpreted similarly.</p>
+</section>
+<section id="mixed-schemes-dummy-and-deviation-coding" class="level2">
+<h2 class="anchored" data-anchor-id="mixed-schemes-dummy-and-deviation-coding">Mixed Schemes: Dummy and Deviation Coding</h2>
+<p>Just like with two-level factors, we might wish to use different coding schemes for different predictors. It might make sense to use dummy coding for a variable which has a control and two different treatment conditions, and to use deviation coding for a variable which has ‘equal’ levels.</p>
+<p>For example, we could use dummy-coding for <code>List</code> and deviation-coding for <code>SOA</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>lm3.mixedCode.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List <span class="sc">*</span> SOA_dev,</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>lm3.mixedCode.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.mixedCode.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.mixedCode.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ List * SOA_dev 
+   Data: latinsquare_df (Number of observations: 144) 
+  Draws: 4 chains, each with iter = 1000; warmup = 500; thin = 1;
+         total post-warmup draws = 2000
+
+Population-Level Effects: 
+                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept         536.86      6.43   524.71   550.08 1.00     1899     1367
+ListL2              7.64      9.18   -10.80    25.65 1.00     2113     1456
+ListL3            -14.67      9.54   -33.18     4.45 1.00     2127     1621
+SOA_dev1           -7.17      9.44   -25.35    11.35 1.01     1199     1390
+SOA_dev2           -0.11      9.31   -17.94    18.74 1.01     1126     1365
+ListL2:SOA_dev1     5.53     13.45   -21.04    32.30 1.00     1284     1336
+ListL3:SOA_dev1    14.37     13.65   -13.08    39.29 1.00     1401     1361
+ListL2:SOA_dev2    11.89     13.03   -12.84    37.04 1.00     1183     1341
+ListL3:SOA_dev2    -6.65     13.24   -33.02    18.72 1.00     1266     1474
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    46.50      2.85    41.37    52.43 1.00     2126     1370
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Towards the end of this tutorial, the main take-away is this: when you look at the estimates of (any) model, you could ask yourself a couple of questions like these to make sure you understand what was calculated:</p>
+<ul>
+<li>What does the intercept represent?</li>
+<li>What do the single estimates mean?</li>
+<li>What do they tell me about my hypotheses?</li>
+</ul>
+<p>Of course, you will also encounter experimental designs which use a two-level and a three-level categorical predictors – but the conceptual basics regarding how to choose the contrasts and how to interpret linear models are the same.</p>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>This tutorial provides an outline of most common coding schemes, but there are also others out there. However, having a basic understanding of the procedures described above, you are perfectly prepared to deal with a broad spectrum of experimental data in psychology and other disciplines. There are heuristics as to which coding schemes to choose; but most importantly, you should choose statistical tools that are the best fit for your specific research question. It is often helpful to write up the results of a pilot model to see if the interpretation of the results makes clear statements about your hypothesis.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>P. Buerckner, 2016. “brms: An R package for Bayesian multilevel models using Stan”. In <em>Journal of Statistical Software 80.1</em>, pp.&nbsp;1–28.</p>
+<p>J. G. W. Raaijmakers et al., 1999. How to Deal with “The Language-as-Fixed-Effect Fallacy: Common Misconceptions and Alternative Solutions. In <em>Journal of Memory and Language</em></p>
+<p>B. Winter, S. Grauwunder, 2012. “The Phonetic Profile of Korean Formality”. In <em>Journal of Phonetics 40</em>, pp.&nbsp;808–815.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
