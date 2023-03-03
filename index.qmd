@@ -3,23 +3,38 @@ title: "Bayesian Regression: Theory & Practice"
 author: "Michael Franke"
 ---
 
-This site provides material for an introductory-level course on Bayesian linear regression modeling.
+This site provides material for an introductory to intermediate level course on Bayesian linear regression modeling.
 The course presupposes some prior exposure to statistics and some acquaintance with R.
 
 ## Intended audience
 
-This course is offered to students (both under-graduate and graduate) of (computational) linguistics and cognitive science.
+This course with people in mind who have a completed a first, introductory course on data analysis, which has conveyed roughly the following: 
+
+- basic knowledge of R and, ideally, the tidyverse
+- basic familiarity with Bayesian reasoning (prior, likelihood, posterior)
+- some prior exposure to regression modeling (ideally from a Bayesian point of view)
 
 ## Scope
 
-The course introduces the basics of Bayesian data analysis, and then immedidately zooms in on regression modeling.
-Starting with simple linear regression, we want to reach a basic understanding of hierarchical generalized linear models.
+The aim of this course is to take students from beginner to intermediate Bayesian regression modeling. 
+The course focuses on Bayesian hierarchical generalized linear models as implemented in the `brms` package.
+It covers the following theoretical and practical aspects:
+
+- prior and posterior model checking
+- generalized linear models (ordered logit, multinomial, Poisson, Beta ...)
+- MCMC methods (HMC diagnostics)
+- contrast coding for categorical predictors
+- missing data
+- distributional and non-linear models (GAMs, Gaussian processes)
+- model comparison (Bayes factors, cross-validation)
 
 ## Additional material
 
 An even more basic introduction to data analysis (introducing R, tidyverse, Bayesian and, eventually, also frequentist statistics) is the webbook ["An introduction to Data Analysis"](https://michael-franke.github.io/intro-data-analysis/index.html).
+This course presupposes roughly the content covered in Chapters 2--9 and 12--13. 
+
 
 ## Acknowledgements
 
-Part of this material was used in a previous course, co-taught with the great Timo Roettger.
-I'm recycling some of his material here, but have (in full awareness of the catastrohpe) made it more dry, less insightful and more nerdy to conceal the breach of authorship.
+Part of the hands-on material was used in a previous course, co-taught with the great Timo Roettger.
+My gratitude for his permission to build on it here.
