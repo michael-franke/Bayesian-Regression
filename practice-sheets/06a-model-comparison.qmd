@@ -1,0 +1,492 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "06: Model comparison"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+callout-appearance: simple
+---
+
+Load relevant packages and "set the scene."
+
+{{< include 00-preamble.qmd >}}
+
+```{r}
+dolphin <- aida::data_MT
+rerun_models = FALSE
+```
+
+# Comparing models with LOO-CV and Bayes factors
+
+Suppose that the ground truth is a robust regression model generating our data (a robust regression uses a Student-t distribution as likelihood function):
+
+```{r}
+set.seed(1970)
+
+# number of observations
+N <- 100
+# 100 samples from a standard normal
+x <- rnorm(N, 0, 1)
+
+intercept <- 2
+slope <- 4
+
+# robust regression with a Student's t error distribution
+# with 1 degree of freedom
+y <- rt(N, df = 1, ncp = slope * x + intercept)
+
+data_robust <- tibble(x = x, y = y)
+```
+
+A plot of the data shows that we have quite a few "outliers":
+
+```{r}
+qplot(x,y) + 
+  geom_smooth(color = project_colors[1], method = "lm") +
+  geom_point(color = project_colors[2], size = 2, alpha = 0.8)
+```
+
+We are going to compare two models for this data, a normal regression model and a robust regression model.
+
+## Normal and robust regression models
+
+A normal regression model uses a normal error function.
+
+```{r}
+#| output: false
+#| error: false
+#| warning: false
+fit_n <- brm(
+  formula = y ~ x,
+  data = data_robust,
+  # student prior for slope coefficient
+  prior = prior("student_t(1,0,30)", class = "b"),
+)
+```
+
+We will want to compare this normal regression model with a **robust regression model**, which uses a Student's t distribution instead as the error function around the linear predictor:
+
+```{r}
+#| output: false
+#| error: false
+#| warning: false
+fit_r <- brm(
+  formula = y ~ x,
+  data = data_robust,
+  # student prior for slope coefficient
+  prior = prior("student_t(1,0,30)", class = "b"),
+  family = student()
+)
+```
+
+Let's look at the posterior inferences of both models about the true (known) parameters of the regression line:
+
+```{r}
+prep_summary <- function(fit, model) {
+  tidybayes::summarise_draws(fit) |> 
+    mutate(model = model) |> 
+    select(model, variable, q5, mean, q95) |> 
+    filter(grepl(variable, pattern = '^b'))  
+}
+
+rbind(prep_summary(fit_n, "normal"), prep_summary(fit_r, "robust"))
+```
+
+Remember that the true intercept is 2 and the true slope is 4. Clearly the robust regression model has recovered the ground-truth parameters much better.
+
+## Leave-one-out cross validation
+
+We can use the `loo` package to compare these two models based on their posterior predictive fit. Here's how:
+
+```{r}
+loo_comp <- loo_compare(list(normal = loo(fit_n), robust = loo(fit_r)))
+loo_comp
+```
+
+We see that the robust regression model is better by ca. `r round(loo_comp[2,1])` points of expected log predictive density. The table shown above is ordered with the "best" model on top. The column `elpd_diff` lists the difference in ELPD of every model to the "best" one. In our case, th estimated ELPD difference has a standard error of about `r round(loo_comp[2,2])`. Computing a $p$-value for this using Lambert's $z$-score method, we find that this difference is "significant" (for which we will use other terms like "noteworthy" or "substantial" in the following):
+
+```{r}
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+```
+
+We conclude from this that the robust regression model is much better at predicting the data (from a posterior point of view).
+
+## Bayes factor model comparison (with bridge sampling)
+
+We use bridge sampling, as implemented in the formidable `bridgesampling` package, to estimate the (log) marginal likelihood of each model. To do this, we need also samples from the prior. To do this reliably, we need many more samples than we would normally need for posterior inference. We can `update()` existing fitted models, so that we do not have to copy-paste all specifications (formula, data, prior, ...) each time. It's important for `bridge_sampler()` to work that we save all parameters (including prior samples).
+
+```{r}
+
+if (rerun_models) {
+  # refit normal model
+  fit_n_4Bridge <- update(
+    fit_n,
+    iter = 5e5,
+    save_pars = save_pars(all = TRUE)
+  )
+  # refit robust model
+  fit_r_4Bridge <- update(
+    fit_r,
+    iter = 5e5,
+    save_pars = save_pars(all = TRUE)
+  )
+  normal_bridge <- bridge_sampler(fit_n_4Bridge, silent = T)
+  write_rds(normal_bridge, "06-normal_bridge.rds")
+  robust_bridge <- bridge_sampler(fit_r_4Bridge, silent = T)  
+  write_rds(robust_bridge, "06-robust_bridge.rds")
+} else {
+  normal_bridge <- read_rds("06-normal_bridge.rds")  
+  robust_bridge <- read_rds("06-robust_bridge.rds")
+}
+
+bf_bridge <- bridgesampling::bf(robust_bridge, normal_bridge)
+```
+
+We can then use the `bf` (Bayes factor) method from the `bridgesampling` package to get the Bayes factor (here: in favor of the robust regression model):
+
+```{r eval=TRUE}
+bf_bridge
+```
+
+As you can see, this is a very clear result. If we had equal levels of credence in both models, after seeing the data, our degree of belief in the robust regression model should ... well, virtually infinitely higer than our degree of belief in the normal model.
+
+
+# Comparing LOO-CV and Bayes factors
+
+LOO-CV and Bayes factor gave similar results in the Walkthrough. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation. In this exercise we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:
+
+-   LOO-CV compares models from a data-informed, *ex post* point of view based on a (repeatedly computed) **posterior predictive distribution**
+-   Bayes factor model comparison takes a data-blind, *ex ante* point of view based on the **prior predictive distribution**
+
+What does that mean in practice? -- To see the crucial difference, imagine that you have tons of data, so much that they completely trump your prior. LOO-CV can use this data to emancipate itself from any wrong or too uninformative prior structure. Bayes factor comparison cannot. If a Bayesian model is a likelihood function AND a prior, Bayes factors give the genuine Bayesian comparison, taking the prior into account. That is what you want when your prior structure are really part of your theoretical commitment. If you are looking for prediction based on weak priors AND a ton of data to train on, you should not use Bayes factors.
+
+To see the influence of priors on model comparison, we are going to look at a very simple data set generated from a standard normal distribution.
+
+```{r}
+# number of observations
+N <- 100
+# data from a standard normal
+y <- rnorm(N)
+# list of data for Stan
+data_normal <- tibble(y = y)
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1a
+
+Use `brms` to implement two models for inferring a Gaussian distribution.
+
+-   The first one has narrow priors for its parameters (`mu` and `sigma`), namely a Student's $t$ distribution with $\nu = 1$, $\mu = 0$ and $\sigma = 10$.
+-   The second one has wide priors for its parameters (`mu` and `sigma`), namely a Student's $t$ distribution with $\nu = 1$, $\mu = 0$ and $\sigma = 1000$.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+fit_narrow <- brm(
+  formula = y ~ 1,
+  data = data_normal,
+  prior = c(prior("student_t(1,0,10)", class = "Intercept"),
+            prior("student_t(1,0,10)", class = "sigma"))
+)
+fit_wide <- brm(
+  formula = y ~ 1,
+  data = data_normal,
+  prior = c(prior("student_t(1,0,1000)", class = "Intercept"),
+            prior("student_t(1,0,1000)", class = "sigma"))
+)
+
+```
+:::
+
+:::
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1b
+
+Compare the models with LOO-CV, using the `loo` package, and interpret the outcome.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+loo_compare(
+  list(
+    wide   = loo(fit_wide),
+    narrow = loo(fit_narrow)
+  )
+)
+```
+
+The models are pretty much incomparable (equally good/bad) based on the LOO-CV.
+:::
+:::
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1c
+
+Use the `bridgesampling` package to find an (approximate) Bayes factor for this model comparison.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+if (rerun_models) {
+  fit_narrow_4Bridge <- update(
+    object = fit_narrow,
+    iter = 5e5,
+    save_pars = save_pars(all = TRUE)
+  )
+  
+  fit_wide_4Bridge <- update(
+    object = fit_wide,
+    iter = 5e5,
+    save_pars = save_pars(all = TRUE)
+  )
+  
+  narrow_bridge <- bridge_sampler(fit_narrow_4Bridge, silent = T)
+  write_rds(narrow_bridge, "06-narrow_bridge.rds")
+  
+  wide_bridge   <- bridge_sampler(fit_wide_4Bridge, silent = T)
+  write_rds(wide_bridge, "06-wide_bridge.rds")
+  
+} else {
+  narrow_bridge <- read_rds("06-narrow_bridge.rds")  
+  wide_bridge <- read_rds("06-wide_bridge.rds")
+}
+
+bridgesampling::bf(narrow_bridge, wide_bridge)
+
+```
+
+The Bayes factors in favor of the narrow model is about 10000. 
+That's massive evidence that, from a prior point of view, the narrow model is much better.
+:::
+:::
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1d
+
+If all went well, you should have seen a difference between the LOO-based and the BF-based model comparison. Explain what's going on in your own words.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Since BF-based comparison looks at the models from the prior point of view, the model with wide priors is less precise, puts prior weight on a lot of "bad" paramter values and so achieves a very weak prior predicitive fit.
+
+The LOO-based estimates are identical because both models have rather flexible, not too strong priors, and so the data is able to produce roughly the same posteriors in both models.
+
+
+:::
+:::
+
+# Comparing (hierarchical) regression models
+
+We are going to consider an example from the mouse-tracking data. We use categorical variables `group` and `condition` to predict `MAD` measures. We are going to compare different models, including models which only differ with respect to random effects.
+
+Let's have a look at the data first to remind ourselves:
+
+```{r}
+
+# aggregate
+dolphin <- dolphin %>% 
+  filter(correct == 1) 
+
+# plotting the data
+ggplot(data = dolphin, 
+       aes(x = MAD, 
+           color = condition, fill = condition)) + 
+  geom_density(alpha = 0.3, linewidth = 0.4, trim = F) +
+  facet_grid(~group) +
+  xlab("MAD")
+
+```
+
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 2a
+
+Set up four regression models and run them via `brms`:
+
+1.  Store in variable `model1_noInnteraction_FE` a regression with `MAD` as dependent variable, and as explanatory variables `group` and `condition` (but NOT the interaction between these two).
+2.  Store in variable `model2_interaction_FE` a regression with `MAD` as dependent variable, and as explanatory variables `group`, `condition` and the interaction between these two.
+3.  Store in variable `model3_interaction_RandSlopes` a model like `model2_interaction_FE` but also adding additionally random effects, namely random intercepts for factor `subject_id`.
+4.  Store in `model4_interaction_MaxRE` a model like `model2_interaction_FE` but with the maximal random effects structure licensed by the design of the experiment.
+
+::: {.callout-tip collapse="true"}
+
+### Solution
+
+```{r}
+model1_NOinteraction_FE = brm(
+  MAD ~ condition + group, 
+  data = dolphin
+) 
+
+model2_interaction_FE = brm(
+  MAD ~ condition * group, 
+  data = dolphin
+)
+
+model3_interaction_RandSlopes = brm(
+  MAD ~ condition * group + (1 | subject_id), 
+  data = dolphin
+) 
+
+model4_interaction_MaxRE = brm(
+  MAD ~ condition * group + (1 + group | exemplar) + (1 | subject_id), 
+  data = dolphin
+) 
+```
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2b
+
+This exercise and the next are meant to have you think more deeply about the relation (or unrelatedness) of posterior inference and model comparison. Remember that, conceptually, these are two really different things.
+
+To begin with, look at the summary of posterior estimates for model `model2_interaction_FE`. Based on these results, what would you expect: is the inclusion of the interaction term relevant for loo-based model comparison? In other words, do you think that `model2_interaction_FE` is better, equal or worse than `model2_NOinteraction_FE` under loo-based model comparison? Explain your answer.
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+model2_interaction_FE
+
+```
+
+The coefficient for the interaction term is credibly different from zero,
+in fact quite large. We would therefore expect that the data "needs" the
+interaction term; a model without it is likely to fare worse.
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2c
+
+Now compare the models directly using `loo_compare`. Compute the $p$-value (following Lambert) and draw conclusion about which, if any, of the two models is notably favored by LOO model comparison.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+loo_comp <- loo_compare(
+  loo(model1_NOinteraction_FE),
+  loo(model2_interaction_FE)
+)
+loo_comp
+```
+
+The model `model2_NOinteraction_FE` is worse by `r loo_comp[2,1]` points of expected log predictive density with a standard error of ca. `r loo_comp[2,2]`. This translates into a "significant" difference, leading to the conclusion that the model with interaction term is really better:
+
+```{r}
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+```
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 3d
+
+Now, let's also compare models that differ only in their random effects structure. We start by looking at the posterior summaries for `model4_interaction_MaxRE`. Just by looking at the estimated coefficients for the random effects (standard deviations), would you conclude that these variables are important (e.g., that the data provides support for these parameters to be non-negligible)?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+model4_interaction_MaxRE
+
+```
+
+All the parameters from the RE structure, except for the correlation
+term, are credibly bigger than zero, suggesting that the data lends
+credence to these factors playing a role in the data-generating process.
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 3e
+
+Compare the models `model3_interaction_RandSlopes` and `model4_interaction_MaxRE` with LOO-CV. Compute Lambert's $p$-value and draw conclusions about which, if any, of these models is to be preferred by LOO-CV. Also, comment on the results from 3.b through 3.e in comparison: are the results the same, comparable, different ... ; and why so?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+loo_comp <- loo_compare(
+  loo(model4_interaction_MaxRE),
+  loo(model3_interaction_RandSlopes)
+)
+
+loo_comp
+
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+
+```
+
+LOO-CV finds no noteworthy difference between these models.
+In tendency, the smaller model is even better.
+This is different from the previous case in 3.b/c which might
+have suggested that if a parameter $\theta$ is credibly different
+from 0, then we also prefer to have it in the model for predictive accuracy.
+But this is not the case in the current case (3.d/e) where the smaller model is preferred.
+An explanation for this could be that not all parameters are equal.
+The fixed effect terms have more impact on the variability of
+predictions than random effect terms.
+
+:::
+:::
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 3f
+
+Compare all four models using LOO-CV with method `loo_compare` and interpret the outcome. Which model is, or which models are the best?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+loo_compare(
+  loo(model1_NOinteraction_FE),
+  loo(model2_interaction_FE),
+  loo(model3_interaction_RandSlopes),
+  loo(model4_interaction_MaxRE)
+)
+# model 4 is best, followed by model 3. 
+# As models 3 and 4 are incomparable by LOO-CV (from part 3.c), 
+# we only need to check if model 4 is better than model 2, which is on third place:
+
+loo_compr <- loo_compare(
+  loo(model4_interaction_MaxRE),
+  loo(model2_interaction_FE)
+)
+
+# We find that this difference is substantial:
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+```
+
+
+:::
+:::
+
+

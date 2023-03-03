@@ -1,0 +1,190 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "04a: MCMC diagnostics (demonstrations)"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+callout-appearance: simple
+---
+  
+Load relevant packages and "set the scene."
+  
+{{< include 00-preamble.qmd >}}
+  
+```{r}
+dolphin <- aida::data_MT
+my_scale <- function(x) c(scale(x))
+```
+  
+This tutorial provides demonstrations of how to check the quality of MCMC samples obtained from `brms` model fits.
+  
+# A good model
+ 
+To have something to go on, here are two model fits, one of this is good, the other is ... total crap. The first model fits a smooth line to the average world temperature. (We need to set the seed here to have reproducible results.)
+
+```{r}
+fit_good <- brm(
+  formula = avg_temp ~ s(year), 
+  data = aida::data_WorldTemp,
+  seed = 1969
+) 
+```
+
+The good model is rather well behaved. Here is a generic plot of its posterior fits and traceplots:
+
+```{r}
+plot(fit_good)
+```
+
+Traceplots look like madly-in-love caterpillars doing their thing.
+
+We can check $\hat{R}$ and effective sample sizes also in the summary of the model:
+
+```{r}
+summary(fit_good)
+```
+
+Interestingly, there is one warning message about one divergent transition. We are recommended to check the `pairs()` plot, so here goes:
+
+```{r}
+pairs(fit_good)
+```
+
+This is actually not too bad. (Wait until you see a terrible case below!)
+
+We can try to fix this problem with a single divergent transition by doing as recommended by the warning message, namely increasing the `adapt_delta` parameter in the `control` structure:
+
+```{r}
+fit_good_adapt <- brm(
+  formula = avg_temp ~ s(year), 
+  data = aida::data_WorldTemp,
+  seed = 1969,
+  control = list(adapt_delta=0.9),
+) 
+
+summary(fit_good_adapt)
+```
+
+That looks better, but what did we just do? --- When the sampler "warms up", it tries to find good parameter values for the case at hand. The `adapt_delta` parameter is the minimum amount of accepted proposals (where to jump next) before "warm up" counts as done and successfull. So with a small problem like this, just making the adaptation more ambitious may have have solved the problem. It has also, however, made the sampling slower, less efficient.
+
+A powerful interactive tool for exploring a fitted model (diagnostics and more) is `shinystan`:
+
+```{r}
+#| eval: false
+shinystan::launch_shinystan(fit_good_adapt)
+```
+
+# A terrible model 
+
+The main (maybe only) reason for serious problems with the NUTS sampling is this: **sampling issues arise for bad models**. So, let's come up with a really stupid model.
+
+Here's a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original `year` information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we exepct nightmares during sampling:
+
+```{r}
+fit_bad <- brm(
+  formula = avg_temp ~ s(year) + year_perturbed, 
+  data = aida::data_WorldTemp |> mutate(year_perturbed = rnorm(1,year,0.001)),
+  seed = 1969
+) 
+
+summary(fit_bad)
+```
+
+Indeed, that looks pretty bad. We managed to score badly on all major accounts:
+
+- large $\hat{R}$
+- extremely poor efficient sample size
+- ridiculously far ranging posterior estimates for the main model components
+- tons of divergent transitions
+- maximum treedepth reached more often than hipster touches their phone in a week
+
+Some of these caterpillars look like they are in a vicious rose war:
+
+```{r}
+plot(fit_bad)
+```
+
+We also see that that the intercept of and the slope for `year_perturbed` are the main troublemakers (in terms of traceplots).
+
+Interestingly, a simple posterior check doesn't look half-bad:
+
+```{r}
+pp_check(fit_bad)
+```
+
+But now, have a look at the `pairs()` plot:
+
+```{r}
+pairs(fit_bad)
+```
+
+Aha, there we see a clear problem! The joint posterior for the intercept and the slope for `year_perturbed` looks like a line. This means that these parameters could in princple do the same "job". 
+
+This suggests a possible solution stragey. The model is too unconstrained. It can allow these two parameters meander to wherever they want (or so it seems). We could therefore try honing them in by specifying priors, like so:
+
+```{r}
+fit_bad_wPrior <- brm(
+  formula = avg_temp ~ s(year) + year_perturbed, 
+  data = aida::data_WorldTemp |> mutate(year_perturbed = rnorm(1,year,0.001)),
+  seed = 1969,
+  prior = prior("student_t(1,0,5)", coef = "year_perturbed")
+) 
+
+summary(fit_bad_wPrior)
+```
+
+Well, alright! That isn't too bad anymore. But it is still clear from the posterior `pairs` plot that this model has two parameters that steal each other's show. The model remains a bad model ... for our data.
+
+```{r}
+pairs(fit_bad)
+```
+
+Here's what's wrong: `year_perturbed` is a constant! The model is a crappy model of the data, because the data is not what we thought it would be. Check it out:
+
+```{r}
+aida::data_WorldTemp |> mutate(year_perturbed = rnorm(1,year,0.001))
+```
+
+So, we basically ran a model with two intercepts!?!
+
+Let's try again:
+
+```{r}
+data_WorldTemp_perturbed <- aida::data_WorldTemp |> 
+    mutate(year_perturbed = rnorm(nrow(aida::data_WorldTemp),year, 50))
+data_WorldTemp_perturbed
+```
+
+That's more like what we thought it was: `year_perturbed` is supposed to be noisy version of the actual year. So, let's try again, leaving out the smoothing, just for some more chaos-loving fun:
+
+```{r}
+fit_bad_2 <- brm(
+  formula = avg_temp ~ year + year_perturbed, 
+  data = data_WorldTemp_perturbed,
+  seed = 1969,
+  prior = prior("student_t(1,0,5)", coef = "year_perturbed")
+) 
+
+summary(fit_bad_2)
+```
+
+There are no warnings, so this model *must* be good, right? -- No!
+
+If we check the pairs plot, we see that we now have introduced a fair correlation between the two predictor variables.
+
+```{r}
+pairs(fit_bad_2)
+```
+
+We should just not have `year_perturbed`; it's nonsense, and it shows in the diagnostics.
+
+You can diagnose more using `shinystan`:
+
+```{r}
+#| eval: false
+shinystan::launch_shinystan(fit_bad)
+```

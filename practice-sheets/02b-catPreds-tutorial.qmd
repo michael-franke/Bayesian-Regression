@@ -1,0 +1,520 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "02b: Categorical predictors (tutorial)"
+author: "Michael Franke & Polina Tsvilodub"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+callout-appearance: simple
+---
+
+{{< include 00-preamble.qmd >}}
+
+Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. This tutorial will provide an overview of different categorical variable coding schemes used in mixed effect models. We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.
+
+# Introduction
+
+Whereas models involving continuous predictors like height, weight or reaction time might be interpreted rather intuitively, models involving (very common!) categorical variables like gender or experimental conditions (did the participant read text1 or text2?) are often confusing. However, it is important to understand how to deal with such categorical variables mathematically because different decisions we make about the mathematical procedures influence the interpretation of the regression results.
+
+This hands-on tutorial should provide an overview of different categorical variable coding schemes and walk you through applying and interpreting the output of a regression model fitted to variables coded in those different schemes. This tutorial presupposes a basic familiarity with R, linear regression and Bayesian data analysis with the `brms` R package (Buerkner, 2016). However, all the details of Bayesian analysis need not be understood. Avoiding too many mathematical details, the focus of this tutorial is rather conceptual - to convey in intuitive terms how categorical variables are translated to mathematical terms and how differences in this 'translation' influence the interpretation of a regression model. These conceptual ideas are also not bound to Bayesian analysis and are directly applicable in frequentist modeling tools (e.g. `lmer` package in R).
+
+Most importantly, we should remember: any statistics of the data are just a tool for us to be able to draw conclusions about our research questions. The numbers that R (or any other application) computes don't tell us anything - it's our understanding of those tools and the interpretation of the numbers that provides answers to scientific questions!
+
+First, we will shortly recap how linear regression models look like. Then, we will roughly familiarize ourselves with the data sets. Then, step by step we will look at different coding schemes: how they are applied in R and what a fitted regression model looks like.
+
+*Estimated reading time: 1.5h*
+
+# Categorical Variables Coding Schemes
+
+Why do we need to *code* categorical variables like gender or experimental conditions? 'We don't have to code continuous variables like reaction time!', you might say. The reason is that categorical variables (also called **factors**) are usually represented in a data set as strings, e.g. the factor *gender* could contain the **levels** (i.e. distinct categories) `female` and `male`. But we cannot represent different strings in a regression model. So we need to numerically indicate that a predictor has different levels - by (implicitly) recoding the levels of a variable to numbers, e.g. a 1 for each occurrence of `female` and -1 for each occurrence of `male` in our data set. How we choose these numbers is the focus of this tutorial.
+
+In common terms, by recoding the levels numerically we indicate the **contrasts** between the levels. Generally, we need *N-1* numeric variables to represent the contrasts of a categorical variable with *N* levels.
+
+To get a better understanding of what this means, we will dive right into an example.
+
+# Preparing the tools
+
+We will use the following R packages in this tutorial. If you are missing some of them, you can install them by running e.g. `install.packages('tidyverse')`. **NB**: we will fit the models using `brm` - this might take some time to compile!
+
+```{r libraries, warnings=FALSE}
+library(tidyverse)
+library(tidyboot)
+library(brms)
+library(lmerTest)
+library(broom)
+library(languageR)
+```
+
+## Dataset
+
+The first part of this tutorial is based on a data set from an experiment by Winter and Grawunder (2012) You can get the dataset by running:
+
+```{r data}
+politeness_df <- faintr::politeness
+
+# get a look at the data set
+head(politeness_df)
+```
+
+The data contains records of the voice pitch of speakers in different social `contexts` (polite and informal). They investigated whether the mean voice pitch differs across the *factor* `gender` of the speakers (F and M) and across the *factor* `contexts` - resulting in four different condition combinations (gender X context). Such a design is called **factorial design** and the single combinations are called design cells.
+
+## Explore Data visually
+
+Before we dive into any statistical analyses of our dataset it is helpful to get a rough idea of what the data looks like. For example, we can start by exploring the dataset visually.
+
+```{r politeness, echo=FALSE}
+politeness_df %>%
+  mutate(gender = factor(gender),
+         context = factor(context)) %>%
+ggplot(., aes(x = gender, y = pitch)) +
+  geom_point( aes(color = context),
+              position = position_jitterdodge(dodge.width=0.5))
+```
+
+Furthermore, we can compute some basic statistics - e.g. the mean of the different design cells, before we turn to more complex linear models. We can also compute the overall mean pitch across all the conditions - the **grand mean**. These values will be helpful for a sanity check when interpreting the linear models later on.
+
+```{r}
+tibble_means <- politeness_df %>%
+  group_by(context, gender) %>%
+  summarize(mean = mean(pitch))
+head(tibble_means)
+mean(tibble_means$mean)
+```
+
+# Regression Models
+
+While this tutorial presupposes some basic understanding of regression models, let us recap what exactly we compute when fitting a regression model. As usual for factorial designs, the regression model works under the assumption that observations in each cell are sampled from a normal distribution with a certain mean - and each design cell has an own mean. Research questions about data from factorial designs are usually about the estimated means of these design cells, e.g.: is this design cell's mean different from zero, or from that design cell's mean?
+
+Let us stick to our example data. We want to estimate the mean pitch ($y$) depending on gender ($x_1$), context ($x_2$) and the interaction of the two factors ($x_1x_2$). So what we estimate is the regression function described by
+
+$$y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + \beta_3*x_1x_2 + \epsilon$$
+
+$\beta_0$ is the intercept and $\beta_1, \beta_2$ and $\beta_3$ are the slopes that are estimated when fitting the model; $x_1$ and $x_2$ represent the categorical variables and are exactly what is 'coded' when applying different variable coding schemes. For simplicity we will omit the error term $\epsilon$ below. Will will come back to this regression function when interpreting the regression output given respective coding schemes.
+
+# Coding Categorical Variables
+
+In our example, gender and context are categorical variables, so they need to be coded numerically. When categorical variables are coded for regression modeling, they are internally set to factors. Let's do this manually here for explicitness.
+
+```{r}
+politeness_df <- politeness_df %>%
+  mutate(gender = factor(gender),   # you could rename or reorder the levels here
+         context = factor(context))
+# check
+head(politeness_df)
+```
+
+## Dummy (Treatment) Coding
+
+Dummy coding, or **treatment coding**, is the default coding scheme used by R. Understanding the name 'treatment coding' helps understanding what this coding scheme does: imagine a medical experiment with a single control group (who obtain a placebo) and different experimental groups each of which gets a different treatment (e.g., different drugs), and where we want to compare each treatment group to the single, pivotal control group. Consequently, dummy coded variables are estimated by comparing all levels of the variable to a reference level. The intercept of a linear model containing dummy-coded variables is the mean of the reference level.
+
+Our variables only have two levels, so the effect of *gender* could be estimated by treating `female` as the reference level and estimating the effect of being `male` compared to the reference level -- so basically estimating the difference in pitch it takes to "get from female to male". Similarly, we can estimate the effect of *context*: the `informal` context can be treated as the reference level and the effect of `polite`ness can be estimated against it. By default, the first level of a factor is treated as the reference level (for unordered factors that is the first string in alphanumeric order) - but principally, there is no difference as to which level should be used as the reference level. It makes sense to choose the level which is in some sense the 'control' in your experimental design.
+
+Because R uses dummy-coding by default, we can look at the default numerical coding right away. The function `contrasts()` displays the contrast matrix for the respective variable:
+
+```{r}
+contrasts(politeness_df$gender)
+contrasts(politeness_df$context)
+```
+
+But if we wish to explicitly assign a dummy (treatment) coding to a variable, we may do so by a built-in R function:
+
+```{r}
+contrasts(politeness_df$gender) <- contr.treatment(2) # insert the number of levels here
+# check
+contrasts(politeness_df$gender)
+```
+
+So both variables $x_1$ and $x_2$ can take either the value 0 or 1 (because we dummy-code both categorical variables; see below for more). We already defined the referenc levels of the single variables, now we can define the overall reference level of our model (by combining the two individual reference levels) -- it is the mean pitch of female speakers in informal contexts.
+
+Having set all the basics, we can now turn to computing a linear model of the mean pitch as predicted by the factors gender and context:
+
+```{r dummy}
+# here, we only use fixed effects
+lm.dummy.FE <- brm(
+  pitch ~ gender * context,
+  data = politeness_df,
+  cores = 4,
+  iter = 1000
+)
+lm.dummy.FE.coefs <- fixef(lm.dummy.FE)[,1] %>% as.numeric() # get the estimated coefficients
+summary(lm.dummy.FE)
+```
+
+Now how do we interpret the estimated coefficients?
+
+Let us recall the regression equation that is hidden behind this output: $$y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + \beta_3*x_1x_2$$
+
+In order to help us interpret the output, R assigns string names to the estimated coefficients using the names we used in the generic formula. The `(Intercept)` corresponds to $\beta_0$, `genderM` corresponds to $\beta_1$, `contextpol` corresponds to $\beta_2$ and `genderM:contextpol` (the interaction term) to $\beta_3$.
+
+Further, let us recall the numerical coding of our variables: for $x_1$ (gender) a 0 means `female`, a 1 means `male`; for $x_2$ (context) a 0 means `informal`, a 1 means `polite`. So the computed values are the estimates for conditions differing from the respective reference conditions - i.e. when the respective $x$ is a 1.
+
+To get an estimate of a certain design cell ($y_i$) - let's start with the mean pitch of female speakers (0 for $x_1$) in informal contexts (0 for $x_2$) - we just insert the corresponding numeric values for the corresponding $x$ and the estimated value for the corresponding $\beta$. Thus we get:
+
+```{r}
+
+y1 = lm.dummy.FE.coefs[1] + lm.dummy.FE.coefs[2]*0 +
+  lm.dummy.FE.coefs[3]*0 + lm.dummy.FE.coefs[4]*(0)
+y1
+```
+
+Hence, the mean pitch of female speakers in informal context corresponds to the intercept. As a sanity check, we can recall that for dummy coded variables the model intercept is just the mean of the reference cell (in our case, female speakers in informal contexts!).
+
+Let's now calculate the mean pitch of male speakers (1 for $x_1$) in informal contexts (0 for $x_2$):
+
+```{r}
+y2 = lm.dummy.FE.coefs[1] + lm.dummy.FE.coefs[2]*1 +
+  lm.dummy.FE.coefs[3]*0 + lm.dummy.FE.coefs[4]*(1*0)
+y2
+```
+
+## Simple (Contrast) Coding
+
+Another common coding scheme is the simple coding (also called contrast coding). Simple coded variables are also compared to a reference level (just like dummy-coded ones). However, the intercept of a simple coded model is the grand mean -- the mean of all cells (i.e. the mean of female-informal & female-polite & male-informal & male-polite cells).
+
+Generally, this kind of coding can be created by subtracting $1/k$ from the dummy coding contrast matrix, where $k$ is the number of levels a variable has (in our case, both have two). Hence, the reference level will always only have negative values in the contrast matrix. The general rule is that the contrasts within a column have to add up to 0. R does not provide a built-in function for simple coding, but we can easily create the respective matrix ourselves by subtracting $1/k$ (i.e. 1/2) from the dummy coding matrix:
+
+```{r}
+# manual creation of contrasts
+contr.matrix <- matrix( rep(0.5, 2))
+dummy.matrix <- contr.treatment(2)
+contr.coding <- dummy.matrix - contr.matrix
+
+# we should duplicate the values to not overwrite previous contrasts
+politeness_df <- politeness_df %>%
+  mutate(context_contr = context,
+         gender_contr = gender)
+contrasts(politeness_df$context_contr) <- contr.coding
+contrasts(politeness_df$gender_contr)  <- contr.coding
+```
+
+Hence now the `gender` is coded as -0.5 for `female` and 0.5 for `male`; `context` is coded as -0.5 for `informal` and 0.5 for `polite`.
+
+Let's again look at our regression model:
+
+```{r}
+lm.contr.FE <- brm(
+  pitch ~ gender_contr * context_contr,
+  data = politeness_df,
+  cores = 4,
+  iter =  1000
+)
+lm.contr.FE.coefs <- fixef(lm.contr.FE)[,1] %>% as.numeric() # get vector of estimated coefficients
+summary(lm.contr.FE)
+```
+
+In order to compute the mean pitch of a specific cell, we proceed just as with dummy-coded variables and insert the respective estimates and values for $x$. Let us start with female speakers ($x_1$ is -0.5) in informal contexts ($x_2$ is -0.5):
+
+```{r}
+y1 = lm.contr.FE.coefs[1] + lm.contr.FE.coefs[2]*(-0.5) + lm.contr.FE.coefs[3]*(-0.5) + lm.contr.FE.coefs[4]*(-0.5)*(-0.5)
+y1
+```
+
+We get the same result as before (as we should - the estimates should not depend on a coding scheme but only on the data). As a sanity check, we can again look at the intercept -- it matches the grand mean we computed in the beginning of this tutorial -- as it should.
+
+Your turn! Compute the pitch means for the other three conditions.
+
+```{r}
+# your code here
+```
+
+## Deviation (Sum) Coding
+
+Deviation coding (also called sum coding) is the most popular coding scheme and is often considered the best choice to get a clear picture of presence (or absence) of an effect and a clear random effects interpretation.
+
+It is slightly different from the previous schemes. It compares the mean of the predicted variable for a specific condition to the grand mean. So the estimates do not tell you the difference between the reference level and another level anymore. The intercept of linear models with sum coded variables is the grand mean.
+
+R has a built-in function for creating sum coded variables:
+
+```{r}
+# again create a new variable
+politeness_df %>%
+  mutate(context_dev = context,
+         gender_dev = gender) -> politeness_df
+contrasts(politeness_df$context_dev) <- contr.sum(2) # insert number of levels
+contrasts(politeness_df$gender_dev)  <- contr.sum(2)
+```
+
+Now the `gender` is coded as s 1 for `female` and -1 for `male`; `context` is coded as 1 for `informal` and -1 for `polite`.
+
+Below we fit a model with the sum-coded variables:
+
+```{r}
+lm.dev.FE <- brm(pitch ~ context_dev * gender_dev,
+                data = politeness_df,
+                cores = 4,
+                iter = 1000)
+lm.dev.FE.coefs <- fixef(lm.dev.FE)[,1] %>% as.numeric()
+summary(lm.dev.FE)
+```
+
+The coefficients denote now the difference between the grand mean (i.e. intercept) and the mean of the respective condition.
+
+We apply the same idea to estimate the pitch means for specific cases: E.g. for female speakers in informal contexts we do:
+
+```{r}
+y1 = lm.dev.FE.coefs[1] + lm.dev.FE.coefs[2]*1 + lm.dev.FE.coefs[3]*1 + lm.dev.FE.coefs[4]*1*1
+y1
+```
+
+Since the intercept is now the grand mean and not a specific reference level, let us think about the interpretation of the single estimates. The estimate of e.g. the context effect now denotes the value by which the mean pitch in informal (estimate \* 1, remember our coding!) or polite contexts (estimate \* -1) differs from the grand mean. So if we wish to calculate the mean pitch in polite contexts (across genders), we would do:
+
+```{r}
+yPol = lm.dev.FE.coefs[1] + lm.dev.FE.coefs[2] * (-1)
+yPol
+```
+
+This means that the single estimates are in some sense 'independent' of each other (in contrast to e.g. dummy-coded variables where the estimates are bound to the reference levels of two variables) and give us insight if a specific factor is credibly different from 0. Similarly, if we wish to calculate the mean pitch of male speakers, we would calculate:
+
+```{r}
+yM = lm.dev.FE.coefs[1] + lm.dev.FE.coefs[3] * (-1)
+yM
+```
+
+## Helmert Coding
+
+In this coding scheme, a level of a variable is compared to its subsequent levels. In our dataset, e.g. for `gender` the level `female` is compared to the subsequent level `male`.
+
+Generally, to create such a coding, in order to compare the first level to the subsequent levels you would assign $(k-1)/k$ to the first level and $-1/k$ to all subsequent levels where $k$ is the total number of levels. To compare the second level to the subsequent levels you would assign 0 to the first level, $(i-1)/i$ to the second level and $-i/1$ to all subsequent levels where $i = k-1$ and so on. The difference of this coding scheme to previous ones is more clear for variales with \>2 levels (see below). The intercept of a linear model corresponds to the grand mean.
+
+R does not have a built-in function for standard Helmert coding, so we do it manually:
+
+```{r}
+# with politeness data
+helm.matrix <- matrix(c(0.5, -0.5))
+politeness_df <-
+ politeness_df %>%
+ mutate(gender_helm = gender,
+         context_helm = context)
+contrasts(politeness_df$gender_helm)  <- helm.matrix
+contrasts(politeness_df$context_helm) <- helm.matrix
+```
+
+The linear model looks like this:
+
+```{r}
+lm.helmert.FE <- brm(pitch ~ context_helm * gender_helm,
+                data = politeness_df,
+                cores = 4,
+                iter = 1000)
+lm.helmert.FE.coefs <- fixef(lm.helmert.FE)[,1] %>% as.numeric()
+summary(lm.helmert.FE)
+```
+
+The contrast estimate for the first level and the remaining levels is calculated by taking the mean of the dependent variable for the first level and subtracting the mean of the dependent variable for the remaining levels (in our case, just the mean of the second level). In other words, if we look at the `context` coefficient it denotes the difference between the mean of the `polite` and `informal` context means.
+
+## Mixing Coding Schemes
+
+If you have several categorical predictor variables, it is also possible (and often useful!) to use different coding schemes for the different variables. It might, for example, make sense to use dummy coding for a variable which has a control and a treatment condition, and to use e.g. simple coding for a variable which has two 'equal' levels.
+
+For example, we could use **dummy-coding** for `context` and **simple-coding** for `gender`.
+
+When you mix coding schemes or define your own schemes there might be no pre-defined answers to questions as to what the sigle coefficients or the intercept mean. But knowing how the different schemes work, you can easily find this out!
+
+Let us explore how the interpretation of the model changes if we mix coding schemes:
+
+```{r}
+lm.mixedCode.FE <- brm(pitch ~ context * gender_contr,
+                data = politeness_df,
+                cores = 4,
+                iter = 1000)
+lm.mixedCode.FE.coefs <- fixef(lm.mixedCode.FE)[,1] %>% as.numeric()
+summary(lm.mixedCode.FE)
+```
+
+Generally, the interpretation is just the combination of what we have learned about the individual coding schemes. Recall that the intercept of a dummy-coded model is the mean of the reference level -- since we dummy-coded `context`, the refernce level would be `informal` context. But it is not the intercept yet! We have the second predictor in our model -- the simple coded gender. In simple coded models the intercept is the mean across the levels of the variable. Now the intercept of our model with the two different predictors is the mean pitch in informal contexts - across genders.
+
+Following this logic, the context estimate denotes the difference between the `informal` and `polite` contexts - still across genders. The gender estimate denoted the difference between the mean pitch and female speakers if multiplied by the value -0.5 (recall our coding above); and the mean pitch and male speakers if multiplied by the value 0.5.
+
+# Variables with three levels
+
+In order to see the differences yielded by the different coding schemes more clearly, it is usefut to look at an example datas et containing predictors with three levels. But don't worry, all the concepts we have learned so far work just the same way - independently of the number of levels a predictor has.
+
+The data set `latinsquare` is provided in the package `languageR` which you need to install in order to access it.
+
+```{r}
+# alternative dataset with a three-level variable
+require(languageR)
+latinsquare_df <- as_tibble(latinsquare)
+head(latinsquare_df)
+```
+
+In this example data set, the reaction time (`RT`) of subjects in a lexical decision experiment was simulated. The predictors are, among others, the stimulus-onset asynchrony (`SOA`) (with the levels long, medium, short) and different `lists` of prime-target pairs of words (L1, L2, L3) that are presented to the participants. Without going into the details of the experimental paradign, let's imagine we would like to predict the participants' mean reaction time given the list type, the SOA type and their interaction.
+
+Again, it is helpful to start by trying to get a rough idea of what the data looks like.
+
+```{r}
+
+latinsquare_df %>%
+ggplot(., aes(x = List, y = RT)) +
+  geom_point( aes(color = SOA),
+              position = position_jitterdodge(dodge.width=0.5))
+
+```
+
+We can also look at the empirical means of the different conditions:
+
+```{r}
+latinsquare_df %>% group_by(List, SOA) %>% summarize(mean = mean(RT)) -> tibble_baseStats
+tibble_baseStats
+mean(tibble_baseStats$mean)
+```
+
+Now we can turn to modelling!
+
+## Dummy (Treatment) Coding
+
+Generally, the coding schemes work in the very same way independently of the number of levels. The only difference to our old data set is that now we need two numeric variables coding the contrasts between the levels of one variable. If we look at the default (dummy) coding of e.g. the variable `List` we see a contrast matrix with two columns, each denoting the comparisons between two levels:
+
+```{r}
+contrasts(latinsquare$SOA)
+contrasts(latinsquare_df$List)
+```
+
+So now the recoding of the categorical variable takes two numeric variables: e.g. $x_{1_2}$ and $x_{1_3}$, where both can take the values 0 or 1; the single levels are denoted by the combination of the two numeric variables. Again there is a reference level - `List 1` - described by $x_{1_2}$ and $x_{1_3}$ being 0. $x_{1_2}$ being 1 describes the difference between the reference level and `List 2`; $x_{1_3}$ being 1 describes the difference between the reference level and `List 3`. Correspondingly, there is and individual $\beta$ for each numeric variable estimated in the regression model. The coding of the `SOA` factor works just the same way. The interactions between specific levels are described by combining the respective numeric variables $x$. So the model we are fitting is described by:
+
+$$y = \beta_0 + \beta_1 * x_{1_2} + \beta_2 * x_{1_3} + \beta_3 * x_{2_2} + \beta_4 * x{2_3} + \beta_5 * x_{1_2}x_{2_2} + \beta_6 * x_{1_3}x_{2_2} + \beta_7 * x_{1_2}x_{2_3}  + \beta8 * x_{1_3}x_{2_3}$$
+
+```{r}
+lm3.dummy.FE <- brm(RT ~ List * SOA,
+                   data = latinsquare_df,
+                   cores = 4,
+                   iter = 1000)
+lm3.dummy.FE.coefs <- fixef(lm3.dummy.FE)[,1] %>% as.numeric()
+summary(lm3.dummy.FE)
+```
+
+Since both predictors are dummy-coded the intercept represents the reference level - the mean RT for `List 1` and a `long` SOA. Following the same procedure as for the two-level variables you could calculate the estimated mean RTs for specific conditions.
+
+## Simple (Contrast) Coding
+
+Simple coding only slightly differs from dummy-coding -- the intercept of the model is the grand mean, not the mean RT of the reference level. Otherwise, the coefficients still denote the difference between the reference level and other specific levels.
+
+```{r}
+latinsquare_df %>%
+  mutate(List_contr = factor(List),
+         SOA_contr = factor(SOA)) -> latinsquare_df
+dummy.matrix3 <- contr.treatment(3)
+contr.matrix3 <- matrix(c(1/3, 1/3, 1/3, 1/3, 1/3, 1/3), ncol=2)
+contrasts(latinsquare_df$List_contr) <- dummy.matrix3 - contr.matrix3
+contrasts(latinsquare_df$SOA_contr) <-  dummy.matrix3 - contr.matrix3
+```
+
+```{r}
+lm3.simple.FE <- brm(RT ~ List_contr * SOA_contr,
+                   data = latinsquare_df,
+                   cores = 4,
+                   iter = 1000)
+lm3.simple.FE.coefs <- fixef(lm3.simple.FE)[,1] %>% as.numeric()
+summary(lm3.simple.FE)
+```
+
+## Deviation (Sum) Coding
+
+With increasing number of levels within the factors the complexity and messiness of interpreting the differences between levels against each other increases considerably. Hence it might make a lot of sense to use the deviation coding scheme which provides estimates of effects comapred to the grand mean. We again can use the R built-in function to assign deviation coding to our three-level factors:
+
+```{r}
+latinsquare_df %>%
+  mutate(List_dev = List,
+         SOA_dev = SOA) -> latinsquare_df
+contrasts(latinsquare_df$List_dev) <- contr.sum(3) # insert number of levels
+contrasts(latinsquare_df$SOA_dev) <- contr.sum(3)
+```
+
+For e.g. `SOA` our numeric variables now denote the effect of `long` SOA compared to the grand mean when $x_{2_2}$ is a 1 and $x_{2_3}$ is a 0; they denote the effect of `medium` SOA compared to the grand mean when $x_{2_2}$ is a 0 and $x_{2_3}$ is a 1; the effect of `short` SOA is never compared to the grand mean since it is always assigned a -1.
+
+```{r}
+lm3.dev.FE <- brm(RT ~ List_dev * SOA_dev,
+                   data = latinsquare_df,
+                 cores = 4,
+                 iter = 1000)
+lm3.dev.FE.coefs <- fixef(lm3.dev.FE)[,1] %>% as.numeric()
+summary(lm3.dev.FE)
+```
+
+Think about what the single estimates mean!
+
+## Helmert Coding
+
+For recap: In this coding scheme, a level of a variable is compared to its subsequent levels. What does this mean for the three-level factors?
+
+```{r}
+latinsquare_df %>%
+  mutate(List_helm = List,
+         SOA_helm = SOA) -> latinsquare_df
+helm.matrix3 <- matrix(c(2/3, -1/3, -1/3, 0, 1/2, -1/2 ), ncol = 2)
+contrasts(latinsquare_df$List_helm) <- helm.matrix3
+contrasts(latinsquare_df$SOA_helm) <- helm.matrix3
+```
+
+```{r}
+lm3.helm.FE <- brm(RT ~ List_helm * SOA_helm,
+                   data = latinsquare_df,
+                  cores = 4,
+                  iter = 1000)
+lm3.helm.FE.coefs <- fixef(lm3.helm.FE)[,1] %>% as.numeric()
+summary(lm3.helm.FE)
+```
+
+The main effect estimates denote the differences between the mean of `List1` and the mean of (`List2` + `List3`); and between the mean of `List2` and the mean of `List3`. Respectively, they denote the differences between the mean of SOA `long` and the mean of (`medium` + `short`); and between the mean of SOA `medium` and the mean of `short`. The intercept is the grand mean.
+
+## Reverse Helmert Coding
+
+The reverse Helmert coding scheme (also called difference coding) is quite similar to the Helmert coding, but compares the mean of a level to its previous levels. Since we basically reverse the coding we used in the previous scheme, we also 'reverse' the contrast matrix to create such a coding.
+
+```{r}
+latinsquare_df %>%
+  mutate(List_rhelm = List,
+         SOA_rhelm = SOA) -> latinsquare_df
+rhelm.matrix3 <- matrix(c(-1/2, 1/2, 0, -1/3, -1/3, 2/3 ), ncol = 2)
+contrasts(latinsquare_df$List_rhelm) <- rhelm.matrix3
+contrasts(latinsquare_df$SOA_rhelm) <- rhelm.matrix3
+```
+
+```{r}
+lm3.rhelm.FE <- brm(RT ~ List_rhelm * SOA_rhelm,
+                   data = latinsquare_df,
+                   iter = 1000,
+                   cores = 4)
+lm3.rhelm.FE.coefs <- fixef(lm3.rhelm.FE)[,1] %>% as.numeric()
+summary(lm3.rhelm.FE)
+```
+
+In our example, the first estimate denotes the difference between the mean of `List2` and the mean of `List1`; the second - the difference between the mean of `List3` and the mean of (`List1` + `List2`). The main effects of SOA can be interpreted similarly.
+
+## Mixed Schemes: Dummy and Deviation Coding
+
+Just like with two-level factors, we might wish to use different coding schemes for different predictors. It might make sense to use dummy coding for a variable which has a control and two different treatment conditions, and to use deviation coding for a variable which has 'equal' levels.
+
+For example, we could use dummy-coding for `List` and deviation-coding for `SOA`.
+
+```{r}
+lm3.mixedCode.FE <- brm(RT ~ List * SOA_dev,
+                   data = latinsquare_df,
+                   cores = 4,
+                   iter = 1000)
+lm3.mixedCode.FE.coefs <- fixef(lm3.mixedCode.FE)[,1] %>% as.numeric()
+summary(lm3.mixedCode.FE)
+```
+
+Towards the end of this tutorial, the main take-away is this: when you look at the estimates of (any) model, you could ask yourself a couple of questions like these to make sure you understand what was calculated:
+
+-   What does the intercept represent?
+-   What do the single estimates mean?
+-   What do they tell me about my hypotheses?
+
+Of course, you will also encounter experimental designs which use a two-level and a three-level categorical predictors -- but the conceptual basics regarding how to choose the contrasts and how to interpret linear models are the same.
+
+# Conclusion
+
+This tutorial provides an outline of most common coding schemes, but there are also others out there. However, having a basic understanding of the procedures described above, you are perfectly prepared to deal with a broad spectrum of experimental data in psychology and other disciplines. There are heuristics as to which coding schemes to choose; but most importantly, you should choose statistical tools that are the best fit for your specific research question. It is often helpful to write up the results of a pilot model to see if the interpretation of the results makes clear statements about your hypothesis.
+
+# References
+
+P. Buerckner, 2016. "brms: An R package for Bayesian multilevel models using Stan". In *Journal of Statistical Software 80.1*, pp. 1--28.
+
+J. G. W. Raaijmakers et al., 1999. How to Deal with "The Language-as-Fixed-Effect Fallacy: Common Misconceptions and Alternative Solutions. In *Journal of Memory and Language*
+
+B. Winter, S. Grauwunder, 2012. "The Phonetic Profile of Korean Formality". In *Journal of Phonetics 40*, pp. 808--815.

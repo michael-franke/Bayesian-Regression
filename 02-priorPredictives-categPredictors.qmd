@@ -1,0 +1,28 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Session 2: Priors, prior & posterior predictions, and categorical predictors"
+author: "Michael Franke"
+---
+
+# Part 1: Priors and predictives
+
+Priors are an essential part of Bayesian data analysis.
+There are different approaches to specify priors:
+
+- we can try to be feign maximal uncertainty;
+- we can try to commit strongly to prior knowledge we think is relevant;
+- we can use priors to make the model "well-behaved" (e.g., help training / fitting)
+- we can try to use priors that are as "objective" and "non-committal".
+
+Whatever approach to specifying priors we adopt, all (proper) priors generate predictions.
+So here we look at prior and posterior predictives of a Bayesian model.
+This is helpful because you might not have intuitions about how to select priors, but you will likely have intuitions about what counts are reasonable /a priori/ predictions.
+
+Here are [slides for session 2](slides/02-priors-predictives-catPredictors.pdf).
+
+# Part 2: Categorical predictors
+
+In the second part of this session, we look at categorical predictors in simple linear regression models.
+
+More on this topic can be found in [this chapter](https://michael-franke.github.io/intro-data-analysis/Chap-04-03-predictors.html) of the webbook.
+

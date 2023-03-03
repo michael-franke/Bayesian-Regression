@@ -1,0 +1,36 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Session 6: Model comparison"
+author: "Michael Franke"
+---
+
+The three main things we can do with models are: 
+
+1. inferring (credible) parameter values (on the assumption that the model we use is good (enough))
+2. making predictions (from an *ex ante* (a priori) or *ex post* (a posteriori)) point of view
+   - predictions can also be used for *model checking* (also known as *model criticism*)
+3. comparing which of several models is better (in some sense of "better")
+
+We have so far looked only at the first two "pillars of Bayesian data analysis". 
+In this unit we look at the third, model comparison.
+
+Model comparison is deeply related to the second point: making predictions.
+We compare models based on their ability to predict data well enough.
+But not exclusively!
+We might also rely on other aspects, such as whether a model makes fewer spurious assumptions, i.e., is simpler, more economical or more parsimonious.
+
+As usual, there is not one criterion for model comparison that everybody unanimously agrees to as the best.
+As usual, this is likely because "goodness of a model" is a multi-dimensional concept.
+What counts as a good model for science (knowledge gain; theoretical understanding) need not be the same as for engineering or application (getting high-quality predictions in the most efficient manner).
+
+This unit therefore centers on two important tools for Bayesian model comparison that lie at opposite ends of a continuous spectrum, namely *Bayes factors* and *leave-one-out (LOO) cross validation*. 
+Bayes factors take the most extreme point of view of *ex ante* predictions: we compare models without any updating on the relevant data.
+LOO-CV, on the other hand, take the (almost) most extreme point of view of *ex post* predictions, comparing models that are trained on all of the relevant data, except one single data observations.
+
+In the practical session, we explore how these different perspectives can give rise to opposite results.
+This is not a puzzle or paradox, and maybe not even something to quarrel about.
+It is a natural reflex of comparing the same objects based on a different task, namely making predictions before training, or after.
+
+Here are [slides for session 6](slides/06-model-comparison.pdf).
+
+

@@ -1,0 +1,376 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "05b: Hierarchical regression models (exercises)"
+author: "Michael Franke & Timo Roettger"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+callout-appearance: simple
+---
+
+Load relevant packages and "set the scene."
+
+{{< include 00-preamble.qmd >}}
+
+```{r}
+dolphin <- aida::data_MT
+my_scale <- function(x) c(scale(x))
+```
+
+## Exercise 1: Logistic regression
+
+Consider the following model formula for the `dolphin` data set:
+
+```{r}
+
+brms::bf(MAD ~ condition + 
+     (condition || subject_id) +
+     (condition || exemplar))
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1a**
+
+Why is the random effect structure of this model questionable? Can we meaningfully estimate all parameters? (Tip: Think about what group levels vary across predictor levels)
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# Answer: `condition` is not crossed with `exemplar`. An exemplar is either typical or atypical, thus a random slope does not make sense.
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1b**
+
+Use the following data frame:
+
+```{r}
+#| eval: false
+
+# set up data frame
+dolphin_correct <- dolphin %>% 
+  filter(correct == 1) %>% 
+  mutate(log_RT_s = my_scale(log(RT)),
+         AUC_s = my_scale(AUC))
+
+```
+
+Run a multilevel model that predicts `AUC_s` based on `condition.` Specify maximal random effect structures for `exemplar`s and `subject_id`s (ignore correlations between intercepts and slopes for now). Specify a `seed = 98`.
+
+If you encounter "divergent transition" warning, make them go away by refitting the model appropriately (Tip: Brms gives very useful, actionable advice)
+
+(This might take a couple of minutes, get used to it ;)
+:::
+
+```{r exercise1b, cache = TRUE, warnings = FALSE, messages = FALSE, results = 'hide'}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# refit with upped adapt_delta and max_treedepth
+xmdl_AUC2 <- brm(AUC_s ~ condition +
+                  (condition || subject_id) +
+                  (1 | exemplar),
+                data = dolphin_correct,
+                control=list(adapt_delta=0.99, max_treedepth=15), 
+                seed = 98
+                )
+xmdl_AUC2
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1c**
+
+You want to run a multilevel model that predicts `log_RT_s` based on `group`. You want to account for group-level variation of both `subject_id` and `exemplar`. What kind of groupings can be meaningfully estimated, given the dataset and the experimental design. You can check the crossing of different vectors with `xtabs()` for example.
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# check crossing
+xtabs(~ group + subject_id, dolphin_correct)
+# individual subject_ids contributed data only to one group because it is a between-subject design
+# --> we need varying intercepts only, i.e. a different base-rate for subjects
+
+xtabs(~ group + exemplar, dolphin_correct)
+# each exemplar contributes data to both groups
+# --> we can integrate varying intercepts and slopes for exemplars
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1d**
+
+Run a multilevel model that predicts `log_RT_s` based on `group` and add maximal random effect structures licensed by the experimental design (ignore possible random intercept-slope interactions for now).
+
+Specify weakly informative priors as you see fit.
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+priors <- c(
+  #priors for all fixed effects (group)
+  set_prior("student_t(3, 0, 3)", class = "b"),
+  #prior for the Intercept
+  set_prior("student_t(3, 0, 3)", class = "Intercept"),
+  #prior for all SDs including the varying intercepts and slopes
+  set_prior("student_t(3, 0, 3)", class = "sd")
+)
+
+xmdl <- brm(log_RT_s ~ group + 
+              (1 | subject_id) +
+              (group || exemplar),
+            prior = priors,
+            data = dolphin_correct)
+xmdl
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1e**
+
+Extract the posterior means and 95% CrIs of touch vs. click `log_RT_s` and plot them.
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+ 
+# Extract the posteriors
+posteriors <- xmdl %>%
+  spread_draws(b_Intercept, 
+               b_grouptouch) %>%
+  # calculate posteriors for each individual level
+  mutate(click = b_Intercept,
+         touch = b_Intercept + b_grouptouch) %>% 
+  select(click, touch) %>% 
+  gather(key = "parameter", value = "posterior") %>% 
+  group_by(parameter) %>% 
+  summarise(mean_posterior = mean(posterior),
+            `95lowerCrI` = HDInterval::hdi(posterior, credMass = 0.95)[1],
+            `95higherCrI` = HDInterval::hdi(posterior, credMass = 0.95)[2])
+
+# plot
+ggplot(data = posteriors, 
+       aes(x = parameter, y = mean_posterior,
+           color = parameter, fill = parameter)) + 
+  geom_errorbar(aes(ymin = `95lowerCrI`, ymax = `95higherCrI`),
+                width = 0.2, color = "grey") +
+  geom_line(aes(group = 1), color = "black") +
+  geom_point(size = 4) +
+  labs(x = "group",
+       y = "posterior log(RT) (scaled)")
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 1f**
+
+Add the posterior estimates for different `exemplar`s to the plot. (Tip: Check code from the previous "tutorial" to extract the random effect estimates.)
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# extract the random intercepts for exemplars
+random_intc_matrix <- ranef(xmdl)$exemplar[, , "Intercept"] %>% 
+  round(digits = 2) 
+
+# extract the by-exemplar random slopes for group
+random_slope_matrix <- ranef(xmdl)$exemplar[, , "grouptouch"] %>% 
+  round(digits = 2)
+
+# random intercepts to dataframe
+random_intc_df <- data.frame(exemplar = row.names(random_intc_matrix), random_intc_matrix) %>% 
+  select(exemplar, Estimate) %>% 
+  rename(rintercept = Estimate)
+
+# combine with random slope matrix
+random_slope_df <- data.frame(exemplar = row.names(random_slope_matrix), random_slope_matrix) %>% 
+  select(exemplar, Estimate) %>% 
+  rename(rslope = Estimate) %>% 
+  full_join(random_intc_df) %>% 
+  # add population parameters and group-specific parameters
+  mutate(click_population = fixef(xmdl)[1],
+         touch_population = fixef(xmdl)[1] + fixef(xmdl)[2],
+         click = rintercept + click_population,
+         touch = rintercept + rslope + touch_population) %>% 
+  select(exemplar, touch, click) %>% 
+  gather(parameter, mean_posterior, -exemplar)
+  
+
+# combine with plot
+ggplot(data = posteriors, 
+       aes(x = parameter, y = mean_posterior,
+           color = parameter, fill = parameter)) + 
+   # add random estimates
+  geom_point(data = random_slope_df, 
+             alpha = 0.4,
+             size = 2,
+             position = position_jitter(width = 0.01)
+             ) +
+  # add lines between random estimates
+  geom_line(data = random_slope_df, 
+            aes(group = exemplar),
+            color = "grey", alpha = 0.3) +
+  # add population-level estimates
+  geom_errorbar(aes(ymin = `95lowerCrI`, ymax = `95higherCrI`),
+                width = 0.2, color = "grey") +
+  geom_line(aes(group = 1), size = 2, color = "black") +
+  geom_point(size = 4, pch = 21, color = "black") +
+  labs(x = "group",
+       y = "posterior log(RT) (scaled)")
+
+```
+
+## Exercise 2: Poisson regression
+
+::: {.callout-caution collapse="true"}
+**Exercise 2a**
+
+Run a multilevel poisson regression predicting `xpos_flips` based on `group`, `log_RT_s`, and their two-way interaction. Specify maximal random effect structures for `exemplar`s and `subject_id`s licensed by the design (ignore correlations between intercepts and slopes for now). (Tip: allow groupings to differ regarding the interaction effect if licensed by the design.) Specify weakly informative priors.
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+priors <- c(
+  #priors for all fixed effects
+  set_prior("student_t(3, 0, 3)", class = "b"),
+  #prior for all SDs including the varying intercepts and slopes for both groupings
+  set_prior("student_t(3, 0, 3)", class = "sd")
+)
+
+poisson_mdl <- brm(xpos_flips ~ group * log_RT_s +
+                     (log_RT_s || subject_id) +
+                     (group * log_RT_s || exemplar),
+                   data = dolphin_correct,
+                   prior = priors,
+                   family = "poisson")
+
+poisson_mdl
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 2b**
+
+Extract and plot the population level estimates for both click and touch group as a regression line into a scatter plot (x = b_log_RT_s, y = xpos_flips).
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# extract posterior means for model coefficients
+predicted_Poisson_values <- poisson_mdl %>%
+  spread_draws(b_Intercept, b_log_RT_s, 
+               b_grouptouch, `b_grouptouch:log_RT_s`
+               ) %>%
+  # make a list of relevant value range of logRT
+  mutate(log_RT = list(seq(-5, 10, 0.5))) %>% 
+  unnest(log_RT) %>%
+  mutate(click = exp(b_Intercept + b_log_RT_s*log_RT),
+         touch = exp(b_Intercept + b_log_RT_s*log_RT +
+                            b_grouptouch + `b_grouptouch:log_RT_s`*log_RT)) %>%
+  select(log_RT, click, touch) %>% 
+  gather(group, posterior, -log_RT) %>% 
+  group_by(log_RT, group) %>%
+  summarise(pred_m = mean(posterior, na.rm = TRUE),
+            pred_low = quantile(posterior, prob = 0.025),
+            pred_high = quantile(posterior, prob = 0.975)
+            ) 
+
+# plot population level
+ggplot(data = predicted_Poisson_values, aes(x = log_RT, y = pred_m)) +
+  geom_point(data = dolphin_correct, aes(x = log_RT_s, y = xpos_flips, color = group), 
+             position = position_jitter(height = 0.2), alpha = 0.2) +
+  geom_line(aes(y = pred_m, color = group), size = 2) +
+  facet_grid(~group) +
+  ylab("Predicted prob of xflips") +
+  ylim(-1,10) +
+  xlim(-5,10)
+
+
+```
+
+::: {.callout-caution collapse="true"}
+**Exercise 2c**
+
+Extract the respective subject-specific estimates from the model and plot them into the same plot (use thinner lines).
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# extract the random effects for subject_id
+
+# intercepts
+random_intc_matrix <- ranef(poisson_mdl)$subject_id[, , "Intercept"] %>% 
+  round(digits = 3)
+
+# slopes
+random_slope_matrix <- ranef(poisson_mdl)$subject_id[, , "log_RT_s"] %>% 
+  round(digits = 3)
+
+# to df
+random_intc_df <- data.frame(subject_id = row.names(random_intc_matrix), random_intc_matrix) %>% 
+  select(subject_id, Estimate) %>% 
+  rename(rintercept = Estimate)
+
+# wrangle into one df 
+random_slope_df <- data.frame(subject_id = row.names(random_slope_matrix), random_slope_matrix) %>% 
+  select(subject_id, Estimate) %>% 
+  rename(rslope = Estimate) %>% 
+  full_join(random_intc_df) %>% 
+  expand_grid(group = c("click", "touch")) %>% 
+  # add population parameters and group-specific parameters
+  mutate(adjusted_int = ifelse(group == "click",
+           rintercept + fixef(poisson_mdl)[1],
+           rintercept + fixef(poisson_mdl)[1] + fixef(poisson_mdl)[2]),
+         adjusted_slope = ifelse(group == "click",
+           rslope + fixef(poisson_mdl)[3],
+           rslope + fixef(poisson_mdl)[3] + fixef(poisson_mdl)[4])) %>% 
+  mutate(log_RT = list(seq(-5, 10, 0.5))) %>% 
+  unnest(log_RT) %>%
+  select(subject_id, log_RT, group, 
+         adjusted_int, adjusted_slope) %>% 
+  group_by(subject_id, log_RT, group) %>%
+  mutate(pred_m = exp(adjusted_int + adjusted_slope*log_RT))
+
+# plot the individual regression lines on top of the population estimate
+ggplot(data = predicted_Poisson_values, aes(x = log_RT, y = pred_m)) +
+  geom_point(data = dolphin_correct, aes(x = log_RT_s, y = xpos_flips), 
+             position = position_jitter(height = 0.2), alpha = 0.01) +
+  geom_line(aes(y = pred_m, color = group), size = 2) +
+  geom_line(data = random_slope_df, 
+            aes(x = log_RT, y = pred_m, group = subject_id, color = group),
+            size = 0.5, alpha = 0.2) +
+  facet_grid(~group) +
+  ylab("Predicted prob of xflips") +
+  ylim(-1,10) +
+  xlim(-5,10)
+
+```

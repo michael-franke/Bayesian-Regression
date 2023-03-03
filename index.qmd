@@ -1,0 +1,25 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+author: "Michael Franke"
+---
+
+This site provides material for an introductory-level course on Bayesian linear regression modeling.
+The course presupposes some prior exposure to statistics and some acquaintance with R.
+
+## Intended audience
+
+This course is offered to students (both under-graduate and graduate) of (computational) linguistics and cognitive science.
+
+## Scope
+
+The course introduces the basics of Bayesian data analysis, and then immedidately zooms in on regression modeling.
+Starting with simple linear regression, we want to reach a basic understanding of hierarchical generalized linear models.
+
+## Additional material
+
+An even more basic introduction to data analysis (introducing R, tidyverse, Bayesian and, eventually, also frequentist statistics) is the webbook ["An introduction to Data Analysis"](https://michael-franke.github.io/intro-data-analysis/index.html).
+
+## Acknowledgements
+
+Part of this material was used in a previous course, co-taught with the great Timo Roettger.
+I'm recycling some of his material here, but have (in full awareness of the catastrohpe) made it more dry, less insightful and more nerdy to conceal the breach of authorship.

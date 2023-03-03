@@ -1,0 +1,22 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Session 4: MCMC sampling & diagnostics"
+author: "Michael Franke"
+---
+
+The success of Bayesian statistics is in large part the fruit of very clever algorithms and efficient implementations for drawing samples from complex, high-dimensional posterior distributions.
+This unit covers:
+
+- Markov Chain Monte Carlo methods, in particular: 
+  + simple Metropolis-Hastings and
+  + Hamiltonian Monte Carlo
+- common notions and diagnostics for assessing the quality of MCMC samples, such as:
+  + $\hat{R}$
+  + autocorrelation
+  + effective sample size
+  + traceplots
+  + divergent transitions
+
+Here are [slides for session 4](slides/04-MCMC.html).
+
+

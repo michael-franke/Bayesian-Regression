@@ -1,0 +1,570 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "03a: Generalized linear models"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+callout-appearance: simple
+---
+
+{{< include 00-preamble.qmd >}}
+
+```{r}
+dolphin <- aida::data_MT
+```
+
+This tutorial covers common types of generalized linear regression models (GLMs):
+
+-   logistic regression
+-   multinomial regression
+-   ordinal regression
+-   Poisson regression
+
+The shared form of all of these GLMs is the following "feed-forward computation" (here illustrated for a single datum of the predicted variable $y$ for a vector $x$ of predictor variables and a vector of coefficients $\beta$:
+
+1.  compute a **linear predictor**: $\xi = x \cdot \beta$;
+2.  compute a **predictor of central tendency** using an appropriate link function $\text{LF}$: $\eta = \text{LF}(\xi ; \theta_{\text{LF}})$;
+3.  determine the **likelihood function** $\text{LH}$: $y \sim \text{LH}(\eta; \theta_{\text{LH}})$.
+
+Link function and likelihood function may have additional free parameters, $\theta_{\text{LF}}$ and $\theta_{\text{LH}}$, to be fitted alongside the regression coefficients.
+
+Simple linear regression is the special case of this scheme where the link function is just the identity function and the likelihood is given by \$y \\sim \\mathcal{N}(\\eta; \\sigma)\$. Different types of regression are used to account for different kinds predicted variable $y$:
+
+| type of $y$ |             (inverse) link function             |         likelihood function          |
+|:------------|:-----------------------------------------------:|:------------------------------------:|
+| metric      |                  $\eta = \xi$                   | $y \sim \text{Normal}(\eta; \sigma)$ |
+| binary      |          $\eta = \text{logistic}(\xi)$          |   $y \sim \text{Bernoulli}(\eta)$    |
+| nominal     |          $\eta = \text{soft-max}(\xi)$          | $y \sim \text{Categorical}({\eta})$  |
+| ordinal     | $\eta = \text{cumulative-logit}(\xi; {\delta})$ | $y \sim \text{Categorical}({\eta})$  |
+| count       |               $\eta = \exp(\xi)$                |    $y \sim \text{Poisson}(\eta)$     |
+
+# Logistic regression
+
+## Explanation
+
+In logistic regression, the response variable $y$ is binary, i.e., we want to predict the probability $p$ with which one of two possible outcomes (henceforth: the reference outcome) occurs. The likelihood function for this case is the [Bernoulli distribution](https://michael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#app-91-distributions-bernoullihael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#poisson-distribution). This requires a link function $LF$ that maps real-valued linear predictor values $\xi$ onto the unit interval. A common choice is the **logistic function**:
+
+$$
+\text{logistic}(\xi) = \frac{1}{1+ \exp(-\xi)} = \eta
+$$
+
+```{r}
+#| echo: false
+
+logistic = function(x) return( 1 / (1 + exp(- 1 * (x - 0))) )
+ggplot(data.frame(x = c(-5,5)), aes(x)) +
+         stat_function(fun = logistic, color = project_colors[2], size = 2) +
+  labs(label = "logistic function", x = latex2exp::TeX("$\\xi$"), y = latex2exp::TeX("$\\eta$ = logistic($\\xi$)")) + ggtitle("logistic function")
+
+
+```
+
+The logistic regression model is then defined as:
+
+$$
+\begin{align*}
+\xi  &= x \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
+\eta &= \text{logistic}(\xi) && \color{gray}{\text{[predictor of central tendency]}} \\
+y & \sim \text{Bernoulli}(\eta) && \color{gray}{\text{[likelihood]}}
+\end{align*}
+$$
+
+The linear predictor values $\xi$ can be interpreted directly, as the log odds-ratio of the predicted probability $\eta$. This is because the inverse of the logistic function is the **logit function**, which has the following form:
+
+$$
+\text{logit}(\eta) = \log \frac{\eta}{1-\eta} = \xi
+$$
+
+```{r}
+logit = function(x) return( log(x/(1-x)) )
+ggplot(data.frame(x = c(0.001,1-0.001)), aes(x)) +
+         stat_function(fun = logit, color = project_colors[2], size = 2) +
+  labs(label = "logit function", x = latex2exp::TeX("$\\eta$"), y = latex2exp::TeX("$\\xi$ = logistic($\\eta$)")) +
+  ggtitle("logit function")
+```
+
+That also means that a difference in linear predictor parameters, e.g., in a logistic regression with a single binary categorical predictor variable (group A vs. group B), can be interpreted directly as something like the "evidence ratio" or "Bayes factor". It is the log of the factor by which to transform log odds-ratios (e.g., changing beliefs from $\eta_1$ to $\eta_2$:
+
+$$
+\begin{align*}
+& \xi_1 - \xi_2 = \log \frac{\eta_1}{1-\eta_1} - \log \frac{\eta_2}{1-\eta_2} = \log \left ( \frac{\eta_1}{1-\eta_1} \frac{1-\eta_2}{\eta_2}\right ) \\
+\Leftrightarrow & \frac{\eta_1}{1-\eta_1} = \exp (\xi_1 - \xi_2) \ \frac{\eta_2}{1-\eta_2}
+\end{align*}
+$$
+
+For the purposes of understanding which priors are weakly or strongly informative, a unit difference in the linear predictor can be interpreted as a log Bayes factor (changing prior odds to posterior odds). So a unit difference in the predictor value corresponds to a Bayes factor of around 2.72.
+
+## Example
+
+Our hypothesis is that typical examples are easier to classify, so they should have higher accuracy than atypical ones. We are also interested in additional effects of `group` on accuracy.
+
+As usual, we begin by plotting the relevant data.
+
+```{r}
+
+sum_stats <- dolphin |> 
+  group_by(group, condition) |> 
+  tidyboot::tidyboot_mean(correct) |> 
+  rename(accuracy = empirical_stat)
+  
+sum_stats
+
+sum_stats |> 
+  ggplot(aes(x = condition, y = accuracy, group = group, color = group)) +
+  geom_line(size = 1, position = position_dodge(0.2)) +
+  geom_point(size = 3, position = position_dodge(0.2)) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
+                width = 0.1, size = 0.35, position = position_dodge(0.2))
+
+```
+
+Visually, there might be a hint that typical trials had higher accuracy, but we cannot judge with the naked eye whether this is substantial.
+
+A logistic regression, regressing `correct` against `group * condition`, may tell us more. To run the logistic regression, we must tell the `brms:brm()` that we want to treat 0 and 1 as categories. To be sure, and also to directly dictate which of the two categories is the reference level, we use a factor (of strings) with explicit ordering.
+
+```{r}
+fit_logistic <- brm(
+  formula = correct ~ group * condition,
+  data = dolphin |> 
+    mutate(correct = factor(ifelse(correct, "correct", "incorrect"),
+                            levels = c("incorrect", "correct"))),
+  family = bernoulli()
+)
+
+summary(fit_logistic)
+```
+
+To test whether typical examples had credibly higher accuracy, the `faintr` package can be used like so:
+
+```{r}
+compare_groups(
+  fit_logistic,
+  higher = condition == "Typical",
+  lower  = condition == "Atypical"
+)
+```
+
+Based on these results, we may conclude that, given the model and the data, we should believe that typical examples had higher accuracy.
+
+::: callout-caution
+**Exercise 1a**
+
+Test whether there is reason to believe, given model and data, that the touch group was more accurate than the click group. (After all, the click group could change their minds until the very last moment.)
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+compare_groups(
+  fit_logistic,
+  higher = group == "click",
+  lower  = group == "touch"
+)
+
+# there is no reason to believe (given model and data) that this conjecture is true
+```
+
+::: callout-caution
+**Exercise 1b**
+
+If you look back at the plot of accuracy, it looks as if the change from atypical to typical condition does not have the same effect, at least not at the same level of strength, for the click and the touch group, i.e., it seems that there is an interaction between these two variables (`group` and `condition`). Use the function `brms::hypothesis()` to examine the interaction term of the model fit. What do you conclude from this?
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+brms::hypothesis(fit_logistic, "grouptouch:conditionTypical < 0")
+
+# given model and data, it is very plausible to believe that there is an interaction between these two variables.
+```
+
+# Multinomial regression
+
+## Explanation
+
+In multinomial regression the predicted variable is categorical with more than two levels: $c_1, \dots, c_k$, $k > 2$. We want to predict probabilities for each category $p_1, \dots, p_k$ (with some linear predictors, more on this in a moment). To obtain the probabilities, we estimate a set of weights (so-called *logits*): $s_1, \dots, s_k$. By default, we set $s_1 = 0$. (We only need $k-1$ numbers to define a $k$-place probability vector (given that it must sum to one).) For all $1 \le i \le k$, we define the probability $p_i$ of category $i$ via the following (so-called *soft-max* operation):
+
+$$
+p_i = \frac{\exp s_i}{ \sum_{j=1}^k \exp s_j}
+$$
+
+This entails that for every $1 < i \le k$, the score $s_i$ can be interpreted as the log-odds of category $c_i$ over the reference category $c_1$:
+
+$$
+s_i = \log \frac{p_i}{p_1}
+$$
+
+Finally, we do not just estimate any-old vector of logits, but we assume that each logit $s_i$ ($1 < i \le k$) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the $l$ explanatory variables):
+
+$$
+s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
+$$
+
+Two things are important for interpreting the outcome of a multinomial regression fit:
+
+1.  each category (beyond the reference category) receives its own (independent) set of regression coefficients;
+2.  the linear predictor predictor $s_i$ for category $c_i$ can be interpreted as the log-odds of the $i$-th category over the first, reference category.
+
+## Example
+
+Our next research question is slightly diffuse: we want to explore whether the distribution of trajectory types is affected by whether the correct target was on the right or the left. We only consider three types of categories (curved, straight and 'change of mind') and prepare the data to also give us the information whether the 'correct' target was left or right.
+
+```{r}
+dolphin_prepped <-
+  dolphin |>
+  mutate(
+    prototype_label = case_when(
+     prototype_label %in% c('curved', 'straight') ~ prototype_label,
+     TRUE ~ 'CoM'
+    ),
+    prototype_label = factor(prototype_label,
+                             levels = c('straight', 'curved', 'CoM')),
+    target_position = ifelse(category_left == category_correct, "left", "right")
+    )
+```
+
+The relevant data now looks as follows:
+
+```{r}
+dolphin_prepped |> 
+  select(prototype_label, target_position)
+```
+
+The counts and proportions we care about are these:
+
+```{r}
+sum_stats <- dolphin_prepped |> 
+  count(target_position, prototype_label) |>
+  group_by(target_position) |> 
+  mutate(proportion = n / sum(n))
+
+sum_stats
+```
+
+And here is a plot that might be useful to address your current issue:
+
+```{r}
+sum_stats |> 
+  ggplot(aes(x = prototype_label, y = proportion, fill = prototype_label)) +
+  geom_col() +
+  facet_grid(. ~ target_position)
+```
+
+It is hard to say from visual inspection alone, whether there are any noteworthy differences. We might consider the following:
+
+-   **Conjecture:** the /difference/ in probability between straight vs curved is higher when the target is on the right than when it is on the left.
+
+This is not a real "research hypothesis" but a conjecture about the data. Let's still run a multinomial regression model to test address this conjecture.
+
+```{r}
+fit_multinom <- brm(
+  formula = prototype_label ~ target_position,
+  data = dolphin_prepped,
+  family = categorical()
+)
+```
+
+The summary of this model fit is a bit unwieldy:
+
+```{r}
+summary(fit_multinom)
+```
+
+For better visibility here is a plot of the posteriors over relevant model parameters.
+
+```{r}
+# there MUST be a nicer way of doing this, but ...
+ordered_names <- c(
+  "b_mucurved_Intercept", 
+  "b_muCoM_Intercept",
+  "b_mucurved_target_positionright",
+  "b_muCoM_target_positionright"
+)
+
+fit_multinom |> 
+  tidybayes::tidy_draws() |> 
+  pivot_longer(cols = starts_with("b_")) |> 
+  select(name, value) |> 
+  mutate(name = factor(name, levels = rev(ordered_names))) |> 
+  ggplot(aes(x = value, y = name)) +
+  tidybayes::stat_halfeye() +
+  geom_vline(aes(xintercept = 0), color = project_colors[3], alpha= 1, size = 1)
+```
+
+::: callout-caution
+**Exercise 2a**
+
+Look at the names of the coefficients in the fit summary to find out:What is the reference level for the categorical predictor variable?
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# It's the 'left' position, because there is a coefficient for the 'right' position.
+```
+
+::: callout-caution
+**Exercise 2b**
+
+Look at the names of the coefficients in the fit summary to find out: What is the reference level of the categories to be predicted in the multinomial model?
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# The reference category is 'straight' because we have regression coeffiecient for all but the 'straight' category.
+```
+
+::: callout-caution
+**Exercise 2c**
+
+Can you extract information about our conjecture from this plot (or the summary of the model fit)?
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# Yes! Our conjecture is about the difference in probability of the 'straight' vs he 'curved' category. This difference is directly encoded in regression coefficients. Concretely, the coefficient 'mucurved_Intercept' gives us the log odds of the 'straight' vs' the 'curved' category for the 'left'-position cases. The difference of log odds for the 'right'-position cases is simply the coefficient 'mucurved_target_positionright'. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.
+
+```
+
+::: callout-caution
+**Exercise 2d**
+
+Use the postrior means of the regression coefficients to compute the corresponding scores $s_i$ and class probabilities $c_i$. Compare these to the observed frequencies.
+:::
+
+```{r}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show solution"
+
+# extract mean posteriors
+posterior_means <- fit_multinom |> tidybayes::summarise_draws() |> 
+  select(variable, mean) |> 
+  pivot_wider(names_from = variable, values_from = mean)
+
+as.numeric(posterior_means, names = colnames(posterior_means))  
+
+scores_left <- c(
+  0,
+  posterior_means[1,"b_mucurved_Intercept"] |> as.numeric(),
+  posterior_means[1,"b_muCoM_Intercept"] |> as.numeric()
+)
+
+scores_right <- c(
+  0,
+  posterior_means[1,"b_mucurved_Intercept"] |> as.numeric() + posterior_means[1,"b_mucurved_target_positionright"] |> as.numeric(),
+  posterior_means[1,"b_muCoM_Intercept"] |> as.numeric() + posterior_means[1,"b_muCoM_target_positionright"] |> as.numeric()
+)
+
+probabilities_left <- prop.table(exp(scores_left))
+probabilities_right <- prop.table(exp(scores_right))
+
+sum_stats |> ungroup() |> 
+  mutate(prediction = c(probabilities_left, probabilities_right))
+
+```
+
+# Ordinal regression
+
+## Explanation
+
+When $k>2$ categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the **cumulative logit function** which takes the linear predictor and a vector $\delta$ of $k-1$ thresholds as arguments to return a probability vector, here denoted as $\eta$, whose components are defined like so:
+
+$$
+\eta_i = \text{cumulative-logit}(\xi; \delta) = \begin{cases}
+\text{logistic}(\delta_1 - \xi) & \text{if } i=1 \\
+\text{logistic}(\delta_{i} - \xi) - \eta_i & \text{if } i>1 \\
+\end{cases}
+$$ To see what is going on, consider the a case with three categories. Fix the two threshold $\delta_1=-0.75$ and $\delta_2=1.6$ just for illustration. Now assume that we have a case there the linear predictor value $\eta$ is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:
+
+```{r}
+#| echo: false
+
+k1 <- -0.75
+k2 <- 1.6
+k1_color <- project_colors[3]
+k2_color <- project_colors[5]
+k3_color <- project_colors[6]
+seg_size = 2
+
+tibble(x = seq(-4,4, length.out = 100),
+       y = logistic(x)) |> 
+  ggplot(aes(x,y)) +
+  # logistic function
+  geom_line() +
+  # segments for k1
+  geom_segment(aes(x = k1, y = 0, xend = k1, yend = logistic(k1)), color = "darkgray") +
+  geom_segment(aes(x = k1, y = logistic(k1), xend = -4, yend = logistic(k1)), color = "darkgray") +
+  geom_segment(aes(x = 0,  y = 0, xend = 0,  yend = logistic(k1)), color = k1_color, size = seg_size) +
+  # segments for k2
+  geom_segment(aes(x = k2, y = 0, xend = k2, yend = logistic(k2)), color = "darkgray") +
+  geom_segment(aes(x = k2, y = logistic(k2), xend = -4, yend = logistic(k2)), color = "darkgray") +
+  geom_segment(aes(x = 0,  y = logistic(k1), xend = 0,  yend = logistic(k2)), color = k2_color, size = seg_size) +
+  # segments for k2
+  geom_segment(aes(x = 0,  y = logistic(k2), xend = 0,  yend = 1), color = k3_color, size = seg_size) +
+  # custom ticks & labels
+  scale_x_continuous(breaks = c(k1, 0, k2), 
+                     labels = c(latex2exp::TeX("$\\delta_1$"), 
+                                0, 
+                                latex2exp::TeX("$\\delta_2$"))) +
+  scale_y_continuous(breaks = c(0, logistic(k1), logistic(k2), 1), 
+                     labels = c(
+                       0,
+                       latex2exp::TeX("logistic($\\delta_1$)"), 
+                       latex2exp::TeX("logistic($\\delta_2$)"),
+                       1
+                     )) +
+  # add category probabilities
+  
+  # remove axis labels
+  xlab("") + ylab("")
+```
+
+If the linear predictor $\eta$ is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount). For example, the plot below shows the case of $\eta=1$ where the probability of the first category decreases while that of the third increases.
+
+```{r}
+#| echo: false
+
+k1 <- -0.75 - 1
+k2 <- 1.6 - 1
+k1_color <- project_colors[3]
+k2_color <- project_colors[5]
+k3_color <- project_colors[6]
+seg_size = 2
+
+tibble(x = seq(-4,4, length.out = 100),
+       y = logistic(x)) |> 
+  ggplot(aes(x,y)) +
+  # logistic function
+  geom_line() +
+  # segments for k1
+  geom_segment(aes(x = k1, y = 0, xend = k1, yend = logistic(k1)), color = "darkgray") +
+  geom_segment(aes(x = k1, y = logistic(k1), xend = -4, yend = logistic(k1)), color = "darkgray") +
+  geom_segment(aes(x = 0,  y = 0, xend = 0,  yend = logistic(k1)), color = k1_color, size = seg_size) +
+  # segments for k2
+  geom_segment(aes(x = k2, y = 0, xend = k2, yend = logistic(k2)), color = "darkgray") +
+  geom_segment(aes(x = k2, y = logistic(k2), xend = -4, yend = logistic(k2)), color = "darkgray") +
+  geom_segment(aes(x = 0,  y = logistic(k1), xend = 0,  yend = logistic(k2)), color = k2_color, size = seg_size) +
+  # segments for k2
+  geom_segment(aes(x = 0,  y = logistic(k2), xend = 0,  yend = 1), color = k3_color, size = seg_size) +
+  # custom ticks & labels
+  scale_x_continuous(breaks = c(k1, 0, k2), 
+                     labels = c(latex2exp::TeX("$\\delta_1-1$"), 
+                                0, 
+                                latex2exp::TeX("$\\delta_2-1$"))) +
+  scale_y_continuous(breaks = c(0, logistic(k1), logistic(k2), 1), 
+                     labels = c(
+                       0,
+                       latex2exp::TeX("logistic($\\delta_1-1$)"), 
+                       latex2exp::TeX("logistic($\\delta_2-1$)"),
+                       1
+                     )) +
+  # add category probabilities
+  
+  # remove axis labels
+  xlab("") + ylab("")
+```
+
+In sum, the cumulative-logit model for ordinal regression, is defined as follows:
+
+$$
+\begin{align*}
+\xi  &= X \beta       && \color{gray}{\text{[linear predictor]}} \\
+\eta &= \text{cumulative-logit}(\xi; \delta) && \color{gray}{\text{[predictor of central tendency]}} \\
+y & \sim \text{Categorical}(\eta) && \color{gray}{\text{[likelihood]}}
+\end{align*}
+$$
+
+## Example
+
+The kind of mouse-trajectories, as categorized in variable `prototype_label`, are plausibly ordered by the "amount of deviation". The following therefore tries to predict the ordered category `prototype_label` from the numerical measure `MAD`. Here is a plot of how this would look like:
+
+```{r}
+# prepare data by making 'prototype_label' an ordered factor
+dolphin_prepped2 <- dolphin_prepped |> 
+    mutate(prototype_label = factor(prototype_label, ordered = T))
+
+# plotting the ordered categories as a function of MAD
+dolphin_prepped2 |> 
+  ggplot(aes(x = MAD, y = prototype_label, 
+             color = prototype_label)) +
+  geom_jitter(alpha = 0.3,height = 0.3, width = 0)
+```
+
+To run an ordinal regression model, we specify `family = cumulative()`. This runs the default cumulative-logit model introduced at the beginning of the session.
+
+```{r}
+fit_ordinal <- brm(
+  formula = prototype_label ~ MAD,
+  data = dolphin_prepped2,
+  family = cumulative()
+)
+```
+
+The summary output for this fitted model gives information about the slope of the predictor variable `MAD` as usual. But it also supplies information about two (!) intercepts: these are the cutoff points for the different categories in the cumulative normal link function.
+
+```{r}
+summary(fit_ordinal)
+```
+
+Concretely, this means that if `MAD` is \$x\$, we compute the linear predictor $\xi = \beta_{\text{MAD}} x$ (without intercept!), and then "imagine around it" a standard normal distribution, i.e., consider the normal distribution \$\\mathcal{\\xi, 1}\$. The probabilities of the three categories are given by the areas under the curve of this normal distribution, namely:
+
+-   probability category 1: area from $-\infty$ to first threshold,
+
+-   probability category 2: area between first and second threshold,
+
+-   probability category 3: area between second threshold and $\infty$.
+
+We can operator with the linear regression coefficients as usual, e.g., asking whether there is any reason to believe, given model and data, that the higher `MAD`, the higher the probability of seeing a more 'uncertain' trajectory type.
+
+```{r}
+fit_ordinal |> 
+  tidybayes::gather_draws(b_MAD) |> 
+  ggplot(aes(x = .value, y = .variable)) +
+  tidybayes::stat_halfeye() +
+  ylab("") + xlab("") + ggplot2::xlim(0,0.03)
+```
+
+```{r}
+brms::hypothesis(fit_ordinal, "MAD > 0")
+```
+
+# Poisson regression
+
+## Explanation
+
+The [Poisson distribution](https://michael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#poisson-distribution) is the common choice for count data. It is defined as:
+
+$$
+\text{Poisson}(k ; \lambda) = \frac{\lambda^k \ \exp( -\lambda)} {k!}
+$$
+
+The link function is the exponential function (so the inverse link function is the logarithmic function). The Poisson regression model is defined as:
+
+$$
+\begin{align*}
+\xi  &= X \beta       && \color{gray}{\text{[linear predictor]}} \\
+\eta_i &= \exp(\xi_i) && \color{gray}{\text{[predictor of central tendency]}} \\
+y_i & \sim \text{Poisson}(\eta_i) && \color{gray}{\text{[likelihood]}}
+\end{align*}
+$$
+
+## Example
+
+There are examples in the next exercise sheet. For a tutorial on Poisson regression specifically geared towards linguists see [here](https://compass.onlinelibrary.wiley.com/doi/pdf/10.1111/lnc3.12439).
