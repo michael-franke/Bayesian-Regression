@@ -58,6 +58,10 @@ website:
             text: Overview
           - href: practice-sheets/06a-model-comparison.qmd
             text: Model comparison (practice)
+      - section: "07: Causal inference"
+        contents:
+          - href: practice-sheets/07-causal-inference.qmd
+            text: Causal inference (practice)
 format:
   html:
     theme: cosmo

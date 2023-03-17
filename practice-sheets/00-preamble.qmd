@@ -43,7 +43,7 @@ options(mc.cores = parallel::detectCores())
 theme_set(theme_csp())
 
 # global color scheme from CSP
-project_colors = cspplot::list_colors()[c(1,3,4,5,2,6:14),"hex", drop = TRUE]
+project_colors = cspplot::list_colors() |> pull(hex)
 
 # setting theme colors globally
 scale_colour_discrete <- function(...) {
