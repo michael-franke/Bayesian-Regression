@@ -302,6 +302,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">07: Causal inference</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/07-causal-inference.html" class="sidebar-item-text sidebar-link">Causal inference (practice)</a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -371,7 +386,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
 <div class="cell">
 <details>
-<summary>Code</summary>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pckgs_needed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>,</span>
@@ -441,21 +456,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1>Preparing the tools</h1>
 <p>We will use the following R packages in this tutorial. If you are missing some of them, you can install them by running e.g.&nbsp;<code>install.packages('tidyverse')</code>. <strong>NB</strong>: we will fit the models using <code>brm</code> - this might take some time to compile!</p>
 <div class="cell" data-warnings="false">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyboot)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(languageR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
 <p>The first part of this tutorial is based on a data set from an experiment by Winter and Grawunder (2012) You can get the dataset by running:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span> faintr<span class="sc">::</span>politeness</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># get a look at the data set</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(politeness_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   subject gender sentence context pitch
@@ -480,10 +501,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>Furthermore, we can compute some basic statistics - e.g.&nbsp;the mean of the different design cells, before we turn to more complex linear models. We can also compute the overall mean pitch across all the conditions - the <strong>grand mean</strong>. These values will be helpful for a sanity check when interpreting the linear models later on.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tibble_means <span class="ot">&lt;-</span> politeness_df <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(context, gender) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(pitch))</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tibble_means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
 # Groups:   context [2]
@@ -494,7 +518,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 3 pol     F       233.
 4 pol     M       133.</code></pre>
 </div>
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(tibble_means<span class="sc">$</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 192.8605</code></pre>
 </div>
@@ -512,11 +539,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1>Coding Categorical Variables</h1>
 <p>In our example, gender and context are categorical variables, so they need to be coded numerically. When categorical variables are coded for regression modeling, they are internally set to factors. Let’s do this manually here for explicitness.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span> politeness_df <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">factor</span>(gender),   <span class="co"># you could rename or reorder the levels here</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">context =</span> <span class="fu">factor</span>(context))</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(politeness_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   subject gender sentence context pitch
@@ -535,13 +565,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Our variables only have two levels, so the effect of <em>gender</em> could be estimated by treating <code>female</code> as the reference level and estimating the effect of being <code>male</code> compared to the reference level – so basically estimating the difference in pitch it takes to “get from female to male”. Similarly, we can estimate the effect of <em>context</em>: the <code>informal</code> context can be treated as the reference level and the effect of <code>polite</code>ness can be estimated against it. By default, the first level of a factor is treated as the reference level (for unordered factors that is the first string in alphanumeric order) - but principally, there is no difference as to which level should be used as the reference level. It makes sense to choose the level which is in some sense the ‘control’ in your experimental design.</p>
 <p>Because R uses dummy-coding by default, we can look at the default numerical coding right away. The function <code>contrasts()</code> displays the contrast matrix for the respective variable:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  M
 F 0
 M 1</code></pre>
 </div>
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    pol
 inf   0
@@ -550,9 +586,12 @@ pol   1</code></pre>
 </div>
 <p>But if we wish to explicitly assign a dummy (treatment) coding to a variable, we may do so by a built-in R function:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender) <span class="ot">&lt;-</span> <span class="fu">contr.treatment</span>(<span class="dv">2</span>) <span class="co"># insert the number of levels here</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  2
 F 0
@@ -562,6 +601,8 @@ M 1</code></pre>
 <p>So both variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> can take either the value 0 or 1 (because we dummy-code both categorical variables; see below for more). We already defined the referenc levels of the single variables, now we can define the overall reference level of our model (by combining the two individual reference levels) – it is the mean pitch of female speakers in informal contexts.</p>
 <p>Having set all the basics, we can now turn to computing a linear model of the mean pitch as predicted by the factors gender and context:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here, we only use fixed effects</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>lm.dummy.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  pitch <span class="sc">~</span> gender <span class="sc">*</span> context,</span>
@@ -571,6 +612,7 @@ M 1</code></pre>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>lm.dummy.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.dummy.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="co"># get the estimated coefficients</span></span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.dummy.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -601,9 +643,12 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Further, let us recall the numerical coding of our variables: for <span class="math inline">\(x_1\)</span> (gender) a 0 means <code>female</code>, a 1 means <code>male</code>; for <span class="math inline">\(x_2\)</span> (context) a 0 means <code>informal</code>, a 1 means <code>polite</code>. So the computed values are the estimates for conditions differing from the respective reference conditions - i.e.&nbsp;when the respective <span class="math inline">\(x\)</span> is a 1.</p>
 <p>To get an estimate of a certain design cell (<span class="math inline">\(y_i\)</span>) - let’s start with the mean pitch of female speakers (0 for <span class="math inline">\(x_1\)</span>) in informal contexts (0 for <span class="math inline">\(x_2\)</span>) - we just insert the corresponding numeric values for the corresponding <span class="math inline">\(x\)</span> and the estimated value for the corresponding <span class="math inline">\(\beta\)</span>. Thus we get:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.dummy.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  lm.dummy.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="dv">0</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 260.9607</code></pre>
 </div>
@@ -611,9 +656,12 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Hence, the mean pitch of female speakers in informal context corresponds to the intercept. As a sanity check, we can recall that for dummy coded variables the model intercept is just the mean of the reference cell (in our case, female speakers in informal contexts!).</p>
 <p>Let’s now calculate the mean pitch of male speakers (1 for <span class="math inline">\(x_1\)</span>) in informal contexts (0 for <span class="math inline">\(x_2\)</span>):</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">=</span> lm.dummy.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  lm.dummy.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">0</span> <span class="sc">+</span> lm.dummy.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="dv">1</span><span class="sc">*</span><span class="dv">0</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 144.5167</code></pre>
 </div>
@@ -624,6 +672,8 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Another common coding scheme is the simple coding (also called contrast coding). Simple coded variables are also compared to a reference level (just like dummy-coded ones). However, the intercept of a simple coded model is the grand mean – the mean of all cells (i.e.&nbsp;the mean of female-informal &amp; female-polite &amp; male-informal &amp; male-polite cells).</p>
 <p>Generally, this kind of coding can be created by subtracting <span class="math inline">\(1/k\)</span> from the dummy coding contrast matrix, where <span class="math inline">\(k\)</span> is the number of levels a variable has (in our case, both have two). Hence, the reference level will always only have negative values in the contrast matrix. The general rule is that the contrasts within a column have to add up to 0. R does not provide a built-in function for simple coding, but we can easily create the respective matrix ourselves by subtracting <span class="math inline">\(1/k\)</span> (i.e.&nbsp;1/2) from the dummy coding matrix:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manual creation of contrasts</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>contr.matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">2</span>))</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>dummy.matrix <span class="ot">&lt;-</span> <span class="fu">contr.treatment</span>(<span class="dv">2</span>)</span>
@@ -635,10 +685,13 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender_contr =</span> gender)</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_contr) <span class="ot">&lt;-</span> contr.coding</span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_contr)  <span class="ot">&lt;-</span> contr.coding</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Hence now the <code>gender</code> is coded as -0.5 for <code>female</code> and 0.5 for <code>male</code>; <code>context</code> is coded as -0.5 for <code>informal</code> and 0.5 for <code>polite</code>.</p>
 <p>Let’s again look at our regression model:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lm.contr.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  pitch <span class="sc">~</span> gender_contr <span class="sc">*</span> context_contr,</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> politeness_df,</span>
@@ -647,6 +700,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>lm.contr.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.contr.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="co"># get vector of estimated coefficients</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.contr.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -678,8 +732,11 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>In order to compute the mean pitch of a specific cell, we proceed just as with dummy-coded variables and insert the respective estimates and values for <span class="math inline">\(x\)</span>. Let us start with female speakers (<span class="math inline">\(x_1\)</span> is -0.5) in informal contexts (<span class="math inline">\(x_2\)</span> is -0.5):</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.contr.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span> lm.contr.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>)<span class="sc">*</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 260.5951</code></pre>
 </div>
@@ -687,7 +744,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>We get the same result as before (as we should - the estimates should not depend on a coding scheme but only on the data). As a sanity check, we can again look at the intercept – it matches the grand mean we computed in the beginning of this tutorial – as it should.</p>
 <p>Your turn! Compute the pitch means for the other three conditions.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="deviation-sum-coding" class="level2">
@@ -696,22 +756,28 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>It is slightly different from the previous schemes. It compares the mean of the predicted variable for a specific condition to the grand mean. So the estimates do not tell you the difference between the reference level and another level anymore. The intercept of linear models with sum coded variables is the grand mean.</p>
 <p>R has a built-in function for creating sum coded variables:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># again create a new variable</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="sc">%&gt;%</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">context_dev =</span> context,</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender_dev =</span> gender) <span class="ot">-&gt;</span> politeness_df</span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">2</span>) <span class="co"># insert number of levels</span></span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_dev)  <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now the <code>gender</code> is coded as s 1 for <code>female</code> and -1 for <code>male</code>; <code>context</code> is coded as 1 for <code>informal</code> and -1 for <code>polite</code>.</p>
 <p>Below we fit a model with the sum-coded variables:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>lm.dev.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context_dev <span class="sc">*</span> gender_dev,</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>lm.dev.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.dev.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.dev.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -744,24 +810,33 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>The coefficients denote now the difference between the grand mean (i.e.&nbsp;intercept) and the mean of the respective condition.</p>
 <p>We apply the same idea to estimate the pitch means for specific cases: E.g. for female speakers in informal contexts we do:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">1</span><span class="sc">*</span><span class="dv">1</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>y1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 260.6811</code></pre>
 </div>
 </div>
 <p>Since the intercept is now the grand mean and not a specific reference level, let us think about the interpretation of the single estimates. The estimate of e.g.&nbsp;the context effect now denotes the value by which the mean pitch in informal (estimate * 1, remember our coding!) or polite contexts (estimate * -1) differs from the grand mean. So if we wish to calculate the mean pitch in polite contexts (across genders), we would do:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>yPol <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">2</span>] <span class="sc">*</span> (<span class="sc">-</span><span class="dv">1</span>)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>yPol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 183.2212</code></pre>
 </div>
 </div>
 <p>This means that the single estimates are in some sense ‘independent’ of each other (in contrast to e.g.&nbsp;dummy-coded variables where the estimates are bound to the reference levels of two variables) and give us insight if a specific factor is credibly different from 0. Similarly, if we wish to calculate the mean pitch of male speakers, we would calculate:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>yM <span class="ot">=</span> lm.dev.FE.coefs[<span class="dv">1</span>] <span class="sc">+</span> lm.dev.FE.coefs[<span class="dv">3</span>] <span class="sc">*</span> (<span class="sc">-</span><span class="dv">1</span>)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>yM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 138.9629</code></pre>
 </div>
@@ -773,6 +848,8 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Generally, to create such a coding, in order to compare the first level to the subsequent levels you would assign <span class="math inline">\((k-1)/k\)</span> to the first level and <span class="math inline">\(-1/k\)</span> to all subsequent levels where <span class="math inline">\(k\)</span> is the total number of levels. To compare the second level to the subsequent levels you would assign 0 to the first level, <span class="math inline">\((i-1)/i\)</span> to the second level and <span class="math inline">\(-i/1\)</span> to all subsequent levels where <span class="math inline">\(i = k-1\)</span> and so on. The difference of this coding scheme to previous ones is more clear for variales with &gt;2 levels (see below). The intercept of a linear model corresponds to the grand mean.</p>
 <p>R does not have a built-in function for standard Helmert coding, so we do it manually:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with politeness data</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>helm.matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>))</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>politeness_df <span class="ot">&lt;-</span></span>
@@ -781,15 +858,19 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">context_helm =</span> context)</span>
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>gender_helm)  <span class="ot">&lt;-</span> helm.matrix</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(politeness_df<span class="sc">$</span>context_helm) <span class="ot">&lt;-</span> helm.matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The linear model looks like this:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>lm.helmert.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context_helm <span class="sc">*</span> gender_helm,</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>lm.helmert.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.helmert.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.helmert.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -828,12 +909,15 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>When you mix coding schemes or define your own schemes there might be no pre-defined answers to questions as to what the sigle coefficients or the intercept mean. But knowing how the different schemes work, you can easily find this out!</p>
 <p>Let us explore how the interpretation of the model changes if we mix coding schemes:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>lm.mixedCode.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(pitch <span class="sc">~</span> context <span class="sc">*</span> gender_contr,</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> politeness_df,</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>lm.mixedCode.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm.mixedCode.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.mixedCode.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -872,10 +956,13 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>In order to see the differences yielded by the different coding schemes more clearly, it is usefut to look at an example datas et containing predictors with three levels. But don’t worry, all the concepts we have learned so far work just the same way - independently of the number of levels a predictor has.</p>
 <p>The data set <code>latinsquare</code> is provided in the package <code>languageR</code> which you need to install in order to access it.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># alternative dataset with a three-level variable</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(languageR)</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(latinsquare)</span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(latinsquare_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
   Group Subject Word     RT SOA   List 
@@ -891,18 +978,24 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>In this example data set, the reaction time (<code>RT</code>) of subjects in a lexical decision experiment was simulated. The predictors are, among others, the stimulus-onset asynchrony (<code>SOA</code>) (with the levels long, medium, short) and different <code>lists</code> of prime-target pairs of words (L1, L2, L3) that are presented to the participants. Without going into the details of the experimental paradign, let’s imagine we would like to predict the participants’ mean reaction time given the list type, the SOA type and their interaction.</p>
 <p>Again, it is helpful to start by trying to get a rough idea of what the data looks like.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> List, <span class="at">y =</span> RT)) <span class="sc">+</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="at">color =</span> SOA),</span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">position_jitterdodge</span>(<span class="at">dodge.width=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <p><img src="02b-catPreds-tutorial_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We can also look at the empirical means of the different conditions:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(List, SOA) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(RT)) <span class="ot">-&gt;</span> tibble_baseStats</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>tibble_baseStats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 9 × 3
 # Groups:   List [3]
@@ -918,7 +1011,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 8 L3    medium  515.
 9 L3    short   522.</code></pre>
 </div>
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(tibble_baseStats<span class="sc">$</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 534.5139</code></pre>
 </div>
@@ -928,14 +1024,20 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h2 class="anchored" data-anchor-id="dummy-treatment-coding-1">Dummy (Treatment) Coding</h2>
 <p>Generally, the coding schemes work in the very same way independently of the number of levels. The only difference to our old data set is that now we need two numeric variables coding the contrasts between the levels of one variable. If we look at the default (dummy) coding of e.g.&nbsp;the variable <code>List</code> we see a contrast matrix with two columns, each denoting the comparisons between two levels:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare<span class="sc">$</span>SOA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       medium short
 long        0     0
 medium      1     0
 short       0     1</code></pre>
 </div>
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   L2 L3
 L1  0  0
@@ -946,12 +1048,15 @@ L3  0  1</code></pre>
 <p>So now the recoding of the categorical variable takes two numeric variables: e.g.&nbsp;<span class="math inline">\(x_{1_2}\)</span> and <span class="math inline">\(x_{1_3}\)</span>, where both can take the values 0 or 1; the single levels are denoted by the combination of the two numeric variables. Again there is a reference level - <code>List 1</code> - described by <span class="math inline">\(x_{1_2}\)</span> and <span class="math inline">\(x_{1_3}\)</span> being 0. <span class="math inline">\(x_{1_2}\)</span> being 1 describes the difference between the reference level and <code>List 2</code>; <span class="math inline">\(x_{1_3}\)</span> being 1 describes the difference between the reference level and <code>List 3</code>. Correspondingly, there is and individual <span class="math inline">\(\beta\)</span> for each numeric variable estimated in the regression model. The coding of the <code>SOA</code> factor works just the same way. The interactions between specific levels are described by combining the respective numeric variables <span class="math inline">\(x\)</span>. So the model we are fitting is described by:</p>
 <p><span class="math display">\[y = \beta_0 + \beta_1 * x_{1_2} + \beta_2 * x_{1_3} + \beta_3 * x_{2_2} + \beta_4 * x{2_3} + \beta_5 * x_{1_2}x_{2_2} + \beta_6 * x_{1_3}x_{2_2} + \beta_7 * x_{1_2}x_{2_3}  + \beta8 * x_{1_3}x_{2_3}\]</span></p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>lm3.dummy.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List <span class="sc">*</span> SOA,</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>lm3.dummy.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.dummy.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.dummy.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -987,6 +1092,8 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h2 class="anchored" data-anchor-id="simple-contrast-coding-1">Simple (Contrast) Coding</h2>
 <p>Simple coding only slightly differs from dummy-coding – the intercept of the model is the grand mean, not the mean RT of the reference level. Otherwise, the coefficients still denote the difference between the reference level and other specific levels.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_contr =</span> <span class="fu">factor</span>(List),</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_contr =</span> <span class="fu">factor</span>(SOA)) <span class="ot">-&gt;</span> latinsquare_df</span>
@@ -994,14 +1101,18 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>contr.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">ncol=</span><span class="dv">2</span>)</span>
 <span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_contr) <span class="ot">&lt;-</span> dummy.matrix3 <span class="sc">-</span> contr.matrix3</span>
 <span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_contr) <span class="ot">&lt;-</span>  dummy.matrix3 <span class="sc">-</span> contr.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>lm3.simple.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_contr <span class="sc">*</span> SOA_contr,</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>lm3.simple.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.simple.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.simple.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -1046,20 +1157,26 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h2 class="anchored" data-anchor-id="deviation-sum-coding-1">Deviation (Sum) Coding</h2>
 <p>With increasing number of levels within the factors the complexity and messiness of interpreting the differences between levels against each other increases considerably. Hence it might make a lot of sense to use the deviation coding scheme which provides estimates of effects comapred to the grand mean. We again can use the R built-in function to assign deviation coding to our three-level factors:</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_dev =</span> List,</span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_dev =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
 <span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>) <span class="co"># insert number of levels</span></span>
 <span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_dev) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>For e.g.&nbsp;<code>SOA</code> our numeric variables now denote the effect of <code>long</code> SOA compared to the grand mean when <span class="math inline">\(x_{2_2}\)</span> is a 1 and <span class="math inline">\(x_{2_3}\)</span> is a 0; they denote the effect of <code>medium</code> SOA compared to the grand mean when <span class="math inline">\(x_{2_2}\)</span> is a 0 and <span class="math inline">\(x_{2_3}\)</span> is a 1; the effect of <code>short</code> SOA is never compared to the grand mean since it is always assigned a -1.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>lm3.dev.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_dev <span class="sc">*</span> SOA_dev,</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>lm3.dev.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.dev.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.dev.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -1095,20 +1212,26 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h2 class="anchored" data-anchor-id="helmert-coding-1">Helmert Coding</h2>
 <p>For recap: In this coding scheme, a level of a variable is compared to its subsequent levels. What does this mean for the three-level factors?</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_helm =</span> List,</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_helm =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
 <span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>helm.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span> ), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
 <span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_helm) <span class="ot">&lt;-</span> helm.matrix3</span>
 <span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_helm) <span class="ot">&lt;-</span> helm.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>lm3.helm.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_helm <span class="sc">*</span> SOA_helm,</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>lm3.helm.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.helm.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.helm.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -1154,20 +1277,26 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h2 class="anchored" data-anchor-id="reverse-helmert-coding">Reverse Helmert Coding</h2>
 <p>The reverse Helmert coding scheme (also called difference coding) is quite similar to the Helmert coding, but compares the mean of a level to its previous levels. Since we basically reverse the coding we used in the previous scheme, we also ‘reverse’ the contrast matrix to create such a coding.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>latinsquare_df <span class="sc">%&gt;%</span></span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">List_rhelm =</span> List,</span>
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SOA_rhelm =</span> SOA) <span class="ot">-&gt;</span> latinsquare_df</span>
 <span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>rhelm.matrix3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span> ), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
 <span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>List_rhelm) <span class="ot">&lt;-</span> rhelm.matrix3</span>
 <span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(latinsquare_df<span class="sc">$</span>SOA_rhelm) <span class="ot">&lt;-</span> rhelm.matrix3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>lm3.rhelm.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List_rhelm <span class="sc">*</span> SOA_rhelm,</span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>,</span>
 <span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>)</span>
 <span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>lm3.rhelm.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.rhelm.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.rhelm.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
@@ -1214,12 +1343,15 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Just like with two-level factors, we might wish to use different coding schemes for different predictors. It might make sense to use dummy coding for a variable which has a control and two different treatment conditions, and to use deviation coding for a variable which has ‘equal’ levels.</p>
 <p>For example, we could use dummy-coding for <code>List</code> and deviation-coding for <code>SOA</code>.</p>
 <div class="cell">
+<details>
+<summary>Reveal code</summary>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>lm3.mixedCode.FE <span class="ot">&lt;-</span> <span class="fu">brm</span>(RT <span class="sc">~</span> List <span class="sc">*</span> SOA_dev,</span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> latinsquare_df,</span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cores =</span> <span class="dv">4</span>,</span>
 <span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter =</span> <span class="dv">1000</span>)</span>
 <span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>lm3.mixedCode.FE.coefs <span class="ot">&lt;-</span> <span class="fu">fixef</span>(lm3.mixedCode.FE)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
 <span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm3.mixedCode.FE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
   Links: mu = identity; sigma = identity 
