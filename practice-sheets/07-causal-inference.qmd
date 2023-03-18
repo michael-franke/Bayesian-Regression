@@ -15,8 +15,20 @@ callout-appearance: simple
 
 # Simpson's paradox: puzzle and data
 
-Simpson's paradox is a puzzle about how the same data set can (or should be) be interpreted differently, based on different assumptions about the causal relation between variables.
-Here is a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell ("Causal Inference in Statistics: A primer", 2016)), except that we here take the liberty of swapping the columns for the "blood pressure" scenario.
+[Simpson's paradox](https://plato.stanford.edu/entries/paradox-simpson/) is a multi-faceted puzzle about how to analyse data, when the same data set can be interpreted differently, based on different assumptions about the causal relation between variables.
+The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell ("Causal Inference in Statistics: A primer", 2016)).
+
+There are two scenarios.
+
+## Case 1: Gender
+
+In the first scenario (referred to as "Case 1: Gender as a confound"), the data was collected by the following procedure:
+
+- 700 participants were recruited, out of which 350 identify as `male` and 350 identify as `350` female
+- each participant decides whether or not to take a new drug
+- we observe whether the patient recovered or not
+
+Here is the data for the first scenario:
 
 ```{r}
 ##################################################
@@ -32,10 +44,93 @@ data_simpsons_paradox <- tibble(
   proportion = k/N
 )
 
-data_simpsons_paradox
+data_simpsons_paradox |> select(-bloodP)
 ```
 
-<span style = "color:darkgreen"> TODO: describe data set & puzzle </span>  
+Research Team 1 bends over this data set and notices that the drug increases recovery for both males and females, as shown in the plot below.
+Based on this, Research Team 1 concludes that the drug is effective and they recommend its usage.
+
+```{r}
+data_simpsons_paradox |> 
+  ggplot(aes(x = drug, y = proportion, group = gender)) +
+  geom_line(size = 1.2, color = project_colors[12]) + 
+  geom_point(size = 3, aes(color = gender))
+```
+
+## Case 2: Blood pressure
+
+But now consider a second scenario. 
+Data was collected by the following process:
+
+- 700 participants were recruited
+- each participant decides whether or not to take a new drug
+- we measure the blood pressure of each patient and divide by median into a `high` and `low` blood pressure group (if a patient took the drug, this measurement happens /after/ having taken the drug)
+- we observe whether the patient recovered or not 
+
+The data for this scenario look as follows:
+
+```{r }
+data_simpsons_paradox |> select(-gender)
+```
+
+(Yes, you are right! The numbers are exactly the same as before!)
+
+Research Team 2 bends over this data set and notices that the drug decreases recovery rate in the whole population, as shown in the plot below.
+Based on this, Research Team 2 concludes that the drug is /not/ effective.
+They do /not/ recommend it for usage.
+
+```{r}
+data_simpsons_paradox |>
+  group_by(drug) |> 
+  summarise(proportion = sum(k) / sum(N)) |> 
+  ggplot(aes(x = drug, y = proportion)) +
+  geom_line(size = 1.2, aes(group = 1), color = project_colors[12]) +
+  geom_point(size = 3, aes(color = drug)) 
+```
+
+## What's the paradox?
+
+The puzzle here is that two research teams have reached opposite conclusions based on data which is at least numerically the exact same. 
+Each team seems, at first glance, to have drawn reasonable conclusions.
+How is it possible to reach opposite conclusions about whether or not to use a drug, based on the same set of numbers?
+
+## Resolving the puzzle by causal analysis
+
+You say: "The data sets are not the same! The numbers are, but in one case we observed `gender` in the other we observed `blood pressure`. That makes a difference, doesn't it?"
+
+I say: "Well, okay, but not necessarily. Just having different label for levels of a categorical variable doesn't make for a different data set, does it?"
+
+But you immediately shoot back: "Granted, but you also told us about a difference in the data-generating process. There is at least a temporal difference: `blood pressure` is measure after the treatment, but the level of `gender` was fixed already before the treatment."
+
+"Okay" I say. "So, do you suggest a temporal analysis?"
+
+You roll your eyes and after a few more (ridiculous) turns of this conversation, we both agree that, at least, conceptually speaking, there is a difference in the plausible *causal structure* of the involved variables.
+
+Consider the first case.
+There are three binary variables involved.
+Given the temporal sequence of events in the data generating process, the likely causal relation between the variables is that `gender` may influence both `drug` (the decision to take the drug or not) and `recovery`.
+Moreover, the `drug` may have influence `recovery` directly.
+(The latter is, of course, what we want to find out: does the `drug` influence recovery /itself/.)
+
+<span style = "color:darkgreen"> TODO: insert pictures of causal graph </span>
+
+Now consider the second scenario.
+Again, we have three binary variables.
+But since `blood pressure` is measures /after/ the treatment, it is not plausible that it could have influence the decision of whether to take the drug or not.
+Reversely, it /is/ plausible to assume, i.e., at least allow for the possibility, that `blood pressure` was affected by gender and that it may have affected `recovery`.
+As before, we also make room for the possibility that `drug` may affect `recovery` also directly.
+
+<span style = "color:darkgreen"> TODO: insert pictures of causal graph </span>
+
+# Causal analysis
+
+<span style = "color:darkgreen"> TODO: describe what we want to do and how the purported causal structure makes a world of difference </span>  
+
+- we want to calculate the *total causal effect (TCE)*: 
+
+$$ P(R=1 \mid \mathit{do}(D=1)) - P(R=1 \mid \mathit{do}(D=0)) $$
+
+## Some data wrangling 
 
 For subsequent analysis (especially when generating predictive samples), it helps to have the data in long format.
 The `uncount()` function is a great tool for this.
@@ -60,36 +155,8 @@ data_SP_long |>
   count()
 ```
 
-Here are plots of the data.
-The drug increases recovery for both males and females, but decreases recovery on average.
-
-```{r}
-data_simpsons_paradox |> 
-  ggplot(aes(x = drug, y = proportion, group = gender)) +
-  geom_line(size = 1.2, color = project_colors[12]) + 
-  geom_point(size = 3, aes(color = gender))
-```
-
-
-```{r}
-data_simpsons_paradox |>
-  group_by(drug) |> 
-  summarise(proportion = sum(k) / sum(N)) |> 
-  ggplot(aes(x = drug, y = proportion)) +
-  geom_line(size = 1.2, aes(group = 1), color = project_colors[12]) +
-  geom_point(size = 3, aes(color = drug)) 
-```
-
-# Causal analysis
-
-<span style = "color:darkgreen"> TODO: describe what we want to do and how the purported causal structure makes a world of difference </span>  
-
-- we want to calculate the *total causal effect (TCE)*: 
-
-$$ P(R=1 \mid \mathit{do}(D=1)) - P(R=1 \mid \mathit{do}(D=0)) $$
 
 # Case 1: Gender as a confounder
-
 
 Since the set $\{G\}$ statisfies the backdoor criterion for the assumed causal DAG, we know that we can calculate the TCE in terms of:
 
