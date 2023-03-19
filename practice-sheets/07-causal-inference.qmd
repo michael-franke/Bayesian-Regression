@@ -15,18 +15,17 @@ callout-appearance: simple
 
 # Simpson's paradox: puzzle and data
 
-[Simpson's paradox](https://plato.stanford.edu/entries/paradox-simpson/) is a multi-faceted puzzle about how to analyse data, when the same data set can be interpreted differently, based on different assumptions about the causal relation between variables.
-The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell ("Causal Inference in Statistics: A primer", 2016)).
+[Simpson's paradox](https://plato.stanford.edu/entries/paradox-simpson/) is a multi-faceted puzzle about how to analyse data, when the same data set can be interpreted differently, based on different assumptions about the causal relation between variables. The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell ("Causal Inference in Statistics: A primer", 2016)). There are two scenarios, to be introduced one after the other below, framed as data about the effect of a drug on the rate of recovery.
 
-There are two scenarios.
+The most important objective of this tutorial is to calculate the *total causal effect* (TCE) of the drug in each scenario, following the approach outline by Pearl et al. (2016). We first calculate a maximum-likelihood estimate of the TCE and then a Bayesian estimate derived from regression modeling. The advantage of the latter is that it allows quantification of uncertainty of the TCE estimate.
 
 ## Case 1: Gender
 
 In the first scenario (referred to as "Case 1: Gender as a confound"), the data was collected by the following procedure:
 
-- 700 participants were recruited, out of which 350 identify as `male` and 350 identify as `350` female
-- each participant decides whether or not to take a new drug
-- we observe whether the patient recovered or not
+-   700 participants were recruited, out of which 357 identified as `male` and 343 identified as `350` female
+-   each participant decides whether or not to take a new drug
+-   we observe whether the patient recovered or not
 
 Here is the data for the first scenario:
 
@@ -47,8 +46,7 @@ data_simpsons_paradox <- tibble(
 data_simpsons_paradox |> select(-bloodP)
 ```
 
-Research Team 1 bends over this data set and notices that the drug increases recovery for both males and females, as shown in the plot below.
-Based on this, Research Team 1 concludes that the drug is effective and they recommend its usage.
+Research Team 1 bends over this data set and notices that the drug increases recovery for both males and females, as shown in the plot below. Based on this, Research Team 1 concludes that the drug is effective and they recommend its usage.
 
 ```{r}
 data_simpsons_paradox |> 
@@ -59,13 +57,12 @@ data_simpsons_paradox |>
 
 ## Case 2: Blood pressure
 
-But now consider a second scenario. 
-Data was collected by the following process:
+But now consider a second scenario. Data was collected by the following process:
 
-- 700 participants were recruited
-- each participant decides whether or not to take a new drug
-- we measure the blood pressure of each patient and divide by median into a `high` and `low` blood pressure group (if a patient took the drug, this measurement happens /after/ having taken the drug)
-- we observe whether the patient recovered or not 
+-   700 participants were recruited
+-   each participant decides whether or not to take a new drug
+-   each patient is assigned to a `high` and `low` blood pressure group, after a blood pressure measurement (if a patient took the drug, this measurement happens *after* having taken the drug)
+-   we observe whether each patient recovered or not
 
 The data for this scenario look as follows:
 
@@ -75,9 +72,7 @@ data_simpsons_paradox |> select(-gender)
 
 (Yes, you are right! The numbers are exactly the same as before!)
 
-Research Team 2 bends over this data set and notices that the drug decreases recovery rate in the whole population, as shown in the plot below.
-Based on this, Research Team 2 concludes that the drug is /not/ effective.
-They do /not/ recommend it for usage.
+Research Team 2 bends over this data set and notices that the drug decreases recovery rate in the whole population, as shown in the plot below. Based on this, Research Team 2 concludes that the drug is *not* effective. They do *not* recommend it for usage.
 
 ```{r}
 data_simpsons_paradox |>
@@ -90,50 +85,119 @@ data_simpsons_paradox |>
 
 ## What's the paradox?
 
-The puzzle here is that two research teams have reached opposite conclusions based on data which is at least numerically the exact same. 
-Each team seems, at first glance, to have drawn reasonable conclusions.
-How is it possible to reach opposite conclusions about whether or not to use a drug, based on the same set of numbers?
+The puzzle here is that two research teams have reached opposite conclusions based on data which is at least numerically the exact same. Each team seems, at first glance, to have drawn reasonable conclusions. How is it possible to reach opposite conclusions about whether or not to use a drug, based on the same set of numbers?
 
 ## Resolving the puzzle by causal analysis
 
-You say: "The data sets are not the same! The numbers are, but in one case we observed `gender` in the other we observed `blood pressure`. That makes a difference, doesn't it?"
+You say: "The data sets are not the same! The numbers are, but in one case we observed `gender` and in the other we observed `blood pressure`. That makes a difference, doesn't it?"
 
-I say: "Well, okay, but not necessarily. Just having different label for levels of a categorical variable doesn't make for a different data set, does it?"
+I say: "Well, okay, but not necessarily. Just having different labels for levels of a categorical variable doesn't make for a different data set, does it?"
 
-But you immediately shoot back: "Granted, but you also told us about a difference in the data-generating process. There is at least a temporal difference: `blood pressure` is measure after the treatment, but the level of `gender` was fixed already before the treatment."
+But you immediately shoot back: "Maybe, but you also told us about a difference in the data-generating process. There is at least a temporal difference: `blood pressure` is measured after the treatment, but the level of `gender` was fixed already before the treatment."
 
 "Okay" I say. "So, do you suggest a temporal analysis?"
 
-You roll your eyes and after a few more (ridiculous) turns of this conversation, we both agree that, at least, conceptually speaking, there is a difference in the plausible *causal structure* of the involved variables.
+You roll your eyes and after a few more (ridiculous) turns of this conversation, we both agree that, at least conceptually speaking, there is a difference in the plausible *causal structure* of the involved variables.
 
-Consider the first case.
-There are three binary variables involved.
-Given the temporal sequence of events in the data generating process, the likely causal relation between the variables is that `gender` may influence both `drug` (the decision to take the drug or not) and `recovery`.
-Moreover, the `drug` may have influence `recovery` directly.
-(The latter is, of course, what we want to find out: does the `drug` influence recovery /itself/.)
+Consider the first case. There are three binary variables involved. Given the temporal sequence of events in the data-generating process, the likely causal relation between the variables is that `gender` may influence both `drug` (the decision to take the drug or not) and `recovery`. Moreover, the `drug` may have influenced `recovery` directly.
 
-<span style = "color:darkgreen"> TODO: insert pictures of causal graph </span>
+![Causal structure of scenario 1: gender is a confound](../pics/Simpson-paradox-confound.pdf)
 
-Now consider the second scenario.
-Again, we have three binary variables.
-But since `blood pressure` is measures /after/ the treatment, it is not plausible that it could have influence the decision of whether to take the drug or not.
-Reversely, it /is/ plausible to assume, i.e., at least allow for the possibility, that `blood pressure` was affected by gender and that it may have affected `recovery`.
-As before, we also make room for the possibility that `drug` may affect `recovery` also directly.
+Now consider the second scenario. Again, we have three binary variables. But since `blood pressure` is measures *after* the treatment, it is not plausible that it could have influenced the decision of whether to take the drug or not. Reversely, it *is* plausible to assume, i.e., to at least allow for the possibility, that `blood pressure` was affected by gender and that it may have affected `recovery`. As before, we also make room for the possibility that `drug` may affect `recovery` also directly.
 
-<span style = "color:darkgreen"> TODO: insert pictures of causal graph </span>
+![Causal structure of scenario 2: blood pressure is a mediator](../pics/Simpson-paradox-mediator.pdf)
 
-# Causal analysis
+# Causal analysis with MLE
 
-<span style = "color:darkgreen"> TODO: describe what we want to do and how the purported causal structure makes a world of difference </span>  
-
-- we want to calculate the *total causal effect (TCE)*: 
+Following Pearl's approach to causal analysis, the most important quantity to assess is how (hypothetical) manipulations of administering the drug would influence the recovery rate. In other words, we would like to quantify the *total causal effect (TCE)*:
 
 $$ P(R=1 \mid \mathit{do}(D=1)) - P(R=1 \mid \mathit{do}(D=0)) $$
 
-## Some data wrangling 
+as the difference in expected recovery rate in the imagined scenario that we could surgically change whether a drug was given, without changing non-causal dependencies of `drug`.
 
-For subsequent analysis (especially when generating predictive samples), it helps to have the data in long format.
-The `uncount()` function is a great tool for this.
+What it means to condition on "$\mathit{do}(D=d)$" depends on the assumed causal relationship between variables. So, we will look at each scenario in sequence.
+
+## Case 1: Gender as a confound
+
+Since the set $\{G\}$ statisfies the *backdoor criterion* for the assumed causal DAG, we know that we can calculate the total causal effect (TCE) by eliminating the *do*-operator in the conditioning using the *adjustment formula*:
+
+$$
+P(R=r \mid \mathit{do}(D=d)) = \sum_{g \in \{0,1\}} P(R=r \mid D=d, G=g) \ P(G=g)
+$$
+
+This means that we need to estimate two probability distributions: the conditional probability of recovery given `drug` and `gender` and the (marginal) probability of `gender`. We can use maximum-likelihood estimates for these by just using the observed frequencies as estimators. For $\mathit{do}(D=1)$, this yields:
+
+$$
+\begin{align*}
+& P(R=1 \mid \mathit{do}(D=1)) 
+\\
+= &   P(R=1 \mid D=1, G=f) \ P(G=f) + P(R=1 \mid D=1, G=m) \ P(G=m)
+\\
+= &   \frac{192}{263} \ \frac{343}{700} 
+    + \frac{81}{87}  \ \frac{357}{700}
+\\
+= & 0.8325462
+\end{align*}
+$$
+
+For $\mathit{do}(D=0)$, we get:
+
+$$
+\begin{align*}
+& P(R=1 \mid \mathit{do}(D=0)) 
+\\
+= &   P(R=1 \mid D=0, G=f) \ P(G=f) + P(R=1 \mid D=0, G=m) \ P(G=m)
+\\
+= &   \frac{55}{80} \ \frac{343}{700} 
+    + \frac{234}{270}  \ \frac{357}{700}
+\\
+= & 0.778875
+\end{align*}
+$$ So, an ML-estimate of the TCE would be:
+
+```{r}
+192/263 * 343/700 + 81/87 * 357/700 -
+  (55/80 * 343/700 + 234/270 * 357/700)
+```
+
+This suggest that the drug is effectively increasing expected recovery, but we do not have a measure of uncertainty of this estimate. We don't know if we should consider this convincing evidence to recommend wide-spread adoption. That's why we need (something like) Bayesian estimation eventually. But let's first look at the second scenario.
+
+## Case 2: Blood pressure as a mediator
+
+For the causal graph assumed for the second scenario, the *do*-intervention reduces to the conditional probability:
+
+$$
+P\left(R=1 \mid \mathit{do}(D=d)\right) 
+= P\left(R = 1 \mid D=d \right)
+$$
+
+For $\mathit{do}(D=1)$, this yields:
+
+$$
+P(R=1 \mid \mathit{do}(D=1)) = P(R=1 \mid D=1) = \frac{273}{350} = 0.78
+$$
+
+For $\mathit{do}(D=0)$, we get:
+
+$$
+P(R=1 \mid \mathit{do}(D=0)) = P(R=1 \mid D=0) = \frac{289}{350} = 0.8257143
+$$
+
+The ML-esimtate of the TCE is therefore:
+
+```{r}
+273/350 - 289/350
+```
+
+This differs in sign from the previous estimate, and we might conclude that administering the drug is, overall, *not* beneficial. Yet, again, we have no uncertainty quantification regarding this estimate.
+
+# Bayesian causal effect estimation
+
+Let's use Bayesian regression modelling to calculate the total causal effects for each scenario.
+
+## Some data wrangling
+
+For subsequent analysis (especially when generating predictive samples), it helps to have the data in long format. The `uncount()` function is a great tool for this.
 
 ```{r}
 # cast into long format
@@ -146,31 +210,19 @@ data_SP_long <- rbind(
 data_SP_long
 ```
 
-Let's quickly sanity-check that this did what we wanted it to:
+## Case 1: Gender as a confound
 
-```{r}
-# sanity check if that worked
-data_SP_long |> 
-  group_by(gender, drug, recover) |> 
-  count()
-```
-
-
-# Case 1: Gender as a confounder
-
-Since the set $\{G\}$ statisfies the backdoor criterion for the assumed causal DAG, we know that we can calculate the TCE in terms of:
+Given the causal structure assumed for scenario 1, we can calculate:
 
 $$
 P(R=1 \mid \mathit{do}(D=d)) = \sum_{g \in \{0,1\}} P(R=1 \mid D=d, G=g) \ P(G=g)
-$$
-This means that we need to estimate two probability distributions:
+$$ Therefore, we need to do three things:
 
-1. We need to estimate $P(R=1 \mid D=d, G=g)$. This can be done with a logistic regression model, regressing $R$ on $D$ and $G$.
-2. We need to estimate $P(G)$, which we can do with an intercept-only logistic regression model.
+1.  We estimate $P(R=1 \mid D=d, G=g)$. This can be done with a logistic regression model, regressing $R$ on $D$ and $G$.
+2.  We estimate $P(G)$, which we can do with an intercept-only logistic regression model.
+3.  We calculate the TCE based on samples from the posterior predictive distribution of these models.
 
-Once we have both of these models, the TCE can be calculated in a third step based on samples from the posterior predictive distribution of these models.
-
-## Step 1: Intercept-only model for `gender`
+### Step 1: Intercept-only model for `gender`
 
 Here is an intercept-only logistic regression model for `gender`:
 
@@ -189,8 +241,7 @@ fit_SP_GonIntercept <- brm(
 )
 ```
 
-Each sample from the posterior of the `Intercept` parameter represents (a guess of) the log-odds of the `Male` category.
-The posterior over the proportion of male participants can therefore be retrieved and plotted as follows (the yellow line shows the observed frequency):
+Each sample from the posterior of the `Intercept` parameter represents (a guess of) the log-odds of the `Male` category. The posterior over the proportion of male participants can therefore be retrieved and plotted as follows (the yellow line shows the observed frequency):
 
 ```{r}
 logistic <- function(x) {
@@ -209,8 +260,7 @@ posterior_SP_GonIntercept |>
   ylab("posterior density")
 ```
 
-
-## Step 2: Regressing $R$ against $G$ and $D$
+### Step 2: Regressing $R$ against $G$ and $D$
 
 ```{r}
 
@@ -272,8 +322,7 @@ CE_post |>
   tidybayes::stat_halfeye()
 ```
 
-
-# Case 2: Blood pressure as a mediator
+## Case 2: Blood pressure as a mediator
 
 ```{r}
 
@@ -319,4 +368,3 @@ rbind(
 
 
 ```
-
