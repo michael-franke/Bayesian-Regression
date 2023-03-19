@@ -333,16 +333,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#whats-the-paradox" id="toc-whats-the-paradox" class="nav-link" data-scroll-target="#whats-the-paradox">What’s the paradox?</a></li>
   <li><a href="#resolving-the-puzzle-by-causal-analysis" id="toc-resolving-the-puzzle-by-causal-analysis" class="nav-link" data-scroll-target="#resolving-the-puzzle-by-causal-analysis">Resolving the puzzle by causal analysis</a></li>
   </ul></li>
-  <li><a href="#causal-analysis" id="toc-causal-analysis" class="nav-link" data-scroll-target="#causal-analysis">Causal analysis</a>
+  <li><a href="#causal-analysis-with-mle" id="toc-causal-analysis-with-mle" class="nav-link" data-scroll-target="#causal-analysis-with-mle">Causal analysis with MLE</a>
+  <ul class="collapse">
+  <li><a href="#case-1-gender-as-a-confound" id="toc-case-1-gender-as-a-confound" class="nav-link" data-scroll-target="#case-1-gender-as-a-confound">Case 1: Gender as a confound</a></li>
+  <li><a href="#case-2-blood-pressure-as-a-mediator" id="toc-case-2-blood-pressure-as-a-mediator" class="nav-link" data-scroll-target="#case-2-blood-pressure-as-a-mediator">Case 2: Blood pressure as a mediator</a></li>
+  </ul></li>
+  <li><a href="#bayesian-causal-effect-estimation" id="toc-bayesian-causal-effect-estimation" class="nav-link" data-scroll-target="#bayesian-causal-effect-estimation">Bayesian causal effect estimation</a>
   <ul class="collapse">
   <li><a href="#some-data-wrangling" id="toc-some-data-wrangling" class="nav-link" data-scroll-target="#some-data-wrangling">Some data wrangling</a></li>
-  </ul></li>
-  <li><a href="#case-1-gender-as-a-confounder" id="toc-case-1-gender-as-a-confounder" class="nav-link" data-scroll-target="#case-1-gender-as-a-confounder">Case 1: Gender as a confounder</a>
+  <li><a href="#case-1-gender-as-a-confound-1" id="toc-case-1-gender-as-a-confound-1" class="nav-link" data-scroll-target="#case-1-gender-as-a-confound-1">Case 1: Gender as a confound</a>
   <ul class="collapse">
   <li><a href="#step-1-intercept-only-model-for-gender" id="toc-step-1-intercept-only-model-for-gender" class="nav-link" data-scroll-target="#step-1-intercept-only-model-for-gender">Step 1: Intercept-only model for <code>gender</code></a></li>
   <li><a href="#step-2-regressing-r-against-g-and-d" id="toc-step-2-regressing-r-against-g-and-d" class="nav-link" data-scroll-target="#step-2-regressing-r-against-g-and-d">Step 2: Regressing <span class="math inline">\(R\)</span> against <span class="math inline">\(G\)</span> and <span class="math inline">\(D\)</span></a></li>
   </ul></li>
-  <li><a href="#case-2-blood-pressure-as-a-mediator" id="toc-case-2-blood-pressure-as-a-mediator" class="nav-link" data-scroll-target="#case-2-blood-pressure-as-a-mediator">Case 2: Blood pressure as a mediator</a></li>
+  <li><a href="#case-2-blood-pressure-as-a-mediator-1" id="toc-case-2-blood-pressure-as-a-mediator-1" class="nav-link" data-scroll-target="#case-2-blood-pressure-as-a-mediator-1">Case 2: Blood pressure as a mediator</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -429,13 +434,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <section id="simpsons-paradox-puzzle-and-data" class="level1">
 <h1>Simpson’s paradox: puzzle and data</h1>
-<p><a href="https://plato.stanford.edu/entries/paradox-simpson/">Simpson’s paradox</a> is a multi-faceted puzzle about how to analyse data, when the same data set can be interpreted differently, based on different assumptions about the causal relation between variables. The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell (“Causal Inference in Statistics: A primer”, 2016)).</p>
-<p>There are two scenarios.</p>
+<p><a href="https://plato.stanford.edu/entries/paradox-simpson/">Simpson’s paradox</a> is a multi-faceted puzzle about how to analyse data, when the same data set can be interpreted differently, based on different assumptions about the causal relation between variables. The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell (“Causal Inference in Statistics: A primer”, 2016)). There are two scenarios, to be introduced one after the other below, framed as data about the effect of a drug on the rate of recovery.</p>
+<p>The most important objective of this tutorial is to calculate the <em>total causal effect</em> (TCE) of the drug in each scenario, following the approach outline by Pearl et al.&nbsp;(2016). We first calculate a maximum-likelihood estimate of the TCE and then a Bayesian estimate derived from regression modeling. The advantage of the latter is that it allows quantification of uncertainty of the TCE estimate.</p>
 <section id="case-1-gender" class="level2">
 <h2 class="anchored" data-anchor-id="case-1-gender">Case 1: Gender</h2>
 <p>In the first scenario (referred to as “Case 1: Gender as a confound”), the data was collected by the following procedure:</p>
 <ul>
-<li>700 participants were recruited, out of which 350 identify as <code>male</code> and 350 identify as <code>350</code> female</li>
+<li>700 participants were recruited, out of which 357 identified as <code>male</code> and 343 identified as <code>350</code> female</li>
 <li>each participant decides whether or not to take a new drug</li>
 <li>we observe whether the patient recovered or not</li>
 </ul>
@@ -488,8 +493,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li>700 participants were recruited</li>
 <li>each participant decides whether or not to take a new drug</li>
-<li>we measure the blood pressure of each patient and divide by median into a <code>high</code> and <code>low</code> blood pressure group (if a patient took the drug, this measurement happens /after/ having taken the drug)</li>
-<li>we observe whether the patient recovered or not</li>
+<li>each patient is assigned to a <code>high</code> and <code>low</code> blood pressure group, after a blood pressure measurement (if a patient took the drug, this measurement happens <em>after</em> having taken the drug)</li>
+<li>we observe whether each patient recovered or not</li>
 </ul>
 <p>The data for this scenario look as follows:</p>
 <div class="cell">
@@ -508,7 +513,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>(Yes, you are right! The numbers are exactly the same as before!)</p>
-<p>Research Team 2 bends over this data set and notices that the drug decreases recovery rate in the whole population, as shown in the plot below. Based on this, Research Team 2 concludes that the drug is /not/ effective. They do /not/ recommend it for usage.</p>
+<p>Research Team 2 bends over this data set and notices that the drug decreases recovery rate in the whole population, as shown in the plot below. Based on this, Research Team 2 concludes that the drug is <em>not</em> effective. They do <em>not</em> recommend it for usage.</p>
 <div class="cell">
 <details>
 <summary>Reveal code</summary>
@@ -530,38 +535,122 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="resolving-the-puzzle-by-causal-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="resolving-the-puzzle-by-causal-analysis">Resolving the puzzle by causal analysis</h2>
-<p>You say: “The data sets are not the same! The numbers are, but in one case we observed <code>gender</code> in the other we observed <code>blood pressure</code>. That makes a difference, doesn’t it?”</p>
-<p>I say: “Well, okay, but not necessarily. Just having different label for levels of a categorical variable doesn’t make for a different data set, does it?”</p>
-<p>But you immediately shoot back: “Granted, but you also told us about a difference in the data-generating process. There is at least a temporal difference: <code>blood pressure</code> is measure after the treatment, but the level of <code>gender</code> was fixed already before the treatment.”</p>
+<p>You say: “The data sets are not the same! The numbers are, but in one case we observed <code>gender</code> and in the other we observed <code>blood pressure</code>. That makes a difference, doesn’t it?”</p>
+<p>I say: “Well, okay, but not necessarily. Just having different labels for levels of a categorical variable doesn’t make for a different data set, does it?”</p>
+<p>But you immediately shoot back: “Maybe, but you also told us about a difference in the data-generating process. There is at least a temporal difference: <code>blood pressure</code> is measured after the treatment, but the level of <code>gender</code> was fixed already before the treatment.”</p>
 <p>“Okay” I say. “So, do you suggest a temporal analysis?”</p>
-<p>You roll your eyes and after a few more (ridiculous) turns of this conversation, we both agree that, at least, conceptually speaking, there is a difference in the plausible <em>causal structure</em> of the involved variables.</p>
-<p>Consider the first case. There are three binary variables involved. Given the temporal sequence of events in the data generating process, the likely causal relation between the variables is that <code>gender</code> may influence both <code>drug</code> (the decision to take the drug or not) and <code>recovery</code>. Moreover, the <code>drug</code> may have influence <code>recovery</code> directly. (The latter is, of course, what we want to find out: does the <code>drug</code> influence recovery /itself/.)</p>
-<p><span style="color:darkgreen"> TODO: insert pictures of causal graph </span></p>
-<p>Now consider the second scenario. Again, we have three binary variables. But since <code>blood pressure</code> is measures /after/ the treatment, it is not plausible that it could have influence the decision of whether to take the drug or not. Reversely, it /is/ plausible to assume, i.e., at least allow for the possibility, that <code>blood pressure</code> was affected by gender and that it may have affected <code>recovery</code>. As before, we also make room for the possibility that <code>drug</code> may affect <code>recovery</code> also directly.</p>
-<p><span style="color:darkgreen"> TODO: insert pictures of causal graph </span></p>
+<p>You roll your eyes and after a few more (ridiculous) turns of this conversation, we both agree that, at least conceptually speaking, there is a difference in the plausible <em>causal structure</em> of the involved variables.</p>
+<p>Consider the first case. There are three binary variables involved. Given the temporal sequence of events in the data-generating process, the likely causal relation between the variables is that <code>gender</code> may influence both <code>drug</code> (the decision to take the drug or not) and <code>recovery</code>. Moreover, the <code>drug</code> may have influenced <code>recovery</code> directly.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="../pics/Simpson-paradox-confound.pdf" class="img-fluid"></p>
+<p></p><figcaption class="figure-caption">Causal structure of scenario 1: gender is a confound</figcaption><p></p>
+</figure>
+</div>
+<p>Now consider the second scenario. Again, we have three binary variables. But since <code>blood pressure</code> is measures <em>after</em> the treatment, it is not plausible that it could have influenced the decision of whether to take the drug or not. Reversely, it <em>is</em> plausible to assume, i.e., to at least allow for the possibility, that <code>blood pressure</code> was affected by gender and that it may have affected <code>recovery</code>. As before, we also make room for the possibility that <code>drug</code> may affect <code>recovery</code> also directly.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="../pics/Simpson-paradox-mediator.pdf" class="img-fluid"></p>
+<p></p><figcaption class="figure-caption">Causal structure of scenario 2: blood pressure is a mediator</figcaption><p></p>
+</figure>
+</div>
 </section>
 </section>
-<section id="causal-analysis" class="level1">
-<h1>Causal analysis</h1>
-<p><span style="color:darkgreen"> TODO: describe what we want to do and how the purported causal structure makes a world of difference </span></p>
-<ul>
-<li>we want to calculate the <em>total causal effect (TCE)</em>:</li>
-</ul>
+<section id="causal-analysis-with-mle" class="level1">
+<h1>Causal analysis with MLE</h1>
+<p>Following Pearl’s approach to causal analysis, the most important quantity to assess is how (hypothetical) manipulations of administering the drug would influence the recovery rate. In other words, we would like to quantify the <em>total causal effect (TCE)</em>:</p>
 <p><span class="math display">\[ P(R=1 \mid \mathit{do}(D=1)) - P(R=1 \mid \mathit{do}(D=0)) \]</span></p>
+<p>as the difference in expected recovery rate in the imagined scenario that we could surgically change whether a drug was given, without changing non-causal dependencies of <code>drug</code>.</p>
+<p>What it means to condition on “<span class="math inline">\(\mathit{do}(D=d)\)</span>” depends on the assumed causal relationship between variables. So, we will look at each scenario in sequence.</p>
+<section id="case-1-gender-as-a-confound" class="level2">
+<h2 class="anchored" data-anchor-id="case-1-gender-as-a-confound">Case 1: Gender as a confound</h2>
+<p>Since the set <span class="math inline">\(\{G\}\)</span> statisfies the <em>backdoor criterion</em> for the assumed causal DAG, we know that we can calculate the total causal effect (TCE) by eliminating the <em>do</em>-operator in the conditioning using the <em>adjustment formula</em>:</p>
+<p><span class="math display">\[
+P(R=r \mid \mathit{do}(D=d)) = \sum_{g \in \{0,1\}} P(R=r \mid D=d, G=g) \ P(G=g)
+\]</span></p>
+<p>This means that we need to estimate two probability distributions: the conditional probability of recovery given <code>drug</code> and <code>gender</code> and the (marginal) probability of <code>gender</code>. We can use maximum-likelihood estimates for these by just using the observed frequencies as estimators. For <span class="math inline">\(\mathit{do}(D=1)\)</span>, this yields:</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; P(R=1 \mid \mathit{do}(D=1))
+\\
+= &amp;   P(R=1 \mid D=1, G=f) \ P(G=f) + P(R=1 \mid D=1, G=m) \ P(G=m)
+\\
+= &amp;   \frac{192}{263} \ \frac{343}{700}
+    + \frac{81}{87}  \ \frac{357}{700}
+\\
+= &amp; 0.8325462
+\end{align*}
+\]</span></p>
+<p>For <span class="math inline">\(\mathit{do}(D=0)\)</span>, we get:</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; P(R=1 \mid \mathit{do}(D=0))
+\\
+= &amp;   P(R=1 \mid D=0, G=f) \ P(G=f) + P(R=1 \mid D=0, G=m) \ P(G=m)
+\\
+= &amp;   \frac{55}{80} \ \frac{343}{700}
+    + \frac{234}{270}  \ \frac{357}{700}
+\\
+= &amp; 0.778875
+\end{align*}
+\]</span> So, an ML-estimate of the TCE would be:</p>
+<div class="cell">
+<details>
+<summary>Reveal code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dv">192</span><span class="sc">/</span><span class="dv">263</span> <span class="sc">*</span> <span class="dv">343</span><span class="sc">/</span><span class="dv">700</span> <span class="sc">+</span> <span class="dv">81</span><span class="sc">/</span><span class="dv">87</span> <span class="sc">*</span> <span class="dv">357</span><span class="sc">/</span><span class="dv">700</span> <span class="sc">-</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">55</span><span class="sc">/</span><span class="dv">80</span> <span class="sc">*</span> <span class="dv">343</span><span class="sc">/</span><span class="dv">700</span> <span class="sc">+</span> <span class="dv">234</span><span class="sc">/</span><span class="dv">270</span> <span class="sc">*</span> <span class="dv">357</span><span class="sc">/</span><span class="dv">700</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.05367122</code></pre>
+</div>
+</div>
+<p>This suggest that the drug is effectively increasing expected recovery, but we do not have a measure of uncertainty of this estimate. We don’t know if we should consider this convincing evidence to recommend wide-spread adoption. That’s why we need (something like) Bayesian estimation eventually. But let’s first look at the second scenario.</p>
+</section>
+<section id="case-2-blood-pressure-as-a-mediator" class="level2">
+<h2 class="anchored" data-anchor-id="case-2-blood-pressure-as-a-mediator">Case 2: Blood pressure as a mediator</h2>
+<p>For the causal graph assumed for the second scenario, the <em>do</em>-intervention reduces to the conditional probability:</p>
+<p><span class="math display">\[
+P\left(R=1 \mid \mathit{do}(D=d)\right)
+= P\left(R = 1 \mid D=d \right)
+\]</span></p>
+<p>For <span class="math inline">\(\mathit{do}(D=1)\)</span>, this yields:</p>
+<p><span class="math display">\[
+P(R=1 \mid \mathit{do}(D=1)) = P(R=1 \mid D=1) = \frac{273}{350} = 0.78
+\]</span></p>
+<p>For <span class="math inline">\(\mathit{do}(D=0)\)</span>, we get:</p>
+<p><span class="math display">\[
+P(R=1 \mid \mathit{do}(D=0)) = P(R=1 \mid D=0) = \frac{289}{350} = 0.8257143
+\]</span></p>
+<p>The ML-esimtate of the TCE is therefore:</p>
+<div class="cell">
+<details>
+<summary>Reveal code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dv">273</span><span class="sc">/</span><span class="dv">350</span> <span class="sc">-</span> <span class="dv">289</span><span class="sc">/</span><span class="dv">350</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.04571429</code></pre>
+</div>
+</div>
+<p>This differs in sign from the previous estimate, and we might conclude that administering the drug is, overall, <em>not</em> beneficial. Yet, again, we have no uncertainty quantification regarding this estimate.</p>
+</section>
+</section>
+<section id="bayesian-causal-effect-estimation" class="level1">
+<h1>Bayesian causal effect estimation</h1>
+<p>Let’s use Bayesian regression modelling to calculate the total causal effects for each scenario.</p>
 <section id="some-data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="some-data-wrangling">Some data wrangling</h2>
 <p>For subsequent analysis (especially when generating predictive samples), it helps to have the data in long format. The <code>uncount()</code> function is a great tool for this.</p>
 <div class="cell">
 <details>
 <summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cast into long format</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data_SP_long <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  data_simpsons_paradox <span class="sc">|&gt;</span> <span class="fu">uncount</span>(k) <span class="sc">|&gt;</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">recover =</span> <span class="cn">TRUE</span>)  <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>proportion),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  data_simpsons_paradox <span class="sc">|&gt;</span> <span class="fu">uncount</span>(N<span class="sc">-</span>k) <span class="sc">|&gt;</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">recover =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>proportion, <span class="sc">-</span>k)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>data_SP_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cast into long format</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>data_SP_long <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  data_simpsons_paradox <span class="sc">|&gt;</span> <span class="fu">uncount</span>(k) <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">recover =</span> <span class="cn">TRUE</span>)  <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>proportion),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  data_simpsons_paradox <span class="sc">|&gt;</span> <span class="fu">uncount</span>(N<span class="sc">-</span>k) <span class="sc">|&gt;</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">recover =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>proportion, <span class="sc">-</span>k)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>data_SP_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 700 × 4
@@ -580,217 +669,193 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 # … with 690 more rows</code></pre>
 </div>
 </div>
-<p>Let’s quickly sanity-check that this did what we wanted it to:</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check if that worked</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>data_SP_long <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gender, drug, recover) <span class="sc">|&gt;</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 4
-# Groups:   gender, drug, recover [8]
-  gender drug   recover     n
-  &lt;chr&gt;  &lt;chr&gt;  &lt;lgl&gt;   &lt;int&gt;
-1 Female Refuse FALSE      25
-2 Female Refuse TRUE       55
-3 Female Take   FALSE      71
-4 Female Take   TRUE      192
-5 Male   Refuse FALSE      36
-6 Male   Refuse TRUE      234
-7 Male   Take   FALSE       6
-8 Male   Take   TRUE       81</code></pre>
-</div>
-</div>
 </section>
-</section>
-<section id="case-1-gender-as-a-confounder" class="level1">
-<h1>Case 1: Gender as a confounder</h1>
-<p>Since the set <span class="math inline">\(\{G\}\)</span> statisfies the backdoor criterion for the assumed causal DAG, we know that we can calculate the TCE in terms of:</p>
+<section id="case-1-gender-as-a-confound-1" class="level2">
+<h2 class="anchored" data-anchor-id="case-1-gender-as-a-confound-1">Case 1: Gender as a confound</h2>
+<p>Given the causal structure assumed for scenario 1, we can calculate:</p>
 <p><span class="math display">\[
 P(R=1 \mid \mathit{do}(D=d)) = \sum_{g \in \{0,1\}} P(R=1 \mid D=d, G=g) \ P(G=g)
-\]</span> This means that we need to estimate two probability distributions:</p>
+\]</span> Therefore, we need to do three things:</p>
 <ol type="1">
-<li>We need to estimate <span class="math inline">\(P(R=1 \mid D=d, G=g)\)</span>. This can be done with a logistic regression model, regressing <span class="math inline">\(R\)</span> on <span class="math inline">\(D\)</span> and <span class="math inline">\(G\)</span>.</li>
-<li>We need to estimate <span class="math inline">\(P(G)\)</span>, which we can do with an intercept-only logistic regression model.</li>
+<li>We estimate <span class="math inline">\(P(R=1 \mid D=d, G=g)\)</span>. This can be done with a logistic regression model, regressing <span class="math inline">\(R\)</span> on <span class="math inline">\(D\)</span> and <span class="math inline">\(G\)</span>.</li>
+<li>We estimate <span class="math inline">\(P(G)\)</span>, which we can do with an intercept-only logistic regression model.</li>
+<li>We calculate the TCE based on samples from the posterior predictive distribution of these models.</li>
 </ol>
-<p>Once we have both of these models, the TCE can be calculated in a third step based on samples from the posterior predictive distribution of these models.</p>
-<section id="step-1-intercept-only-model-for-gender" class="level2">
-<h2 class="anchored" data-anchor-id="step-1-intercept-only-model-for-gender">Step 1: Intercept-only model for <code>gender</code></h2>
+<section id="step-1-intercept-only-model-for-gender" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-intercept-only-model-for-gender">Step 1: Intercept-only model for <code>gender</code></h3>
 <p>Here is an intercept-only logistic regression model for <code>gender</code>:</p>
 <div class="cell">
 <details>
 <summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>niter <span class="ot">=</span> <span class="dv">4000</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fit_SP_GonIntercept <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> gender <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>niter <span class="ot">=</span> <span class="dv">4000</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>fit_SP_GonIntercept <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> gender <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Each sample from the posterior of the <code>Intercept</code> parameter represents (a guess of) the log-odds of the <code>Male</code> category. The posterior over the proportion of male participants can therefore be retrieved and plotted as follows (the yellow line shows the observed frequency):</p>
 <div class="cell">
 <details>
 <summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>logistic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x))</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>posterior_SP_GonIntercept <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_SP_GonIntercept) <span class="sc">|&gt;</span> </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop_male =</span> <span class="fu">logistic</span>(b_Intercept)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(prop_male)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>posterior_SP_GonIntercept <span class="sc">|&gt;</span> </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prop_male)) <span class="sc">+</span> </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">357</span><span class="sc">/</span><span class="dv">700</span>), <span class="at">color =</span> project_colors[<span class="dv">3</span>]) <span class="sc">+</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"proportion males"</span>) <span class="sc">+</span> </span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"posterior density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="07-causal-inference_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="step-2-regressing-r-against-g-and-d" class="level2">
-<h2 class="anchored" data-anchor-id="step-2-regressing-r-against-g-and-d">Step 2: Regressing <span class="math inline">\(R\)</span> against <span class="math inline">\(G\)</span> and <span class="math inline">\(D\)</span></h2>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fit_SP_RonGD <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> recover <span class="sc">~</span> gender <span class="sc">*</span> drug,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. get posterior predictive samples for model from step (2), based on</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    posterior predictive samples for model from step (1), while</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#    setting D to 0 and 1</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain posterior predictive samples for the number of male participants:</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>postPred_males <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_GonIntercept,</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">Intercept =</span> <span class="dv">1</span>),</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"gender"</span>,</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">ifelse</span>(gender, <span class="st">"Male"</span>, <span class="st">"Female"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(gender)</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co"># NB: in this case we could also have gotten this via: </span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co"># rbinom(n=4000, p=rbeta(4000, 315+1, 700-315+1), size = 700)</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior predictive samples for D=1</span></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>posterior_DrugTaken <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">epred_draws</span>(</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_RonGD,</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> postPred_males <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">drug =</span> <span class="st">"Take"</span>),</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"taken"</span>,</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(taken)</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>posterior_DrugRefused <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">epred_draws</span>(</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_RonGD,</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> postPred_males <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">drug =</span> <span class="st">"Refuse"</span>),</span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"refused"</span>,</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(refused)</span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>CE_post <span class="ot">&lt;-</span> <span class="fu">cbind</span>(posterior_DrugTaken, posterior_DrugRefused) <span class="sc">|&gt;</span> </span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">causal_effect =</span> taken <span class="sc">-</span> refused) </span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>taken, <span class="st">"drug_taken"</span>),</span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>refused, <span class="st">"drug_refused"</span>),</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>causal_effect, <span class="st">"causal_effect"</span>)</span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
-  Parameter      `|95%`   mean `95%|`
-  &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-1 drug_taken     0.688  0.832   0.973
-2 drug_refused   0.613  0.779   0.906
-3 causal_effect -0.0511 0.0534  0.145</code></pre>
-</div>
-<details>
-<summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>CE_post <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> causal_effect)) <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>logistic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>posterior_SP_GonIntercept <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_SP_GonIntercept) <span class="sc">|&gt;</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop_male =</span> <span class="fu">logistic</span>(b_Intercept)) <span class="sc">|&gt;</span> </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(prop_male)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>posterior_SP_GonIntercept <span class="sc">|&gt;</span> </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prop_male)) <span class="sc">+</span> </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">357</span><span class="sc">/</span><span class="dv">700</span>), <span class="at">color =</span> project_colors[<span class="dv">3</span>]) <span class="sc">+</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"proportion males"</span>) <span class="sc">+</span> </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"posterior density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="07-causal-inference_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
-</section>
-<section id="case-2-blood-pressure-as-a-mediator" class="level1">
-<h1>Case 2: Blood pressure as a mediator</h1>
+<section id="step-2-regressing-r-against-g-and-d" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-regressing-r-against-g-and-d">Step 2: Regressing <span class="math inline">\(R\)</span> against <span class="math inline">\(G\)</span> and <span class="math inline">\(D\)</span></h3>
 <div class="cell">
 <details>
 <summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SP2: blood pressure as a mediator</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># we just need to estimate P(R \mid D, B), so a single </span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># regression model will do</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>fit_SP_RonBD <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> recover <span class="sc">~</span> drug,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>posterior_DrugTaken <span class="ot">&lt;-</span> </span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  faintr<span class="sc">::</span><span class="fu">extract_cell_draws</span>(fit_SP_RonBD, drug <span class="sc">==</span> <span class="st">"Take"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(draws) <span class="sc">|&gt;</span> </span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic</span>()</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>posterior_DrugRefused <span class="ot">&lt;-</span> </span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  faintr<span class="sc">::</span><span class="fu">extract_cell_draws</span>(fit_SP_RonBD, drug <span class="sc">==</span> <span class="st">"Refuse"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(draws) <span class="sc">|&gt;</span> </span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic</span>()</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>posterior_causalEffect <span class="ot">&lt;-</span> </span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>  posterior_DrugTaken <span class="sc">-</span> posterior_DrugRefused</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_DrugTaken, <span class="st">"drug_taken"</span>),</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_DrugRefused, <span class="st">"drug_refused"</span>),</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_causalEffect, <span class="st">"causal_effect"</span>)</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_SP_RonGD <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> recover <span class="sc">~</span> gender <span class="sc">*</span> drug,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. get posterior predictive samples for model from step (2), based on</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    posterior predictive samples for model from step (1), while</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#    setting D to 0 and 1</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain posterior predictive samples for the number of male participants:</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>postPred_males <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_GonIntercept,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">Intercept =</span> <span class="dv">1</span>),</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"gender"</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">ifelse</span>(gender, <span class="st">"Male"</span>, <span class="st">"Female"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(gender)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># NB: in this case we could also have gotten this via: </span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co"># rbinom(n=4000, p=rbeta(4000, 315+1, 700-315+1), size = 700)</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior predictive samples for D=1</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>posterior_DrugTaken <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">epred_draws</span>(</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_RonGD,</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> postPred_males <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">drug =</span> <span class="st">"Take"</span>),</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"taken"</span>,</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(taken)</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>posterior_DrugRefused <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">epred_draws</span>(</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">object  =</span> fit_SP_RonGD,</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> postPred_males <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">drug =</span> <span class="st">"Refuse"</span>),</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"refused"</span>,</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws  =</span> niter <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(refused)</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>CE_post <span class="ot">&lt;-</span> <span class="fu">cbind</span>(posterior_DrugTaken, posterior_DrugRefused) <span class="sc">|&gt;</span> </span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">causal_effect =</span> taken <span class="sc">-</span> refused) </span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>taken, <span class="st">"drug_taken"</span>),</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>refused, <span class="st">"drug_refused"</span>),</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(CE_post<span class="sc">$</span>causal_effect, <span class="st">"causal_effect"</span>)</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  Parameter      `|95%`   mean `95%|`
+  &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 drug_taken     0.689  0.832   0.973
+2 drug_refused   0.613  0.778   0.905
+3 causal_effect -0.0494 0.0533  0.142</code></pre>
+</div>
+<details>
+<summary>Reveal code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>CE_post <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> causal_effect)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07-causal-inference_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="case-2-blood-pressure-as-a-mediator-1" class="level2">
+<h2 class="anchored" data-anchor-id="case-2-blood-pressure-as-a-mediator-1">Case 2: Blood pressure as a mediator</h2>
+<div class="cell">
+<details>
+<summary>Reveal code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SP2: blood pressure as a mediator</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># we just need to estimate P(R \mid D, B), so a single </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># regression model will do</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>fit_SP_RonBD <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> recover <span class="sc">~</span> drug,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_SP_long,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter    =</span> niter</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>posterior_DrugTaken <span class="ot">&lt;-</span> </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  faintr<span class="sc">::</span><span class="fu">extract_cell_draws</span>(fit_SP_RonBD, drug <span class="sc">==</span> <span class="st">"Take"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(draws) <span class="sc">|&gt;</span> </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic</span>()</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>posterior_DrugRefused <span class="ot">&lt;-</span> </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  faintr<span class="sc">::</span><span class="fu">extract_cell_draws</span>(fit_SP_RonBD, drug <span class="sc">==</span> <span class="st">"Refuse"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(draws) <span class="sc">|&gt;</span> </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic</span>()</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>posterior_causalEffect <span class="ot">&lt;-</span> </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  posterior_DrugTaken <span class="sc">-</span> posterior_DrugRefused</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_DrugTaken, <span class="st">"drug_taken"</span>),</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_DrugRefused, <span class="st">"drug_refused"</span>),</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_causalEffect, <span class="st">"causal_effect"</span>)</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 4
   Parameter     `|95%`    mean `95%|`
   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1 drug_taken     0.735  0.779  0.821 
-2 drug_refused   0.786  0.825  0.866 
-3 causal_effect -0.105 -0.0453 0.0122</code></pre>
+1 drug_taken     0.736  0.780  0.824 
+2 drug_refused   0.785  0.826  0.864 
+3 causal_effect -0.105 -0.0462 0.0122</code></pre>
 </div>
 <details>
 <summary>Reveal code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the total causal effect! </span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We will not go into computing "direct causal effects" in the </span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   presence of mediators.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the total causal effect! </span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We will not go into computing "direct causal effects" in the </span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   presence of mediators.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
