@@ -8,6 +8,7 @@ Here is code to load (and if necessary, install) required packages, and to set s
 pckgs_needed <- c(
   "tidyverse",
   "brms",
+  "rstan",
   "remotes",
   "tidybayes",
   "bridgesampling",
