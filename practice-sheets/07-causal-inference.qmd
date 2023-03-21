@@ -8,6 +8,7 @@ execute:
   error: false
   warning: false
   message: false
+  cache: true
 callout-appearance: simple
 ---
 
@@ -156,8 +157,9 @@ $$
 $$ So, an ML-estimate of the TCE would be:
 
 ```{r}
-192/263 * 343/700 + 81/87 * 357/700 -
+MLE_case1 <- 192/263 * 343/700 + 81/87 * 357/700 -
   (55/80 * 343/700 + 234/270 * 357/700)
+MLE_case1
 ```
 
 This suggest that the drug is effectively increasing expected recovery, but we do not have a measure of uncertainty of this estimate. We don't know if we should consider this convincing evidence to recommend wide-spread adoption. That's why we need (something like) Bayesian estimation eventually. But let's first look at the second scenario.
@@ -186,7 +188,8 @@ $$
 The ML-esimtate of the TCE is therefore:
 
 ```{r}
-273/350 - 289/350
+MLE_case2 <- 273/350 - 289/350
+MLE_case2
 ```
 
 This differs in sign from the previous estimate, and we might conclude that administering the drug is, overall, *not* beneficial. Yet, again, we have no uncertainty quantification regarding this estimate.
@@ -212,15 +215,17 @@ data_SP_long
 
 ## Case 1: Gender as a confound
 
-Given the causal structure assumed for scenario 1, we can calculate:
+Given the causal structure assumed for scenario 1, we can calculate the effects of the relevant *do*-intervention as:
 
 $$
 P(R=1 \mid \mathit{do}(D=d)) = \sum_{g \in \{0,1\}} P(R=1 \mid D=d, G=g) \ P(G=g)
-$$ Therefore, we need to do three things:
+$$ 
+
+Therefore, we need to do three things:
 
 1.  We estimate $P(R=1 \mid D=d, G=g)$. This can be done with a logistic regression model, regressing $R$ on $D$ and $G$.
 2.  We estimate $P(G)$, which we can do with an intercept-only logistic regression model.
-3.  We calculate the TCE based on samples from the posterior predictive distribution of these models.
+3.  We calculate the TCE based on samples from the posterior predictive distributions of these models.
 
 ### Step 1: Intercept-only model for `gender`
 
@@ -231,7 +236,7 @@ Here is an intercept-only logistic regression model for `gender`:
 #| error: false
 #| results: hide
 
-niter = 4000
+niter = 2000
 
 fit_SP_GonIntercept <- brm(
   formula = gender ~ 1,
@@ -239,6 +244,7 @@ fit_SP_GonIntercept <- brm(
   family  = bernoulli(link = "logit"),
   iter    = niter
 )
+
 ```
 
 Each sample from the posterior of the `Intercept` parameter represents (a guess of) the log-odds of the `Male` category. The posterior over the proportion of male participants can therefore be retrieved and plotted as follows (the yellow line shows the observed frequency):
@@ -262,7 +268,12 @@ posterior_SP_GonIntercept |>
 
 ### Step 2: Regressing $R$ against $G$ and $D$
 
+Next, we regress `recover` on `drug` and `gender`. 
+
 ```{r}
+#| warning: false
+#| error: false
+#| results: hide
 
 fit_SP_RonGD <- brm(
   formula = recover ~ gender * drug,
@@ -270,14 +281,17 @@ fit_SP_RonGD <- brm(
   family  = bernoulli(link = "logit"),
   iter    = niter
 )
+```
 
-# 3. get posterior predictive samples for model from step (2), based on
-#    posterior predictive samples for model from step (1), while
-#    setting D to 0 and 1
+### Step 3: Compute the posterior expectations and the TCE
 
-# obtain posterior predictive samples for the number of male participants:
+In a third step, we draw posterior predictive samples for the model from step 2, based on posterior predictive samples for the model from step 1, while manually setting `drug` to `Take` and `Refuse`.
 
-postPred_males <- tidybayes::predicted_draws(
+First, we get posterior predictive samples of `gender` from the model from step 1.
+Notice that these are just samples of `Male` and `Female`, for which we will generate predictions based on the the second model.
+
+```{r}
+postPred_gender <- tidybayes::predicted_draws(
   object  = fit_SP_GonIntercept,
   newdata = tibble(Intercept = 1),
   value   = "gender",
@@ -290,24 +304,34 @@ postPred_males <- tidybayes::predicted_draws(
 # NB: in this case we could also have gotten this via: 
 # rbinom(n=4000, p=rbeta(4000, 315+1, 700-315+1), size = 700)
 
-# posterior predictive samples for D=1
+postPred_gender
+```
 
+Based on these 'sampled individuals' we generate the prediction of the second model (predicting the a posteriori expected recovery, given gender and whether to take the drug or not).
+
+```{r}
+# posterior predictive samples for D=1
 posterior_DrugTaken <- tidybayes::epred_draws(
   object  = fit_SP_RonGD,
-  newdata = postPred_males |> mutate(drug = "Take"),
+  newdata = postPred_gender |> mutate(drug = "Take"),
   value   = "taken",
   ndraws  = niter * 2
 ) |> ungroup() |> 
   select(taken)
 
+# posterior predictive samples for D=0
 posterior_DrugRefused <- tidybayes::epred_draws(
   object  = fit_SP_RonGD,
-  newdata = postPred_males |> mutate(drug = "Refuse"),
+  newdata = postPred_gender |> mutate(drug = "Refuse"),
   value   = "refused",
   ndraws  = niter * 2
 ) |> ungroup() |> 
   select(refused)
+```
 
+To calculate the TCE we look at the difference in predicted recovery rate:
+
+```{r}
 CE_post <- cbind(posterior_DrugTaken, posterior_DrugRefused) |> 
   mutate(causal_effect = taken - refused) 
 
@@ -316,22 +340,95 @@ rbind(
   aida::summarize_sample_vector(CE_post$refused, "drug_refused"),
   aida::summarize_sample_vector(CE_post$causal_effect, "causal_effect")
 )
+```
 
+This yields a point estimate (Bayesian mean posterior) and the usual uncertainty quantification in terms of credible intervals etc.
+In this case, we would not be compelled to conclude that the causal effect is substantial as the posterior estimate for this effect clearly encompasses non-negligible mass for the range of negative values.
+The orange line show the maximum-likelihood estimate of the causal effect.
+
+```{r}
+CE_post |> 
+  ggplot(aes(x = causal_effect)) +
+  tidybayes::stat_halfeye() +
+  geom_vline(aes(xintercept = MLE_case1), color = project_colors[3])
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1: Alternative calculation of causal effect estimate
+
+The last plot looks a bit ragged.
+This is because we approximate $P(G)$ by actual samples of levels `Male` and `Female`.
+There is an alternative, though. 
+Both approaches are correct.
+But they differ slightly in logic and execution, so you may benefit from having seen both.
+
+In this new approach you do this:
+
+1. Approximate $P(G)$ by taking samples from the expected value of $P(G=M)$. Use the function `tidybayes::epred_draws()` for this.
+2. Sample expected values of $P(R=1 \mid G, D)$ for all combinations of levels of $G$ and $D$.
+3. Weigh the predicted recovery rates from step 2 with the corresponding predictions of $P(G)$ from step 1.
+4. Compute the causal effect from this.
+
+Compute the ususal summary statistics (posterior mean, credible interval) and plot the posterior for the estimated causal effect.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+# get epred samples for intercept-only model:
+postPred_maleProportion <- tidybayes::epred_draws(
+  fit_SP_GonIntercept, 
+  newdata = tibble(Intercept = 1),
+  value = "maleProp",
+  ndraws  = niter * 2
+  ) |> ungroup() |> 
+  select(.draw, maleProp)
+
+#  get epred samples for the R ~ D, G model
+#   for all combinations of D and G
+posterior_DrugTaken <- tidybayes::epred_draws(
+  object  = fit_SP_RonGD,
+  newdata = tibble(gender = c("Male", "Male", "Female", "Female"),
+                   drug   = c("Take", "Refuse", "Take", "Refuse")),
+  value   = "recovery",
+  ndraws  = niter * 2
+) |> ungroup() |> 
+  select(.draw, gender, drug, recovery)
+
+# weigh and compute the causal effect
+CE_post <- posterior_DrugTaken |> full_join( postPred_maleProportion) |> 
+  mutate(weights = ifelse(gender == "Male", maleProp, 1-maleProp)) |> 
+  group_by(`.draw`, drug) |> 
+  summarize(predRecover = sum(recovery * weights)) |> 
+  pivot_wider(names_from = drug, values_from = predRecover) |> 
+  mutate(causal_effect = Take - Refuse) 
+
+# produce summary statistics
+rbind(
+  aida::summarize_sample_vector(CE_post$Take, "drug_taken"),
+  aida::summarize_sample_vector(CE_post$Refuse, "drug_refused"),
+  aida::summarize_sample_vector(CE_post$causal_effect, "causal_effect")
+)
+
+# plot the relevant posterior
 CE_post |> 
   ggplot(aes(x = causal_effect)) +
   tidybayes::stat_halfeye()
 ```
 
+:::
+:::
+
 ## Case 2: Blood pressure as a mediator
 
+For the second case, blood pressure as a mediator, the calculations are much easier.
+We just need to estimate $P(R \mid D, B)$, so a single regression model will do.
+
 ```{r}
-
-###################################################
-# SP2: blood pressure as a mediator
-###################################################
-
-# we just need to estimate P(R \mid D, B), so a single 
-# regression model will do
+#| warning: false
+#| error: false
+#| results: hide
 
 fit_SP_RonBD <- brms::brm(
   formula = recover ~ drug,
@@ -339,7 +436,12 @@ fit_SP_RonBD <- brms::brm(
   family  = bernoulli(link = "logit"),
   iter    = niter
 )
+```
 
+The coefficients of a logistic regression model relate to log-odds.
+Using the `faintr` package and the logistic transformation, we can calculate samples of the causal effect as follows:
+
+```{r}
 posterior_DrugTaken <- 
   faintr::extract_cell_draws(fit_SP_RonBD, drug == "Take") |> 
   pull(draws) |> 
@@ -357,14 +459,58 @@ rbind(
   aida::summarize_sample_vector(posterior_DrugTaken, "drug_taken"),
   aida::summarize_sample_vector(posterior_DrugRefused, "drug_refused"),
   aida::summarize_sample_vector(posterior_causalEffect, "causal_effect")
-  
+)
+```
+
+Here is a density plot of the posterior samples.
+The orange line show the maximum-likelihood estimate of the causal effect.
+
+```{r}
+tibble(CE = posterior_causalEffect) |> 
+  ggplot(aes(x = CE)) +
+  tidybayes::stat_halfeye() +
+  geom_vline(aes(xintercept = MLE_case2), color = project_colors[3])
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 2: Using poterior predictives to estimate causal effects
+
+The last section computed estimates of the relevant causal effect directly from the samples for model coefficients.
+This works well for logistic regression, but in other cases it may be more convenient to use samples from the posterior predictive distribution of the `R ~ D, G` model, similar to what we did in the first scenario.
+
+So, use `tidybayes::epred_draws()` to get estimates of the causal effect.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+# get posterior predictive samples & compute causal effect
+CE_post2 <- tidybayes::epred_draws(
+  fit_SP_RonBD,
+  newdata = tibble(drug   = c("Take", "Refuse")),
+  ndraws  = niter * 2
+) |> 
+  pivot_wider(id_cols = `.draw`, names_from = drug, values_from = `.epred`) |> 
+  mutate(causal_effect = Take - Refuse)
+
+# produce summary statistics
+rbind(
+  aida::summarize_sample_vector(CE_post2$Take, "drug_taken"),
+  aida::summarize_sample_vector(CE_post2$Refuse, "drug_refused"),
+  aida::summarize_sample_vector(CE_post2$causal_effect, "causal_effect")
 )
 
-# This is the total causal effect! 
-# We will not go into computing "direct causal effects" in the 
-#   presence of mediators.
-
-
-
+# plot posterior
+CE_post2 |> 
+  ggplot(aes(x = causal_effect)) +
+  tidybayes::stat_halfeye() +
+  geom_vline(aes(xintercept = MLE_case2), color = project_colors[3])
 
 ```
+
+:::
+:::
+
+<span style = "color:darkgreen"> TODO: include direct effect computation for mediator case </span>  
+
+
