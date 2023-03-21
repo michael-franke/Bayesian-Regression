@@ -1,0 +1,376 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "XX: Mixture models"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+---
+
+This tutorial discusses a minimal example of a mixture model. After introducing the main idea behind mixture models, a fictitious (minimal) data set is analyzed first with a hand-written Stan program, and then with a mixture regression model using `brms`.
+
+{{< include 00-preamble.qmd >}}
+
+# Finite mixtures: Motivation & set-up
+
+To motivate mixture modeling, let's look at a fictitious data set. There are two sets of measurements. For each of two species of plants, we measured the length of 25 exemplars.
+
+```{r}
+heights_A <- c(6.94, 11.77, 8.97, 12.2, 8.48, 
+               9.29, 13.03, 13.58, 7.63, 11.47, 
+               10.24, 8.99, 8.29, 10.01, 9.47, 
+               9.92, 6.83, 11.6, 10.29, 10.7, 
+               11, 8.68, 11.71, 10.09, 9.7)
+
+heights_B <- c(11.45, 11.89, 13.35, 11.56, 13.78, 
+               12.12, 10.41, 11.99, 12.27, 13.43, 
+               10.91, 9.13, 9.25, 9.94, 13.5, 
+               11.26, 10.38, 13.78, 9.35, 11.67, 
+               11.32, 11.98, 12.92, 12.03, 12.02) + 4
+```
+
+Here's how this data is distributed:
+
+```{r}
+ffm_data <- tibble(
+  A = heights_A,
+  B = heights_B
+) |> 
+  pivot_longer(
+    cols      = everything(),
+    names_to  = 'species',
+    values_to = 'height'
+  )
+
+ffm_data |> 
+  ggplot(aes(x = height)) +
+  geom_density(aes(color = species), size = 2) +
+  geom_rug(aes(color = species), size = 1.5) +
+  theme(legend.position = 'none')
+```
+
+Now suppose that (for whatever reason) we get the data without information which measure was from which group. If we plot the data without this information, the picture looks like this:
+
+```{r}
+flower_heights <- c(heights_A, heights_B)
+tibble(flower_heights) |> 
+  ggplot(aes(x = flower_heights)) + 
+  geom_rug(size = 2) +
+  geom_density(size = 2) +
+  xlab("height")
+```
+
+Data may often look like this, showing signs of **bi- or multi-modality**, i.e., having several "humps" or apparent local areas of higher concentration. If we fit a single Gaussian to this data it might look like this:
+
+```{r}
+# using the descriptive means/SD for a quick "best fit"
+mu    <- mean(flower_heights)
+sigma <- sd(flower_heights)
+tibble(
+  source  = c(rep("data", length(flower_heights)), rep("fit", 1000)),
+  height  = c(flower_heights, rnorm(1000, mu, sigma))
+) |>  
+ggplot(aes(x = height, fill=source)) +
+  geom_density(size = 2, alpha = 0.3)
+
+
+```
+
+If we see a posterior predictive check that looks like this picture above, you know that there is something systematic amiss with your model: you assume a single peak (a multimodal response distribution) but the data shows signs of multi-modality (several "peaks" or centers of high density).
+
+Models that allow multiple "peaks" in the response distribution, are mixture models. When dealing with a Gaussian likelihood function, as in the case at hand, we speak of Gaussian mixture models (GMM). In general, a mixture model incorporates the idea that the data was generated from more than one process (alternative lingo: that observations were samples from different populations).
+
+Let $\langle f_1, \dots, f_k \rangle$ be $k$ likelihood functions for data $Y$. The $k$-mixture model for $Y$ explains the data as a weighted combination, with mixture weights $\alpha$ (a probability vector). Procedurally, think of inferring for each data point $y_{i}$ which a mixture component $k(i)$ most likelihood belongs to (i.e., by which of $k$ different processes it may have been generated; or, from which of $k$ different populations it was sampled). The probability that any $y_{i}$ is in class $j$ is given by $\alpha_{i}$, so that $\alpha$ represents the overall probabilities of different components (sub-populations). This results in a mixture likelihood function which can be written like so:
+
+$$f^{\mathrm{MM}}(y_i) = \alpha_{k(i)} f_{k(i)}$$
+
+For the current case, we assume that there are just two components (because we see two "humps", or have *a priori* information that there are exactly two groups; the bonus exercise looks at a generalization to $K>2$ groups). Concretely, for each data point $y_i$, $i \in \{1, \dots, N\}$, we are going to estimate how likely data point $i$ may have been a sample from normal distribution "Number 0", with $\mu_0$ and $\sigma_0$, or from normal distribution "Number 1", with $\mu_1$ and $\sigma_1$. Naturally, all $\mu_{0,1}$ and $\sigma_{0,1}$ are estimated from the data, as are the group-indicator variables $z_i$. There is also a global parameter $p$ which indicates how likely any data point is to come from one of the two distributions (you'll think about which one below!). Here's the full model we will work with (modulo an additional ordering constraint, as discussed below):
+
+$$
+\begin{align*}
+p        & \sim \text{Beta}(1,1) \\
+z_i      & \sim \text{Bernoulli}(p) \\
+\mu_{0,1}    & \sim \mathcal{N}(12, 10) \\
+\sigma_{0,1} & \sim \text{log-normal}(0, 2) \\
+y_i      & \sim \mathcal{N}(\mu_{z_i}, \sigma_{z_i})
+\end{align*}
+$$
+
+::: {.callout-caution collapse="false"}
+## Exercise 1a: Draw the model
+
+Draw a graphical representation of this mixture model.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+FILL ME
+:::
+:::
+
+# A Gaussian mixture model in Stan
+
+## The Stan model
+
+We are going to pack the data together for fitting the Stan model:
+
+```{r}
+data_GMM <- list(
+  y = flower_heights,
+  N = length(flower_heights)
+)
+```
+
+Below is the Stan code for this model. It is also given in file `Gaussian-mixture-01-basic.stan`. A few comments on this code:
+
+1.  There is no occurrence of variable $z_i$, as this is marginalized out. We do this following the same recipe as before and increment the log-score manually, using `target += log_sum_exp(alpha)`.
+2.  We declare vector `mu` to be of a particular type which we have not seen before. We want the vector to be ordered. We will come back to this later. Don't worry about it now.
+
+``` stan
+data {
+  int<lower=1> N; 
+  real y[N];      
+}
+parameters {
+  real<lower=0,upper=1> p;         
+  ordered[2] mu;             
+  vector<lower=0>[2] sigma; 
+}
+model {
+  p ~ beta(1,1);
+  mu ~ normal(12, 10);
+  sigma ~ lognormal(0, 1);
+  for (i in 1:N) {
+    vector[2] alpha;
+    alpha[1] = log(p)   + normal_lpdf(y[i] | mu[1], sigma[1]);
+    alpha[2] = log(1-p) + normal_lpdf(y[i] | mu[2], sigma[2]);
+    target += log_sum_exp(alpha);
+  }
+}
+```
+
+```{r, results="hide"}
+#| results: hide
+stan_fit_2b_GMM <- stan(
+  file = 'stan-files/Gaussian-mixture-01-basic.stan',
+  data = data_GMM
+)
+stan_fit_2b_GMM
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1b: Interpret this outcome
+
+Interpret these results! Focus on parameters $p$, $\mu_1$ and $\mu_2$. What does $p$ capture in this implementation? Do the (mean) estimated values make sense?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Yes, they do make sense. $p$ is the prevalence of data from the group with the higher mean, which is group $B$ in our case. The model infers that there are roughly equally many data points from each group, which is indeed the case. The model also recovers the descriptive means of each group!
+
+```{r}
+ffm_data |> 
+  group_by(species) |> 
+  summarise(
+    mean     = mean(height),
+    std_dev  = sd(height)
+  )
+```
+:::
+:::
+
+## An unidentifiable model
+
+Let's run the model in file `Gaussian-mixture-02-unindentifiable.stan`, which is exactly the same as before but with vector `mu` being an unordered vector of reals.
+
+```{r, results="hide"}
+#| results: hide
+
+stan_fit_2c_GMM <- stan(
+  file = 'stan-files/Gaussian-mixture-02-unindentifiable.stan',
+  data = data_GMM,
+  # set a seed for reproducible results
+  seed = 1734
+)
+```
+
+Here's a summary of the outcome:
+
+```{r}
+stan_fit_2c_GMM
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1c: Interpret model output
+
+What is remarkable here? Explain what happened. Explain in what sense this model is "unidentifiable".
+
+**Hint:** Explore the parameters with high $\hat{R}$ values. When a model fit seems problematic, a nice tool to explore what might be amiss is the package `shinystan`. You could do this:
+
+```{r}
+#| eval: false
+shinystan::launch_shinystan(stan_fit_2c_GMM)
+```
+
+Then head over to the tab "Explore" and have a look at some of the parameters.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+The $\hat{R}$ values of the mean parameters are substantially above 1, suggesting that the model did not converge. But if we look at trace plots for these parameters, for example, we see that $\mu_1$ has "locked into" group A for some chains, and into group B for some other chains.
+
+The model is therefore unidentifiable in the sense that, without requiring that `mu` is ordered, $\mu_1$ could be for group A or group B, and which one it will take on depends on random initialization. Requiring that `mu` be ordered, breaks this symmetry.
+:::
+:::
+
+## Posterior predictive check
+
+We can extend the (identifiable) model from above to also output samples from the posterior predictive distribution. This is given in file `Gaussian-mixture-03-withPostPred.stan`. Let's run this model, collect the posterior predictive samples in a variable called `yrep` and draw a density plot.
+
+```{r}
+#| results: hide
+stan_fit_2d_GMM <- stan(
+  file = 'stan-files/Gaussian-mixture-03-withPostPred.stan',
+  data = data_GMM,
+  # only return the posterior predictive samples
+  pars = c('yrep')
+)
+```
+
+```{r}
+tibble(
+  source  = c(rep("data", length(flower_heights)), rep("PostPred", length(extract(stan_fit_2d_GMM)$yrep))),
+  height = c(flower_heights, extract(stan_fit_2d_GMM)$yrep)
+) |>  
+  ggplot(aes(x = height, fill=source, color = source)) +
+  geom_density(size = 2, alpha = 0.3)
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1d: Scrutinize posterior predictive check
+
+Does this look like a distribution that could have generated the data?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+The distribution looks plausible enough. The visual fit in these density plots is not perfect also because we use quite a different number of samples to estimate the density.
+:::
+:::
+
+# A Gaussian mixture model in `brms`
+
+We can also run this finite mixture model in `brms`. We saw earlier already that fitting the parameters of a single Gaussian is like fitting an intercept-only simple linear regression model.
+We can add finite mixtures to `brms` by defining setting the `family` parameter to with the help of the `brms::mixture()` function.
+Here, we define a finite mixture of Gaussians, of course, but more flexibility is possible.
+
+```{r}
+#| results: hide
+
+brms_fit_2e_GMM <- brm(
+  # intercept only model
+  formula = y ~ 1, 
+  data = data_GMM, 
+  # declare that the likelihood should be a mixture
+  family = mixture(gaussian, gaussian),
+  # use weakly informative priors on mu  
+  prior = c(
+    prior(normal(12, 10), Intercept, dpar = mu1),
+    prior(normal(12, 10), Intercept, dpar = mu2)
+  )
+) 
+```
+
+Let's look at the model fit:
+
+```{r}
+brms_fit_2e_GMM
+```
+
+Let's also look at the Stan code that `brms` produced in the background for this model in order to find out how this model is related to that of Ex 2.b:
+
+```{r}
+brms_fit_2e_GMM$model
+```
+
+Now, your job. Look at the two previous outputs and answer the following questions:
+
+::: {.callout-caution collapse="false"}
+
+## Exercise 2a
+
+Is the `brms`-model the exact same as the model in the previous section (model coded directly in Stan)?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+No, the priors on $\mu$ and $\sigma$ are different.
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2b
+
+What is the equivalent of the variable `alpha` from the model of the previous section in this new `brms`-generated code?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+That's `ps`
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2c
+
+What is the equivalent of the variable `p` from the model of Ex 2.b in this new `brms`-generated code?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+That's `theta[1]`
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2d
+
+Is the `brms` code generating posterior predictive samples?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+No! This is not strictly necessary. These can be generated also later for a fitted object.
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2e
+
+What is the prior probability in the `brms`-generated model of any given data point $y_i$ to be from the first or second mixture component? Can you even tell from the code?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+We cannot say. It's in the variable `con_theta` but that is supplied from the outside. We can only guess. (A good guess would be: yes, it's also unbiased 50/50.)
+
+:::
+:::
+
+<link rel="stylesheet" href="hljs.css">
+
+```{=html}
+<script src="stan.js"></script>
+```
+```{=html}
+<script>$('pre.stan code').each(function(i, block) {hljs.highlightBlock(block);});</script>
+```
