@@ -1,0 +1,205 @@
+---
+title: "Group-level effects, pooling & smoothing"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+---
+
+We can motivate the inclusion of group-level effects in terms of otherwise violated independence assumptions (the reaction times of a single individual are not necessarily independent of each other; some individuals are just slower or faster than others *tout court*). We can also motivate group-level effects by appeal to their effect of attenuating inference by flexibly weighing information from different groups. A good example of this latter effect arises when the number of observations in each group is not the same. Let's go and explore!
+
+{{< include 00-preamble.qmd >}}
+
+# Different ways to a mean
+
+We will use the data set of (log) radon measurements that ships with the `rstanarm` package.
+
+```{r}
+data_radon <- rstanarm::radon |> as_tibble()
+data_radon
+```
+
+Suppose that we are interested in an estimate of the mean log-radon measured. Easy! We can just take the empirical mean of each measurement:
+
+```{r}
+# empirical mean: 1.265
+empirical_mean <- data_radon |> pull(log_radon) |> mean()
+empirical_mean
+```
+
+But should we not, somehow, also take into account that these measurements are from different counties? Okay, so let's just calculate the mean log-random measured for each county:
+
+```{r}
+# empirical mean of means: 1.38
+emp_mean_of_means <- data_radon |> 
+  group_by(county) |> 
+  summarize(mean_by_county = mean(log_radon)) |> 
+  ungroup() |> 
+  pull(mean_by_county) |> 
+  mean()
+```
+
+Aha! There is a difference between the (empirical) grand mean and the (empirical) mean-of-means. This is because there different numbers of observations for each county:
+
+```{r}
+data_radon |> 
+  group_by(county) |> 
+  summarize(mean_by_county = mean(log_radon),
+            n_obs_by_county = n())
+```
+
+The grand mean does not distinguish at all which observation came from which county. The mean-of-means, on the other hand, puts "counties first", so to speak, and does not acknowledge that the number of observations each county contributed. To understand how this can yield a difference, look at this picture:
+
+```{r}
+data_radon |> 
+  group_by(county) |> 
+  summarize(mean_by_county = mean(log_radon),
+            n_obs_by_county = n()) |>
+  mutate(county = fct_reorder(county, mean_by_county)) |> 
+  ggplot(aes(x = mean_by_county, y = county)) +
+  theme(legend.position="none") +
+  xlab("mean log-radon") + ylab("") +
+  geom_vline(aes(xintercept = empirical_mean), color = project_colors[2], size = 1.5) + 
+  geom_vline(aes(xintercept = emp_mean_of_means), color = project_colors[3], size = 1.5) +
+  geom_point(aes(size = n_obs_by_county), alpha = 0.7) +
+  annotate("text", x = empirical_mean - 0.4, y = 70, label = "grand mean", color = project_colors[2], size = 13) +
+  annotate("text", x = emp_mean_of_means + 0.5, y = 20, label = "mean-of-means", color = project_colors[3], size = 13) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+The $x$-position of the dots represents the mean for each county. The size of the dots represents the number of observations for each county. The grand mean (in red) is lower because some "heavier dots pull it to the left". Reversely, the mean-of-means (in yellow) is "pulled more towards the right by the lighter dots" (since it doesn't care about the size of the dots).
+
+Which measure is correct? Neither! Or better: both! Or actually: it depends ... on what we want. But actually: maybe we should let the data decide.
+
+# Group-level effects as smoothing terms
+
+Suppose we want a Bayesian measure (with quantified uncertainty) of the grand mean and the mean-of-means, how would we do it? (Maybe you want to think about this for a moment, before you uncover the solution below!)
+
+::: {.callout-caution collapse="false"}
+## Exercise
+
+Retrieve a Bayesian estimate of the grand mean and of the mean-of-means for the log-randon measure.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+The grand mean is estimable with an intercept-only model.
+
+```{r}
+#| results: hide
+
+fit_InterOnly <- brms::brm(
+  formula = log_radon ~ 1,
+  data    = data_radon
+)
+```
+
+The Bayesian estimate of the grand mean is given by the intercept term:
+
+```{r}
+grand_mean_estimate <- 
+  fit_InterOnly |> tidybayes::tidy_draws() |> 
+  pull(b_Intercept) |> 
+  aida::summarize_sample_vector(name = "grand mean")
+grand_mean_estimate
+```
+
+The mean-of-means can be estimated by running a regression model with `county` as population-level effect.
+
+```{r}
+#| results: hide
+
+# We need quite high iterations for this to fit properly 
+# (likely to do the few observations in many of the groups).
+fit_FE <- brms::brm(
+  formula = log_radon ~ county,
+  prior   = prior(student_t(1,0,10)),
+  iter    = 20000,
+  thin    = 5,
+  data    = data_radon
+)
+```
+
+This model yields estimates for the mean of each county. (There is some data wrangling to do to get at them, given the way categorical factors are treated internally, but that is a different matter). If we average the estimates properly (here using helper functions from the `faintr` package), we get an estimate of the mean-of-means:
+
+```{r}
+# estimated grand mean: 1.381
+meanOmean_estimate <- faintr::extract_cell_draws(fit_FE) |> 
+  pull(draws) |> 
+  aida::summarize_sample_vector(name = "mean-of-means")
+rbind(grand_mean_estimate, meanOmean_estimate)
+```
+:::
+:::
+
+In between these two options (no `county` variable vs. `county`) as a population-level effect, there is a middle path: treating `county` as a group-level random intercept.
+
+```{r}
+#| result: hide
+
+fit_RE <- brms::brm(
+  formula = log_radon ~ (1 | county),
+  data    = data_radon
+)
+```
+
+In this model, the intercept term is an estimate of the mean, but it is in between the estimated grand mean and the estimated mean-of-means:
+
+```{r}
+pooled_mean <- fit_RE |> tidybayes::tidy_draws() |> 
+  pull("b_Intercept") |> 
+  aida::summarize_sample_vector(name = "pooled mean")
+rbind(grand_mean_estimate, meanOmean_estimate, pooled_mean)
+```
+
+This estimate is nuanced. It does take all data points into account (unlike the mean-of-mean). But (unlike the grand mean), it does weigh some data observations more heavily than others. In particular, counties with few but extreme observations receive, so to speak, less attention because "we explain away these observations as flukes for a given county". In other words, we can think of group-level modeling also as a way of regularizing inference to differentially weigh observations, depending on which group they originated from.
+
+Okay, this may sound like a plausible rationalization of what one could do, but how do we know that the model actually behaves in this way? -- By looking at what the model would predict for different counties. So, here is a plot of the *a posteriori* expected measurement for each county (ordered by size) together with the empirically observed mean-by-county:
+
+```{r}
+plotData_RE <- data_radon |> 
+  group_by(county) |> 
+  summarize(mean_by_county = mean(log_radon),
+            n_observations = n()) |> 
+  tidybayes::add_epred_draws(
+    object = fit_RE
+  ) |> 
+  group_by(county, mean_by_county, n_observations) |> 
+  summarize(
+    prediction_lower = tidybayes::hdi(.epred)[1],
+    prediction_mean = mean(.epred),
+    prediction_higher = tidybayes::hdi(.epred)[2]
+    ) |> 
+  ungroup() |> 
+  mutate(county = fct_reorder(county, n_observations))
+
+plotData_RE |> 
+  ggplot(aes(x = prediction_mean , y = county), size = 2) +
+  geom_point(aes(x = mean_by_county), color = project_colors[2]) +
+  geom_errorbar(aes(xmin = prediction_lower, xmax = prediction_higher), 
+                color = "gray", alpha = 0.8) +
+  geom_segment(aes(y = county, yend=county, x = mean_by_county, xend=prediction_mean),
+              color = project_colors[2]) +
+  geom_point() +
+  ylab("") +
+  xlab("mean log-radon")
+```
+
+\
+This graph shows the counties on the $y$-axis, ordered number of observation from highest on the top to lowest on the bottom. The black dots are the means of the posterior predictive for each county (the gray error bars are 95% credible intervals for these estimates. The red dots are the empirically observed means for each county (the red lines indicating the differences between prediction and observation for each county).
+
+This graph shows:
+
+1.  The higher the number of observations, the less uncertainty about the prediction.
+2.  The higher the number of observations, the less difference between prediction and observation.
+
+It is the latter observation that lends credence to the interpretation above: the effect of random effects is differential weighing of observations in a data-driven manner; low certainty cases receive less weight, as they should.
+
+<span style = "color:darkgreen"> add an exercise if you can </span>  
+

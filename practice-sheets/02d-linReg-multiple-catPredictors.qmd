@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "02: Simple linear regression & categorical predictors"
+title: "02: Simple linear regression & categorical predictors"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
 editor: visual

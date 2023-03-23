@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "01b: Simple linear regression"
+title: "Simple linear regression"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
 editor: visual
@@ -17,7 +17,7 @@ callout-appearance: simple
 
 Let's use the `dolphin` data set to practice Bayesian linear regression modeling.
 
-```{r}
+```{r load-data}
 dolphin <- aida::data_MT
 ```
 
@@ -27,7 +27,7 @@ First, we will massage the data a little bit. We only want to look at those rows
 
 ## Data wrangling
 
-```{r}
+```{r wrangle-data}
 
 # aggregate
 dolphin_agg <- dolphin |> 
@@ -45,7 +45,7 @@ head(dolphin_agg)
 
 Before we start thinking about statistical inference, we always want to get a feel for the data visually. You basically always want to plot the data.
 
-```{r}
+```{r plot-data}
 
 # plot
 ggplot(data = dolphin_agg, 
@@ -71,9 +71,9 @@ So, to quantify evidence and uncertainty with posterior samples, let's run a sim
 
 When you run this code, the `brms` package generates Stan code and runs the Stan program in the background. Stan code is executed in C++, and the model will be 'compiled' (you get information about this in the console output). We will learn later what this compilation does (spoiler: it computes gradients for all stochastic nodes in the model). The only thing that is relevant for you at the moment is this: This compilation can take quite a while (especially for complex models) before anything happens.
 
-```{r}
-#| output: false 
-  
+```{r fit-model}
+#| output: false
+
 # specify the model 
 model1 = brm(
   # model formula
@@ -83,7 +83,7 @@ model1 = brm(
   )
 ```
 
-```{r}
+```{r summarize-model}
 summary(model1)
 ```
 
@@ -91,15 +91,15 @@ The output of such a model looks very familiar if you have worked with lm() befo
 
 If we need the main summary output in a tidy tibble format, we can use this function from the `tidybayes` package:
 
-```{r}
+```{r use-tidybayes-summary}
 tidybayes::summarise_draws(model1)
 ```
 
-The model output suggests that the posterior mean of the Intercept is around `r tidybayes::summarise_draws(model1)[1, "mean"] |> round(0)` . The coefficient for MAD is estimated to be about `r tidybayes::summarise_draws(model1)[2, "mean"] |> round(0)`.
+The model output suggests that the posterior mean of the Intercept is around `r tidybayes::summarise_draws(model1)[1, "mean"] |> deframe() |> round(0)` . The coefficient for MAD is estimated to be about `r tidybayes::summarise_draws(model1)[2, "mean"] |> deframe() |> round(0)`.
 
 To see how good a fit this is, we should manually draw this line into the graph from above.
 
-```{r}
+```{r plot-model-fit}
 
 # extract model parameters:
 model_intercept <- summary(model1)$fixed[1,1]

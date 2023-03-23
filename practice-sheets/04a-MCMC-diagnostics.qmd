@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "04a: MCMC diagnostics (demonstrations)"
+title: "04a: MCMC diagnostics (demonstrations)"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
 editor: visual

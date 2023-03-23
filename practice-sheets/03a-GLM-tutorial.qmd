@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "03a: Generalized linear models"
+title: "03a: Generalized linear models"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
 editor: visual

@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "02a: Priors, and prior & posterior predictives"
+title: "02a: Priors, and prior & posterior predictives"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
 editor: visual

@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "05a: Hierarchical regression models (tutorial)"
+title: "05a: Hierarchical regression models (tutorial)"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
 editor: visual

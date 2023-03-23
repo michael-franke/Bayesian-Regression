@@ -1,0 +1,196 @@
+---
+title: "Bayesian regression: theory & practice"
+subtitle: "XX: Distributional models"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+---
+
+The term "distributional model" is not sharply defined and not altogether common.
+Alternatively, one may read "models for location, scale and shape" or similar verbiage.
+The general idea, however, is simple: when our model has a likelihood function with additional parameters, e.g., the standard deviation $\sigma$ in the Gaussian likelihood function of a standard linear regression, we can not only infer these parameters, but also make them dependent, e.g., on other predictors.
+
+For example, when a standard linear regression model would look like this:
+
+$$
+\begin{align*}
+y & \sim \mathcal{N}(\mu, \sigma) \\
+\mu & = X \ \beta \\
+\beta, \sigma & \sim \dots \text{some priors} \dots
+\end{align*}
+$$
+
+a simple distributional model could look like this:
+
+$$
+\begin{align*}
+y & \sim \mathcal{N}(\mu, \sigma) \\
+\mu & = X \ \beta^{\mu} \\
+\sigma & = \exp \left ( X \ \beta^{\mu} \right) \\
+\beta^{\mu}, \beta^{\sigma} & \sim \dots \text{some priors} \dots
+\end{align*}
+$$
+
+thereby assuming that $\sigma$ itself depends on the predictors $X$ in a linear way.
+
+# Example: World temperature data
+
+The World Temperature data, included in the `aida` package provides a useful minimal example.
+Let's set the scene by loading relevant packages and setting some defaults:
+
+{{< include 00-preamble.qmd >}}
+
+We want to regress `avg_temp` on `year`, but we see that early measurements appear to be much more noisy, so that a linear fit will be better for data between 1900 and 1980, and worse for data between 1750 to 1900, simply because of differences related to differently noise measurements at different times.
+
+```{r}
+aida::data_WorldTemp |> 
+  ggplot(aes(x = year, y = avg_temp)) +
+  geom_point() +
+  ylab("average temperature") + geom_smooth(method = "lm")
+```
+
+A simple linear regression model is easy to fit:
+
+```{r}
+#| results: hide
+# vanilla regression
+fit_temp_vanilla <- 
+  brms::brm(
+    avg_temp ~ year,
+    data = aida::data_WorldTemp)
+```
+
+But there are clear indicators that this is not a very good model, e.g., using a posterior predictive $p$-value with the standard deviation for predictions of all data points between 1750-1800 as a test statistic:
+
+```{r}
+postPred_y <- 
+  tidybayes::predicted_draws(
+    object  = fit_temp_vanilla,
+    newdata = aida::data_WorldTemp |> select(year) |> filter(year <= 1800),
+    value   = "avg_temp",
+    ndraws  = 4000) |> ungroup() |> 
+  select(.draw,year, avg_temp)
+
+sd_postPred <- postPred_y |> 
+  group_by(.draw) |> 
+  summarize(sd_post_pred = sd(avg_temp)) |> 
+  pull(sd_post_pred)
+
+sd_data <- aida::data_WorldTemp |> filter(year <= 1800) |> pull(avg_temp) |> sd()
+
+mean(sd_data > sd_postPred)
+```
+
+If we care about faithful prediction in this early period, including accuracy about the noisiness of the data, the vanilla linear model is clearly bad.
+
+# A simple distributional model
+
+We want to fit the distributional model sketched in the beginning:
+
+
+$$
+\begin{align*}
+y & \sim \mathcal{N}(\mu, \sigma) \\
+\mu & = X \ \beta^{\mu} \\
+\sigma & = \exp \left ( X \ \beta^{\mu} \right) \\
+\beta^{\mu}, \beta^{\sigma} & \sim \dots \text{some priors} \dots
+\end{align*}
+$$
+
+To fit this model with `brms`, we need to specify the formula for the regression as follows:
+
+```{r}
+formula_temp_distributional = brms::bf(avg_temp ~ year, sigma ~ year)
+```
+
+This formula first declares that `avg_temp` is to be regressed on `year`, as usual, and also declares that `sigma` is supposed to be regressed (in quite the same way) on `year` as well.
+The variable `sigma` does not occur in the data, but is is recognized as an internal variable, namely the standard deviation of the Gaussian likelihood function.
+
+Sampling with Stan can get troublesome if parameters are on quite different scales, so we should make sure that the two estimands are roughly on the same scale.
+
+```{r}
+# to run a distributional model, we need to rescale 'year'
+#   division by a factor of 1000 is sufficient
+data_WorldTemp <- aida::data_WorldTemp |> 
+  mutate(year = (year)/1000)
+```
+
+```{r}
+#| results: hide
+fit_temp_distributional <- 
+  brms::brm( 
+    formula = brms::bf(avg_temp ~ year, sigma ~ year),
+    data    = data_WorldTemp
+  )
+```
+
+This model provides us with information about intercepts and slopes for both components, the regression of `avg_temp` and `sigma`.
+
+```{r}
+summary(fit_temp_distributional)
+```
+
+
+
+<span style = "color:darkgreen"> UP TO HERE </span>  
+
+
+```{r}
+
+# I want a plot that shows the estimated samples of standard deviations
+# for each year
+
+tidybayes::tidy_draws(fit_temp_distributional) |> 
+  select(.draw, b_sigma_Intercept, b_sigma_year) |> 
+  cross_join(tibble(year = (1750:2020) / 1000)) |>
+  mutate(sigma_predicted = exp(b_sigma_Intercept + b_sigma_year * year)) |> 
+  group_by(year) |> 
+  summarize(
+    lower  = tidybayes::hdi(sigma_predicted)[1],
+    mean   = mean(sigma_predicted),
+    higher = tidybayes::hdi(sigma_predicted)[2]) |> 
+  ggplot(aes(x = year * 1000, y = mean)) +
+  geom_ribbon(aes(ymin=lower, ymax=higher), fill = project_colors[2], alpha = 0.2) +
+  geom_line(color = project_colors[2], linewidth = 2) +
+  xlab("year") +
+  ylab("estimated sigma")
+
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 
+
+Let's inspect how `brms` sets up the priors for this model:
+
+```{r}
+brms::get_prior(
+  formula = brms::bf(avg_temp ~ year, sigma ~ year),
+  data    = data_WorldTemp)
+```
+
+Using this information set a prior on the slope coefficient for both components of the model.
+Use a Student-t distribution with one degree of freedom, mean 0 and standard deviation 10.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+# simple distributional model!
+prior_temp_distributional <- 
+  c(prior(student_t(1,0,10), class = "b", coef = "year_c"),
+    prior(student_t(1,0,10), class = "b", dpar = "sigma")
+    )
+```
+
+
+
+:::
+:::

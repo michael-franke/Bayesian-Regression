@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "03b: Generalized linear models (exercises)"
+title: "03b: Generalized linear models (exercises)"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
 editor: visual

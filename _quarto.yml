@@ -2,6 +2,10 @@ project:
   type: website
   output-dir: docs
 
+editor:
+  markdown:
+    wrap: sentence
+
 execute:
   freeze: auto
 

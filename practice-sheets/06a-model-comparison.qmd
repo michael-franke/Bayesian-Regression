@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "06: Model comparison"
+title: "06: Model comparison"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
 editor: visual
