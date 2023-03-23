@@ -1,6 +1,6 @@
 ---
-title: "Bayesian regression: theory & practice"
-subtitle: "XX: Distributional models"
+title: "XX: Distributional models"
+subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
 execute:
