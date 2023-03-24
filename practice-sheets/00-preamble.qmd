@@ -9,10 +9,13 @@ pckgs_needed <- c(
   "tidyverse",
   "brms",
   "rstan",
+  "rstanarm",
   "remotes",
   "tidybayes",
   "bridgesampling",
-  "shinystan"
+  "shinystan",
+  "mgcv",
+  "MASS"
 )
 pckgs_installed <- installed.packages()[,"Package"]
 pckgs_2_install <- pckgs_needed[!(pckgs_needed %in% pckgs_installed)]
@@ -45,6 +48,7 @@ theme_set(theme_csp())
 
 # global color scheme from CSP
 project_colors = cspplot::list_colors() |> pull(hex)
+# names(project_colors) <- cspplot::list_colors() |> pull(name)
 
 # setting theme colors globally
 scale_colour_discrete <- function(...) {

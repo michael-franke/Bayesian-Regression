@@ -1,0 +1,145 @@
+---
+title: "BRMS cheat sheet: common things to do with BRMS"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+---
+
+This document provides a cursory run-down of common operations and manipulations for working with the `brms` package.
+
+{{< include 00-preamble.qmd >}}
+
+# Running a regression model
+
+As a running example, we fit a multi-level model.
+
+```{r}
+#| results: hide
+
+fit_MC <- 
+  brms::brm(
+    # "brmsformula" object specifies the model to fit
+    formula = RT ~ condition + (1 + condition + shape | submission_id),
+    # data to fit model to
+    data = aida::data_MC_preprocessed |> 
+      mutate(condition = factor(as.character(block), 
+                                levels = c("goNoGo", "reaction", "discrimination"))),
+    # "iter" is the number of iterations
+    iter = 4000,
+    # control parameters for MCMC
+    control = list(adapt_delta = 0.9)
+  )
+```
+
+## Updating a model
+
+<span style = "color:darkgreen"> fill me </span>  
+
+
+# Inspecting model fits 
+
+<span style = "color:darkgreen"> fill me </span>  
+
+- summary stats, tidy ...
+- shinystan
+
+
+# MCMC diagnostics
+
+<span style = "color:darkgreen"> fill me </span>  
+
+# Extracting samples
+
+<span style = "color:darkgreen"> fill me </span>  
+
+## Getting summaries for samples
+
+- tidyverse::hdi
+- aida::summarize_...
+
+# Plotting posteriors
+
+<span style = "color:darkgreen"> fill me </span>  
+
+- population and group level effects
+
+# Posterior predictives
+
+## Visual PPCs
+
+## Extracting samples from the posterior predictive distribution
+
+<span style = "color:darkgreen"> fill me </span>  
+
+# Priors
+
+## Inspecting default priors without running the model
+
+```{r}
+# define the model as a "brmsformula" object
+myFormula <- brms::bf(RT ~ 1 + block + (1 + block | submission_id))
+
+# get prior information
+brms::get_prior(
+  formula = myFormula,
+  data    = aida::data_MC_preprocessed,
+  family  = exgaussian()
+  )
+
+```
+
+<span style = "color:darkgreen"> explain what that means </span>  
+
+## Setting priors
+
+<span style = "color:darkgreen"> fill me </span>  
+
+## Sampling from the prior
+
+<span style = "color:darkgreen"> fill me </span>  
+
+## Prior predictive checks
+
+# Under the hood: Stan code, design matrices etc.
+
+## Extract the Stan code
+
+```{r}
+brms::stancode(fit_MC)
+```
+
+## Extract Stan data
+
+This is the data passed to Stan.
+Useful for inspecting dimensions etc.
+
+```{r}
+brms::standata(fit_MC) |> names()
+```
+
+## Inspect design matrices
+
+### Population-level effects
+
+```{r}
+X <- brms::standata(fit_MC)$X
+X |> head()
+```
+
+### Group-level effects
+
+The group-level design matrix is spread out over different variables (all names `Z_` followed by some indices), but retrievable like so:
+
+```{r}
+data4Stan <- brms::standata(fit_MC)
+Z <- data4Stan[str_detect(data4Stan |> names(), "Z_")] |> as_tibble()
+Z
+```
+

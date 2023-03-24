@@ -66,6 +66,20 @@ website:
         contents:
           - href: practice-sheets/07-causal-inference.qmd
             text: Causal inference (practice)
+      - section: "XX: Under construction"
+        contents:
+          - href: practice-sheets/xx-BRMS-cheat-sheet.qmd
+            text: BRMS cheats sheet
+          - href: practice-sheets/xx-MLM-pooling.qmd
+            text: MLM-pooling
+          - href: practice-sheets/xx-distributional-models.qmd
+            text: distributional models
+          - href: practice-sheets/xx-mixture-models.qmd
+            text: mixture models
+          - href: practice-sheets/xx-multi-membership.qmd
+            text: multi membership
+          - href: practice-sheets/xx-GAMs.qmd
+            text: GAMs
 format:
   html:
     theme: cosmo

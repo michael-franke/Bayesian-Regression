@@ -183,7 +183,6 @@ Use a Student-t distribution with one degree of freedom, mean 0 and standard dev
 ### Solution
 
 ```{r}
-# simple distributional model!
 prior_temp_distributional <- 
   c(prior(student_t(1,0,10), class = "b", coef = "year_c"),
     prior(student_t(1,0,10), class = "b", dpar = "sigma")

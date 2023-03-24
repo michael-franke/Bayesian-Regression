@@ -43,6 +43,7 @@ emp_mean_of_means <- data_radon |>
   ungroup() |> 
   pull(mean_by_county) |> 
   mean()
+emp_mean_of_means
 ```
 
 Aha! There is a difference between the (empirical) grand mean and the (empirical) mean-of-means. This is because there different numbers of observations for each county:
@@ -57,6 +58,9 @@ data_radon |>
 The grand mean does not distinguish at all which observation came from which county. The mean-of-means, on the other hand, puts "counties first", so to speak, and does not acknowledge that the number of observations each county contributed. To understand how this can yield a difference, look at this picture:
 
 ```{r}
+#| out-width: 100%
+#| fig-height: 10
+
 data_radon |> 
   group_by(county) |> 
   summarize(mean_by_county = mean(log_radon),
@@ -68,8 +72,8 @@ data_radon |>
   geom_vline(aes(xintercept = empirical_mean), color = project_colors[2], size = 1.5) + 
   geom_vline(aes(xintercept = emp_mean_of_means), color = project_colors[3], size = 1.5) +
   geom_point(aes(size = n_obs_by_county), alpha = 0.7) +
-  annotate("text", x = empirical_mean - 0.4, y = 70, label = "grand mean", color = project_colors[2], size = 13) +
-  annotate("text", x = emp_mean_of_means + 0.5, y = 20, label = "mean-of-means", color = project_colors[3], size = 13) +
+  annotate("text", x = empirical_mean - 0.4, y = 70, label = "grand mean", color = project_colors[2], size = 8) +
+  annotate("text", x = emp_mean_of_means + 0.52, y = 20, label = "mean-of-means", color = project_colors[3], size = 8) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
@@ -141,7 +145,7 @@ rbind(grand_mean_estimate, meanOmean_estimate)
 In between these two options (no `county` variable vs. `county`) as a population-level effect, there is a middle path: treating `county` as a group-level random intercept.
 
 ```{r}
-#| result: hide
+#| results: hide
 
 fit_RE <- brms::brm(
   formula = log_radon ~ (1 | county),
@@ -163,6 +167,9 @@ This estimate is nuanced. It does take all data points into account (unlike the 
 Okay, this may sound like a plausible rationalization of what one could do, but how do we know that the model actually behaves in this way? -- By looking at what the model would predict for different counties. So, here is a plot of the *a posteriori* expected measurement for each county (ordered by size) together with the empirically observed mean-by-county:
 
 ```{r}
+#| out-width: 100%
+#| fig-height: 10
+
 plotData_RE <- data_radon |> 
   group_by(county) |> 
   summarize(mean_by_county = mean(log_radon),
@@ -201,5 +208,5 @@ This graph shows:
 
 It is the latter observation that lends credence to the interpretation above: the effect of random effects is differential weighing of observations in a data-driven manner; low certainty cases receive less weight, as they should.
 
-<span style = "color:darkgreen"> add an exercise if you can </span>  
+<span style = "color:darkgreen"> add an exercise if you can, please </span>  
 
