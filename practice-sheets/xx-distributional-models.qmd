@@ -41,13 +41,13 @@ $$
 
 thereby assuming that $\sigma$ itself depends on the predictors $X$ in a linear way.
 
-# Example: World temperature data
-
-The World Temperature data, included in the `aida` package provides a useful minimal example.
-Let's set the scene by loading relevant packages and setting some defaults:
+# Preamble 
 
 {{< include 00-preamble.qmd >}}
 
+# Example: World temperature data
+
+The World Temperature data, included in the `aida` package provides a useful minimal example.
 We want to regress `avg_temp` on `year`, but we see that early measurements appear to be much more noisy, so that a linear fit will be better for data between 1900 and 1980, and worse for data between 1750 to 1900, simply because of differences related to differently noise measurements at different times.
 
 ```{r}

@@ -11,6 +11,8 @@ execute:
 callout-appearance: simple
 ---
 
+# Preamble 
+
 {{< include 00-preamble.qmd >}}
 
 # Exploring the data set

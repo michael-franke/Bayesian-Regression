@@ -12,6 +12,8 @@ execute:
 callout-appearance: simple
 ---
 
+# Preamble 
+
 {{< include 00-preamble.qmd >}}
 
 # Simpson's paradox: puzzle and data

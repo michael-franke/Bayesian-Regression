@@ -1,5 +1,5 @@
 ---
-title: "02a: Priors, and prior & posterior predictives"
+title: "02a: Prior and prior predictives"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -8,29 +8,42 @@ execute:
   error: false
   warning: false
   message: false
+  cache: true
 callout-appearance: simple
 ---
 
-{{< include 00-preamble.qmd >}}
+This tutorial covers how to inspect and set priors in Bayesian regression models with `brms`. The choice of prior should be informed by their effect on the *prior predictive distribution*. The tutorial therefore also covers how to collect samples from the prior, and the prior and posterior predictive distributions.
 
-```{r}
-dolphin <- aida::data_MT
-```
+# Preamble
+
+{{< include 00-preamble.qmd >}}
 
 # Priors in `brms` models
 
-Here is the aggregate data and a simple linear regression model we looked at before:
+## Preparing the running example
+
+We work with the mouse-tracking data from the `aida` package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`. Here is the relevant data plot:
 
 ```{r}
-#| output: false 
+# catchy name for the data
+dolphin <- aida::data_MT
 
 # create aggregate data
 dolphin_agg <- dolphin |> 
   filter(correct == 1) |> 
   group_by(subject_id) |> 
   dplyr::summarize(
-            AUC = median(AUC, na.rm = TRUE),
-            MAD = median(MAD, na.rm = TRUE)) 
+    AUC = median(AUC, na.rm = TRUE),
+    MAD = median(MAD, na.rm = TRUE))
+
+dolphin_agg |> 
+ggplot(aes(x = MAD, y = AUC)) + 
+  geom_point(size = 3, alpha = 0.3) 
+  
+```
+
+```{r}
+#| results: hide
 
 # run the model
 model1 = brm(
@@ -38,27 +51,29 @@ model1 = brm(
   data = dolphin_agg)
 ```
 
+## Inspecting and changing priors
+
 We can inspect the priors used in in a model fit like so:
 
 ```{r}
 brms::prior_summary(model1)
 ```
 
-This tells us that the priors for the slope coefficient for the variable `MAD` was "flat".
-Per default, `brms` uses so-called improper priors, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution).
+The table gives information about the kind of prior used for different parameters. Parameters are classified into different classes (column "class"). The "b" class contains the slope coeffiecients. Here, we only have one slope (for MAD), which is identified in the "coef" column. For more complex models, the other colums may be important (e.g., identifying groups in multi-level models, for parameters in distributional and non-linear models, as well as lower and upper bounded paramters).
 
-In contrast, `brms` /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation.
-These priors are informed by the data. Look:
+This particular output tells us that the priors for the slope coefficient for the variable `MAD` was "flat". Per default, `brms` uses so-called *improper priors* for slope coefficients, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution since the support is infinite).
+
+In contrast, `brms` /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation. These priors are informed by the data. Look:
 
 ```{r}
 dolphin_agg |> pull(AUC) |> median()
 dolphin_agg |> pull(AUC) |> sd()
 ```
 
-We can change the priors used to fit the model with the `prior` attribute and the `brms::prior()` function.
-Here, we set it to a normal (with ridiculously narrow)
+We can change the priors used to fit the model with the `prior` attribute and the `brms::prior()` function. Here, we set it to a normal (with ridiculously small standard deviation).
 
 ```{r}
+#| results: hide
 model2 <- brm(
   AUC ~ MAD, 
   data = dolphin_agg,
@@ -66,19 +81,18 @@ model2 <- brm(
 )
 ```
 
-The `brms::prior()` function expects the prior to be specified as a Stan expression. Full documentation for this is in the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/index.html).
+The `brms::prior()` function expects the prior to be specified as a Stan expression. Full documentation of the available functions for priors is in the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/index.html).
 
-::: callout-caution
-**Exercise 1a**
+::: {.callout-caution collapse="false"}
+## Exercise 1a
 
 Fit a third model `model3` as the previous ones, but set the prior for the slope coefficient to a Student's $t$ distribution with mean 0, standard deviation 100 and one degree of freedom.
 
-:::
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+#| results: hide
 
 model3 <- brm(
   AUC ~ MAD, 
@@ -87,18 +101,18 @@ model3 <- brm(
 )
 
 ```
+:::
+:::
 
-::: callout-caution
-**Exercise 1b**
+::: {.callout-caution collapse="false"}
+## Exercise 1b
 
 Compare the mean posteriors for all three main parameters (intercept, slope for MAD and sigma) in all three models. What effect did changing the prior on the slope parameter have for models 2 and 3? Remember that the priors for these models are quite "unreasonable" in the sense that they are far away from the posterior obtained for model 1.
 
-:::
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 extract_info <- function(model_fit, label) {
   tidybayes::summarise_draws(model_fit) |> 
@@ -113,45 +127,51 @@ rbind(
   extract_info(model3, "model 3")
 ) |> arrange(variable, model)
 
-# we see that the Student-t prior in model 3 gives a very similar fit as for model 1;
-#   this is likely due to the heavier tails of the Student-t distribution
-#
-# we also see that the more restricted model 2 has a much lower mean posterior 
-#   for the slope coefficient (because this parameter is "leashed close to zero" by the prior);
-#   instead model 2 compensates with a much higher intercept estimate
-
 ```
 
-The important upshot of this exercise is that since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters (who have to "go out of they way" to compensate for what the other parameter can or cannot do, so to speak).
+We see that the Student-t prior in model 3 gives a very similar fit as for model 1. This is likely due to the heavier tails of the Student-t distribution.
 
-This raises the question of how to determine "good priors". This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: **priors should be evaluated  in the context of the (prior) predictions they entail**. That's the topic we attend to in the next section.
+We also see that the more restricted model 2 has a much lower mean posterior for the slope coefficient (because this parameter is "leashed close to zero" by the prior). Instead, model 2 compensates with a much higher intercept estimate.
+:::
+:::
 
-Before going there, here is how we can obtain samples from the prior of a model.
-Sampling from the prior only works if priors are not the improper (flat) default priors.
-Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior.
-(NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
+The important upshot of this exercise is that **since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters** (who have to "go out of their way" to compensate for what the other parameter can or cannot do, so to speak).
+
+This raises the question of how to determine "good priors". This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**. That's the topic we attend to in the next section.
+
+## Sampling from the prior
+
+Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
 
 ```{r}
+#| results: hide
+
 model2_priorOnly <- brm(
   AUC ~ MAD, 
   data = dolphin_agg,
   prior = brms::prior(normal(0,10), class = "b"),
   sample_prior = 'only'
 )
+```
 
+```{r}
 model2_priorOnly |> tidybayes::summarise_draws() |> select(1:6)
 ```
 
 It is also possible to obtain a posterior fit /and/ prior samples at the same time, but that is a bit more fickle, as the prior samples will have other names, and (AFAICS) other functions are required than for posterior samples, entailing other formatting of the returned samples.
 
 ```{r}
+#| results: hide
+
 model2_priorAdded <- brm(
   AUC ~ MAD, 
   data = dolphin_agg,
   prior = brms::prior(normal(0,10), class = "b"),
   sample_prior = TRUE
 )
+```
 
+```{r}
 # posterior samples
 model2_priorAdded |> tidybayes::summarise_draws() |> select(1:6)
 
@@ -162,13 +182,16 @@ brms::prior_samples(model2_priorAdded) |> summary()
 A third possibility is to use `stats::update()` to draw additional prior samples from an already fitted object, like so:
 
 ```{r}
+#| results: hide
+
 # this fit only contains priors but keeps them with the same names and structure
 # as the posterior samples in `model2`
 model2_priorUpdate <- stats::update(model2, sample_prior = "only")
-
-model2_priorUpdate |> tidybayes::summarise_draws() |> select(1:6)
 ```
 
+```{r}
+model2_priorUpdate |> tidybayes::summarise_draws() |> select(1:6)
+```
 
 # Prior and posterior predictives
 
@@ -242,11 +265,9 @@ plot_predictPriPost(prior_crazy)
 **Exercise 2**
 
 Play around with different prior specifications, and inspect the resulting prior and posterior predictions.
-
 :::
 
-Let's have a closer look at prior and posterior predictives, and the functions that we can use to explore them.
-Here, we fit a regression model with the "crazy priors" from above, obtaining both posterior and prior samples for it.
+Let's have a closer look at prior and posterior predictives, and the functions that we can use to explore them. Here, we fit a regression model with the "crazy priors" from above, obtaining both posterior and prior samples for it.
 
 ```{r}
 fit_posterior <- brm(
@@ -261,18 +282,15 @@ fit_prior <- stats::update(
   )
 ```
 
-
 ```{r}
 aida::data_WorldTemp |> 
   ggplot(aes(x = avg_temp)) + geom_density()
 ```
 
-
 ```{r}
 brms::pp_check(fit_posterior, ndraws = 50)
 brms::pp_check(fit_prior, ndraws = 100, prefix = "ppd")
 ```
-
 
 ## New Stuff
 
@@ -303,7 +321,6 @@ dolphin_agg |>
 **Exercise 3a**
 
 Obtain a model fit for `AUC ~ MAD` with a prior for the slope coefficient as a Student-t distribution with 1 degree of freedom, mean 0 and standard deviation 500.
-
 :::
 
 ```{r}
@@ -318,8 +335,7 @@ fit_dolphin_agg <- brm(
   )
 ```
 
-Here is how we can extract and plot three samples from the posterior predictive distribution.
-So, these are three "fake" data sets of the same size and for the same `MAD` values as in the original data.
+Here is how we can extract and plot three samples from the posterior predictive distribution. So, these are three "fake" data sets of the same size and for the same `MAD` values as in the original data.
 
 ```{r}
 # extract & plot posterior predictives
@@ -343,7 +359,6 @@ post_pred |> ggplot(aes(x = MAD, y = AUC)) +
 **Exercise 3b**
 
 Change the input to the parameter `newdata` so that we get three samples for `MAD` values 400, 500 and 600.
-
 :::
 
 ```{r}
@@ -393,8 +408,7 @@ post_lin_pred |> ggplot(aes(x = MAD, y = AUC)) +
 ::: callout-caution
 **Exercise 3c**
 
-Extract 30 samples of linear predictor lines and plot them all in one plot. Make the line plots gray and use a  low `alpha` value (slight transparency).
-
+Extract 30 samples of linear predictor lines and plot them all in one plot. Make the line plots gray and use a low `alpha` value (slight transparency).
 :::
 
 ```{r}
@@ -428,7 +442,6 @@ pp_check(fit_dolphin_agg, ndraws = 20)
 **Exercise 3d**
 
 Repeat all the steps from the prior predictive point of view for model `fit_dolphin_agg`,
-
 :::
 
 ```{r}
@@ -501,4 +514,3 @@ post_lin_pred2 |> ggplot(aes(x = MAD, y = AUC)) +
   geom_line(aes(group = run), color = "gray", alpha = 0.2)
 
 ```
-

@@ -14,8 +14,7 @@ pckgs_needed <- c(
   "tidybayes",
   "bridgesampling",
   "shinystan",
-  "mgcv",
-  "MASS"
+  "mgcv"
 )
 pckgs_installed <- installed.packages()[,"Package"]
 pckgs_2_install <- pckgs_needed[!(pckgs_needed %in% pckgs_installed)]

@@ -14,6 +14,8 @@ callout-appearance: simple
 
 This document provides a cursory run-down of common operations and manipulations for working with the `brms` package.
 
+# Preamble
+
 {{< include 00-preamble.qmd >}}
 
 # Running a regression model
@@ -40,35 +42,63 @@ fit_MC <-
 
 ## Updating a model
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
+# Inspecting the model
 
-# Inspecting model fits 
+[ fill me ]{style="color:darkgreen"}
 
-<span style = "color:darkgreen"> fill me </span>  
+-   summary stats, tidy ...
+-   shinystan
 
-- summary stats, tidy ...
-- shinystan
+## Retrieve names of model variables
 
+```{r }
+tidybayes::get_variables(fit_MC)
+```
 
 # MCMC diagnostics
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
 # Extracting samples
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
+
+## Tidy samples with `tidybayes`
+
+Retrieve all samples with `tidybayes::tidy_draws()`:
+
+```{r}
+tidybayes::tidy_draws(fit_MC)
+```
 
 ## Getting summaries for samples
 
-- tidyverse::hdi
-- aida::summarize_...
+To get (Bayesian) summary statistics for a vector of samples from a parameter you can do this:
+
+```{r}
+posterior_Intercept <- 
+  tidybayes::tidy_draws(fit_MC) |> 
+  dplyr::pull("b_Intercept")
+```
+
+The `tidybayes::hdi` function gives the upper and lower bound of a Bayesian credible interval:
+
+```{tidybayes::hdi(posterior_Intercept, credMass = 0.90)}
+```
+
+The function `aida::summarize_sample_vector` does so, too.
+
+```{r}
+aida::summarize_sample_vector(posterior_Intercept, name = "Intercept")
+```
 
 # Plotting posteriors
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
-- population and group level effects
+-   population and group level effects
 
 # Posterior predictives
 
@@ -76,7 +106,7 @@ fit_MC <-
 
 ## Extracting samples from the posterior predictive distribution
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
 # Priors
 
@@ -95,15 +125,15 @@ brms::get_prior(
 
 ```
 
-<span style = "color:darkgreen"> explain what that means </span>  
+[ explain what that means ]{style="color:darkgreen"}
 
 ## Setting priors
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
 ## Sampling from the prior
 
-<span style = "color:darkgreen"> fill me </span>  
+[ fill me ]{style="color:darkgreen"}
 
 ## Prior predictive checks
 
@@ -117,8 +147,7 @@ brms::stancode(fit_MC)
 
 ## Extract Stan data
 
-This is the data passed to Stan.
-Useful for inspecting dimensions etc.
+This is the data passed to Stan. Useful for inspecting dimensions etc.
 
 ```{r}
 brms::standata(fit_MC) |> names()
@@ -142,4 +171,3 @@ data4Stan <- brms::standata(fit_MC)
 Z <- data4Stan[str_detect(data4Stan |> names(), "Z_")] |> as_tibble()
 Z
 ```
-

@@ -21,6 +21,8 @@ This is, indeed, how `brms` deals with GAMs.
 
 <span style = "color:darkgreen"> The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/). </span>  
 
+# Preamble 
+
 {{< include 00-preamble.qmd >}}
 
 # Data set and mission statement
@@ -347,10 +349,6 @@ postPred |>
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 4: Posterior predictive check
-
-#####################################################
-## exercise 
-#####################################################
 
 Consult visual posterior predictive checks for the GAM. 
 Does it look alright? Anything systematicaly amiss?

@@ -14,6 +14,8 @@ callout-appearance: simple
 
 This tutorial discusses a minimal example of a mixture model. After introducing the main idea behind mixture models, a fictitious (minimal) data set is analyzed first with a hand-written Stan program, and then with a mixture regression model using `brms`.
 
+# Preamble 
+
 {{< include 00-preamble.qmd >}}
 
 # Finite mixtures: Motivation & set-up

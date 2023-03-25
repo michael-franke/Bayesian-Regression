@@ -11,9 +11,12 @@ execute:
 callout-appearance: simple
 ---
 
-{{< include 00-preamble.qmd >}}
 
 Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. This tutorial will provide an overview of different categorical variable coding schemes used in mixed effect models. We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.
+
+# Preamble 
+
+{{< include 00-preamble.qmd >}}
 
 # Introduction
 

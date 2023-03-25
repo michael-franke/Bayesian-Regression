@@ -1,0 +1,195 @@
+---
+title: "02a: Priors in `brms`: inspecting, setting & sampling"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+---
+
+This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`.
+The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution.
+How to obtain samples from the prior predictive distribution is covered in a separate chapter.
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# Preparing the running example
+
+We work with the mouse-tracking data from the `aida` package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`. Here is the relevant data plot:
+
+```{r}
+# catchy name for the data
+dolphin <- aida::data_MT
+
+# create aggregate data
+dolphin_agg <- dolphin |> 
+  filter(correct == 1) |> 
+  group_by(subject_id) |> 
+  dplyr::summarize(
+    AUC = median(AUC, na.rm = TRUE),
+    MAD = median(MAD, na.rm = TRUE))
+
+dolphin_agg |> 
+ggplot(aes(x = MAD, y = AUC)) + 
+  geom_point(size = 3, alpha = 0.3) 
+  
+```
+
+```{r}
+#| results: hide
+
+# run the model
+model1 = brm(
+  AUC ~ MAD, 
+  data = dolphin_agg)
+```
+
+# Inspecting and changing priors
+
+We can inspect the priors used in in a model fit like so:
+
+```{r}
+brms::prior_summary(model1)
+```
+
+The table gives information about the kind of prior used for different parameters. Parameters are classified into different classes (column "class"). The "b" class contains the slope coeffiecients. Here, we only have one slope (for MAD), which is identified in the "coef" column. For more complex models, the other colums may be important (e.g., identifying groups in multi-level models, for parameters in distributional and non-linear models, as well as lower and upper bounded paramters).
+
+This particular output tells us that the priors for the slope coefficient for the variable `MAD` was "flat". Per default, `brms` uses so-called *improper priors* for slope coefficients, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution since the support is infinite).
+
+In contrast, `brms` /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation. These priors are informed by the data. Look:
+
+```{r}
+dolphin_agg |> pull(AUC) |> median()
+dolphin_agg |> pull(AUC) |> sd()
+```
+
+We can change the priors used to fit the model with the `prior` attribute and the `brms::prior()` function. Here, we set it to a normal (with ridiculously small standard deviation).
+
+```{r}
+#| results: hide
+model2 <- brm(
+  AUC ~ MAD, 
+  data = dolphin_agg,
+  prior = brms::prior(normal(0,10), class = "b")
+)
+```
+
+The `brms::prior()` function expects the prior to be specified as a Stan expression. Full documentation of the available functions for priors is in the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/index.html).
+
+::: {.callout-caution collapse="false"}
+## Exercise 1a
+
+Fit a third model `model3` as the previous ones, but set the prior for the slope coefficient to a Student's $t$ distribution with mean 0, standard deviation 100 and one degree of freedom.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+#| results: hide
+
+model3 <- brm(
+  AUC ~ MAD, 
+  data = dolphin_agg,
+  prior = brms::prior(student_t(1,0,100), class = "b")
+)
+
+```
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 1b
+
+Compare the mean posteriors for all three main parameters (intercept, slope for MAD and sigma) in all three models. What effect did changing the prior on the slope parameter have for models 2 and 3? Remember that the priors for these models are quite "unreasonable" in the sense that they are far away from the posterior obtained for model 1.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+extract_info <- function(model_fit, label) {
+  tidybayes::summarise_draws(model_fit) |> 
+    mutate(model = label) |> 
+    select(model, variable, q5, mean, q95) |> 
+    filter(variable %in% c('b_Intercept', 'b_MAD', 'sigma'))
+}
+
+rbind(
+  extract_info(model1, "model 1"),
+  extract_info(model2, "model 2"),
+  extract_info(model3, "model 3")
+) |> arrange(variable, model)
+
+```
+
+We see that the Student-t prior in model 3 gives a very similar fit as for model 1. This is likely due to the heavier tails of the Student-t distribution.
+
+We also see that the more restricted model 2 has a much lower mean posterior for the slope coefficient (because this parameter is "leashed close to zero" by the prior). Instead, model 2 compensates with a much higher intercept estimate.
+:::
+:::
+
+The important upshot of this exercise is that **since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters** (who have to "go out of their way" to compensate for what the other parameter can or cannot do, so to speak).
+
+This raises the question of how to determine "good priors". This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**. That's the topic we attend to in the next section.
+
+# Sampling from the prior
+
+Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
+
+```{r}
+#| results: hide
+
+model2_priorOnly <- brm(
+  AUC ~ MAD, 
+  data = dolphin_agg,
+  prior = brms::prior(normal(0,10), class = "b"),
+  sample_prior = 'only'
+)
+```
+
+```{r}
+model2_priorOnly |> tidybayes::summarise_draws() |> select(1:6)
+```
+
+It is also possible to obtain a posterior fit /and/ prior samples at the same time, but that is a bit more fickle, as the prior samples will have other names, and (AFAICS) other functions are required than for posterior samples, entailing other formatting of the returned samples.
+
+```{r}
+#| results: hide
+
+model2_priorAdded <- brm(
+  AUC ~ MAD, 
+  data = dolphin_agg,
+  prior = brms::prior(normal(0,10), class = "b"),
+  sample_prior = TRUE
+)
+```
+
+```{r}
+# posterior samples
+model2_priorAdded |> tidybayes::summarise_draws() |> select(1:6)
+
+# prior samples
+brms::prior_samples(model2_priorAdded) |> summary()
+```
+
+A third possibility is to use `stats::update()` to draw additional prior samples from an already fitted object, like so:
+
+```{r}
+#| results: hide
+
+# this fit only contains priors but keeps them with the same names and structure
+# as the posterior samples in `model2`
+model2_priorUpdate <- stats::update(model2, sample_prior = "only")
+```
+
+```{r}
+model2_priorUpdate |> tidybayes::summarise_draws() |> select(1:6)
+```
+

@@ -14,6 +14,8 @@ callout-appearance: simple
 
 We can motivate the inclusion of group-level effects in terms of otherwise violated independence assumptions (the reaction times of a single individual are not necessarily independent of each other; some individuals are just slower or faster than others *tout court*). We can also motivate group-level effects by appeal to their effect of attenuating inference by flexibly weighing information from different groups. A good example of this latter effect arises when the number of observations in each group is not the same. Let's go and explore!
 
+# Preamble 
+
 {{< include 00-preamble.qmd >}}
 
 # Different ways to a mean

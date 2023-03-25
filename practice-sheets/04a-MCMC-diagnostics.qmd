@@ -10,9 +10,9 @@ execute:
   message: false
 callout-appearance: simple
 ---
-  
-Load relevant packages and "set the scene."
-  
+ 
+# Preamble
+ 
 {{< include 00-preamble.qmd >}}
   
 ```{r}

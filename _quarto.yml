@@ -26,29 +26,37 @@ website:
             text: Wrangling & plotting
           - href: practice-sheets/01b-simple-regression.qmd
             text: Simple linear regression
-      - section: "02: Priors, predictions & categorical predictors"
+          - href: practice-sheets/01c-priors.qmd
+            text: Priors
+          - href: practice-sheets/01d-predictives.qmd
+            text: Predictive distributions
+          - href: practice-sheets/xx-BRMS-cheat-sheet.qmd
+            text: BRMS cheat sheet
+      - section: "02: Predictors"
         contents:
           - href: 02-priorPredictives-categPredictors.qmd
             text: Overview
-          - href: practice-sheets/02a-predictives.qmd
-            text: Prior & posterior predictives
           - href: practice-sheets/02b-catPreds-tutorial.qmd
             text: Categorical predictors (tutorial)
           - href: practice-sheets/02c-catPreds-execises.qmd
             text: Categorical predictors (hands-on)
-      - section: "03: Generalized linear model"
+      - section: "03: GLMs & beyond"
         contents:
           - href: practice-sheets/03a-GLM-tutorial.qmd
             text: GLM (tutorial)
           - href: practice-sheets/03b-GLM-exercises.qmd
             text: GLM (exercises)
+          - href: practice-sheets/xx-mixture-models.qmd
+            text: mixture models
+          - href: practice-sheets/xx-distributional-models.qmd
+            text: distributional models
       - section: "04: MCMC sampling"
         contents:
           - href: 04-MCMC.qmd
             text: Overview
           - href: practice-sheets/04a-MCMC-diagnostics.qmd
             text: MCMC diagnostics (tutorial)
-      - section: "05: Hierarchical models"
+      - section: "05: Multi-level models"
         contents:
           - href: 05-hierarchical-models.qmd
             text: Overview
@@ -56,6 +64,10 @@ website:
             text: Hierarchical models (tutorial)
           - href: practice-sheets/05b-hierarchical-models-exercises.qmd
             text: Hierarchical models (exercises)
+          - href: practice-sheets/xx-multi-membership.qmd
+            text: multi membership
+          - href: practice-sheets/xx-MLM-pooling.qmd
+            text: MLM-pooling
       - section: "06: Model comparison"
         contents:
           - href: 06-model-comparison.qmd
@@ -66,24 +78,17 @@ website:
         contents:
           - href: practice-sheets/07-causal-inference.qmd
             text: Causal inference (practice)
-      - section: "XX: Under construction"
+      - section: "08: Non-linear models"
         contents:
-          - href: practice-sheets/xx-BRMS-cheat-sheet.qmd
-            text: BRMS cheats sheet
-          - href: practice-sheets/xx-MLM-pooling.qmd
-            text: MLM-pooling
-          - href: practice-sheets/xx-distributional-models.qmd
-            text: distributional models
-          - href: practice-sheets/xx-mixture-models.qmd
-            text: mixture models
-          - href: practice-sheets/xx-multi-membership.qmd
-            text: multi membership
-          - href: practice-sheets/xx-GAMs.qmd
+          - href: practice-sheets/08a-nonLinear.qmd
+            text: Custom non-linearity
+          - href: practice-sheets/08b-GAMs.qmd
             text: GAMs
+
 format:
   html:
     theme: cosmo
     css: styles.css
     toc: true
-    code-fold: true
-    code-summary: "Reveal code"
+    code-fold: show
+    code-summary: "Toggle code"

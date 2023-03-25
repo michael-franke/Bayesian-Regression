@@ -1,0 +1,161 @@
+---
+title: "XX: Non-linear models in `brms`"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+---
+
+It is possible to supply non-linear predictor terms in `brms`.
+These are of the form:
+
+$$
+\eta = X \beta + F(X', \theta_1, \dots, \theta_n)
+$$
+
+where $X'$ are the predictor terms feeding into non-linear function $F$, with parameters $\theta_1, \dots, \theta_n$.
+These parameters can themselves be predicted by linear terms, e.g., in the form:
+
+$$
+\theta_i = X'' \beta_{\theta_i}
+$$
+
+# Preamble 
+
+{{< include 00-preamble.qmd >}}
+
+# Forgetting: power or exponential
+
+Here is a very small data set from (Murdoch 1961), as used in this [tutorial paper on MLE](https://doi.org/10.1016/S0022-2496(02)00028-7).
+We have recall rates `y` for 100 subjects at six different time points `t` (in seconds) after after memorization:
+
+```{r}
+data_forget <- tibble(
+  y = c(.94, .77, .40, .26, .24, .16),
+  t = c(  1,   3,   6,   9,  12,  18),
+  N = 100,
+  k = y * N
+)
+
+data_forget |>
+  ggplot(aes(x = t, y = y)) +
+  geom_point() +
+  xlab("time after memorization") +
+  ylab("recall rate")
+```
+
+There are two competing models on the table.
+The exponential model assumes that recall rates are predicted by exponential decay:
+
+
+$$
+\begin{align*}
+k & \sim \text{Binomial}( \theta, 100) \\
+\theta &= a \exp (-bt) \\
+a,b &\sim \dots \text{some prior} \dots
+\end{align*}
+$$
+
+$$
+\begin{align*}
+k & \sim \text{Binomial}( \theta, 100) \\
+\theta &= ct^{-d} \\
+c,d &\sim \dots \text{some prior} \dots
+\end{align*}
+$$
+
+```{r}
+#| results: hide
+fit_exponential <- brms::brm(
+    formula = brms::bf(k | trials(N) ~ a * exp(-b * t), 
+                       a + b ~ 1, 
+                       nl=TRUE),
+    data    = data_forget,
+    prior   = prior(lognormal(0,0.5), nlpar = "a", lb = 0) + 
+              prior(lognormal(0,0.5), nlpar = "b", lb = 0),
+    family  = binomial(link = "identity"),
+    control = list(adapt_delta = 0.99)
+  )
+```
+
+```{r}
+#| results: hide
+fit_power <- brms::brm(
+    formula = brms::bf(k | trials(N) ~ c * t^(-d), 
+                       c + d ~ 1, 
+                       nl=TRUE),
+    data    = data_forget,
+    prior   = prior(lognormal(0,0.5), nlpar = "c", lb = 0) + 
+              prior(lognormal(0,0.5), nlpar = "d", lb = 0),
+    family  = binomial(link = "identity"),
+    control = list(adapt_delta = 0.99),
+    iter    = 8000
+  )
+```
+
+Compare models with `loo`.
+
+```{r}
+#| eval: false
+loo_compare <- 
+  loo_compare(
+    loo(fit_exponential), 
+    loo(fit_power, moment_match = TRUE))
+```
+
+Use longer data
+
+
+```{r}
+data_forget_long <- 
+  data_forget |> 
+  mutate(l = N-k) |> 
+  dplyr::select(t,l,k) |> 
+  pivot_longer(c(l,k), names_to = "y") |> 
+  uncount(value) |> 
+  mutate(y = ifelse(y == "k", TRUE, FALSE))
+```
+
+```{r}
+#| results: hide
+fit_exponential <- brms::brm(
+    formula = brms::bf(y ~ a * exp(-b * t), 
+                       a + b ~ 1, 
+                       nl=TRUE),
+    data    = data_forget_long,
+    prior   = prior(lognormal(0,0.4), nlpar = "a", lb = 0) + 
+              prior(lognormal(0,0.4), nlpar = "b", lb = 0),
+    family  = bernoulli(link = "identity"),
+    control = list(adapt_delta = 0.99)
+  )
+```
+
+```{r}
+#| results: hide
+fit_power <- brms::brm(
+    formula = brms::bf(y ~ c * t^(-d), 
+                       c + d ~ 1, 
+                       nl=TRUE),
+    data    = data_forget_long,
+    prior   = prior(lognormal(0,0.4), nlpar = "c", lb = 0) + 
+              prior(lognormal(0,0.4), nlpar = "d", lb = 0),
+    family  = bernoulli(link = "identity"),
+    control = list(adapt_delta = 0.999)
+  )
+```
+
+```{r}
+#| eval: false
+loo_compare <- 
+  loo_compare(
+    loo(fit_exponential), 
+    loo(fit_power))
+```
