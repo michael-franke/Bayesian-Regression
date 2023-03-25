@@ -4,3 +4,5 @@
 /practice-sheets/.DS_Store
 /practice-sheets/.Rhistory
 /_freeze/.DS_Store
+*_cache/
+*_files/

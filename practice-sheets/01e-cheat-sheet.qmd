@@ -1,5 +1,5 @@
 ---
-title: "BRMS cheat sheet: common things to do with BRMS"
+title: "Cheat sheet: common things to do with BRMS"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -42,11 +42,11 @@ fit_MC <-
 
 ## Updating a model
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 # Inspecting the model
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 -   summary stats, tidy ...
 -   shinystan
@@ -54,16 +54,16 @@ fit_MC <-
 ## Retrieve names of model variables
 
 ```{r }
-tidybayes::get_variables(fit_MC)
+tidybayes::get_variables(fit_MC)[1:10]
 ```
 
 # MCMC diagnostics
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 # Extracting samples
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 ## Tidy samples with `tidybayes`
 
@@ -85,7 +85,8 @@ posterior_Intercept <-
 
 The `tidybayes::hdi` function gives the upper and lower bound of a Bayesian credible interval:
 
-```{tidybayes::hdi(posterior_Intercept, credMass = 0.90)}
+```{r}
+tidybayes::hdi(posterior_Intercept, credMass = 0.90)
 ```
 
 The function `aida::summarize_sample_vector` does so, too.
@@ -94,9 +95,19 @@ The function `aida::summarize_sample_vector` does so, too.
 aida::summarize_sample_vector(posterior_Intercept, name = "Intercept")
 ```
 
+Here is how you can do this for several vectors at once:
+
+```{r}
+tidybayes::tidy_draws(fit_MC) |> 
+  dplyr::select(starts_with("b_")) |> 
+  pivot_longer(cols = everything()) |> 
+  group_by(name) |> 
+  reframe(aida::summarize_sample_vector(value)[-1])
+```
+
 # Plotting posteriors
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 -   population and group level effects
 
@@ -106,7 +117,59 @@ aida::summarize_sample_vector(posterior_Intercept, name = "Intercept")
 
 ## Extracting samples from the posterior predictive distribution
 
-[ fill me ]{style="color:darkgreen"}
+A vanilla linear model (whether before or after being conditioned on some data), makes two kinds of predictions, namely:
+
+1.  the central tendency of data $y$ for some predictor $x$, and
+2.  the shape of the (hypothetical) data $y'$ for $x$.
+
+Generalized linear models often also disassociate a prediction of central tendency (point 1) above, from the original linear predictor that is used to compute that prediction of central tendency. So, *all* linear models also predict:
+
+3.  a linear predictor value given values of $x$,
+
+but for vanilla linear models (with Gaussian likelihood functions and the identity function as a link function), there is no difference between 1 and 3.
+
+All of these measures can be obtained from a fitted model with different functions, e.g., from the `tidyverse` package. Here, it does not matter whether the model was fitted to data or it is a "prior model", so to speak, fit with the flag `sample_prior = "only"`.
+
+Here is an example for a logistic regression model (where all the three measures clearly show their conceptual difference).
+
+```{r}
+#| results: hide
+fit_MT_logistic <- 
+  brms::brm(
+    formula = correct ~ group * condition,
+    data    = aida::data_MT,
+    family  = brms::bernoulli()
+  )
+```
+
+```{r}
+# 2 samples from the predicted central tendency
+aida::data_MT |> 
+  dplyr::select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_epred_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+
+# 2 samples from the predictive distribution (data samples)
+aida::data_MT |> 
+  dplyr::select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_predicted_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+
+# 2 samples for the linear predictor
+aida::data_MT |> 
+  dplyr::select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_linpred_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+```
 
 # Priors
 
@@ -125,15 +188,15 @@ brms::get_prior(
 
 ```
 
-[ explain what that means ]{style="color:darkgreen"}
+[explain what that means]{style="color:darkgreen"}
 
 ## Setting priors
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 ## Sampling from the prior
 
-[ fill me ]{style="color:darkgreen"}
+[fill me]{style="color:darkgreen"}
 
 ## Prior predictive checks
 

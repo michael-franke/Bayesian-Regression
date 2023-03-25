@@ -1,5 +1,5 @@
 ---
-title: "01a: Wrangling & plotting"
+title: "Wrangling & plotting"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html

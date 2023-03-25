@@ -3,28 +3,26 @@ title: "Bayesian Regression: Theory & Practice"
 author: "Michael Franke"
 ---
 
-This site provides material for an introductory to intermediate level course on Bayesian linear regression modeling.
+This site provides material for an intermediate level course on Bayesian linear regression modeling.
 The course presupposes some prior exposure to statistics and some acquaintance with R.
 
 ## Intended audience
 
-This course with people in mind who have a completed a first, introductory course on data analysis, which has conveyed roughly the following: 
+This course is designed for people who have completed a first, introductory course on data analysis, which has conveyed roughly the following: 
 
 - basic knowledge of R and, ideally, the tidyverse
 - basic familiarity with Bayesian reasoning (prior, likelihood, posterior)
-- some prior exposure to regression modeling (ideally from a Bayesian point of view)
+- some prior exposure to regression modeling (Bayesian or otherwise)
 
 ## Scope
 
-The aim of this course is to take students from beginner to intermediate Bayesian regression modeling. 
-The course focuses on Bayesian hierarchical generalized linear models as implemented in the `brms` package.
-It covers the following theoretical and practical aspects:
+The aim of this course is to increase students overview over topics relevant for intermediate to advanced Bayesian regression modeling. 
+The course focuses on Bayesian multi-level generalized linear models as implemented in the `brms` package.
+It covers, among other things, the following theoretical and practical aspects:
 
 - prior and posterior model checking
 - generalized linear models (ordered logit, multinomial, Poisson, Beta ...)
 - MCMC methods (HMC diagnostics)
-- contrast coding for categorical predictors
-- missing data
 - distributional and non-linear models (GAMs, Gaussian processes)
 - model comparison (Bayes factors, cross-validation)
 
@@ -33,8 +31,7 @@ It covers the following theoretical and practical aspects:
 An even more basic introduction to data analysis (introducing R, tidyverse, Bayesian and, eventually, also frequentist statistics) is the webbook ["An introduction to Data Analysis"](https://michael-franke.github.io/intro-data-analysis/index.html).
 This course presupposes roughly the content covered in Chapters 2--9 and 12--13. 
 
-
 ## Acknowledgements
 
-Part of the hands-on material was used in a previous course, co-taught with the great Timo Roettger.
+Part of the hands-on material (wrangling, plotting, simple regression modeling) was used in a previous course, co-taught with the great Timo Roettger.
 My gratitude for his permission to build on it here.

@@ -29,9 +29,9 @@ website:
           - href: practice-sheets/01c-priors.qmd
             text: Priors
           - href: practice-sheets/01d-predictives.qmd
-            text: Predictive distributions
+            text: Predictions
           - href: practice-sheets/xx-BRMS-cheat-sheet.qmd
-            text: BRMS cheat sheet
+            text: Cheat sheet
       - section: "02: Predictors"
         contents:
           - href: 02-priorPredictives-categPredictors.qmd

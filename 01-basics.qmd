@@ -4,11 +4,15 @@ subtitle: "Basics: Bayesian Data Analysis, Wrangling, Plotting, and Linear Regre
 author: "Michael Franke"
 ---
 
-The first session introduces the basics of BDA and linear regression modeling.
+The first part introduces the basics of BDA and linear regression modeling.
 
-Here are [slides for session 1](slides/01-intro-simpleRegress.pdf).
+<!-- Here are [slides for session 1](slides/01-intro-simpleRegress.pdf). -->
 
-There are two hands-on exploration and exercise sheets.
-The first is a crash-course (or recap) of basic wrangling and plotting in the tidyverse.
-Here, we will also have a first rendez-vous with the data set (mouse-tracking data) which most of our hands-on monkeying will be based on.
-The second sheet covers Bayesian simple linear regression (using `brms`).
+There are four different mostly self-contained tutorials, covering:
+
+1. some basics of data wrangling (in the `tidyverse`) and plotting (with `ggplot2`),
+2. simple linear regression models (with `brms`),
+3. how to specify priors in `brms`, and
+4. why and how to inspect a model's predictive distribution(s).
+
+There is also a sort of "cheat sheet" with common operations and functions when working with `brms`.

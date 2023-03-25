@@ -1,5 +1,5 @@
 ---
-title: "02a: Priors in `brms`: inspecting, setting & sampling"
+title: "Priors in `brms`: inspecting, setting & sampling"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -12,15 +12,13 @@ execute:
 callout-appearance: simple
 ---
 
-This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`.
-The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution.
-How to obtain samples from the prior predictive distribution is covered in a separate chapter.
+This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`. The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution. How to obtain samples from the prior predictive distribution is covered in a separate chapter.
 
 # Preamble
 
 {{< include 00-preamble.qmd >}}
 
-# Preparing the running example
+# Set up example
 
 We work with the mouse-tracking data from the `aida` package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`. Here is the relevant data plot:
 
@@ -51,7 +49,7 @@ model1 = brm(
   data = dolphin_agg)
 ```
 
-# Inspecting and changing priors
+# Inspect & change priors
 
 We can inspect the priors used in in a model fit like so:
 
@@ -139,7 +137,7 @@ The important upshot of this exercise is that **since all parameters jointly con
 
 This raises the question of how to determine "good priors". This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**. That's the topic we attend to in the next section.
 
-# Sampling from the prior
+# Sample from prior
 
 Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
 
@@ -192,4 +190,3 @@ model2_priorUpdate <- stats::update(model2, sample_prior = "only")
 ```{r}
 model2_priorUpdate |> tidybayes::summarise_draws() |> select(1:6)
 ```
-
