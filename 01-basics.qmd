@@ -8,11 +8,14 @@ The first part introduces the basics of BDA and linear regression modeling.
 
 <!-- Here are [slides for session 1](slides/01-intro-simpleRegress.pdf). -->
 
-There are four different mostly self-contained tutorials, covering:
+There are five mostly self-contained tutorials, covering:
 
-1. some basics of data wrangling (in the `tidyverse`) and plotting (with `ggplot2`),
+1. basics of data wrangling (in the `tidyverse`) and plotting (with `ggplot2`),
 2. simple linear regression models (with `brms`),
-3. how to specify priors in `brms`, and
-4. why and how to inspect a model's predictive distribution(s).
+3. how to specify priors in `brms`,
+4. why and how to inspect a model's predictive distribution(s),
+5. contrast coding of categorical predictor variables.
+
+There is also a sheet with additional exercises (simple linear regression with metric and categorical variables).
 
 There is also a sort of "cheat sheet" with common operations and functions when working with `brms`.

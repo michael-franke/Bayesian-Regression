@@ -35,3 +35,4 @@ This course presupposes roughly the content covered in Chapters 2--9 and 12--13.
 
 Part of the hands-on material (wrangling, plotting, simple regression modeling) was used in a previous course, co-taught with the great Timo Roettger.
 My gratitude for his permission to build on it here.
+The tutorial on contrast coding was first authored by Polina Tsvilodub.

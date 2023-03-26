@@ -1,5 +1,5 @@
 ---
-title: "02b: Categorical predictors (tutorial)"
+title: "A tutorial on contrast coding for (Bayesian) regression"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Polina Tsvilodub"
 format: html
@@ -11,12 +11,32 @@ execute:
 callout-appearance: simple
 ---
 
+Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. **This tutorial will provide an** **overview of different categorical variable coding schemes commonly used in regression modeling**. In particular, it covers:
 
-Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. This tutorial will provide an overview of different categorical variable coding schemes used in mixed effect models. We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.
+-   treatment (a.k.a. dummy) coding
 
-# Preamble 
+-   simple contrast coding
+
+-   deviation (a.k.a. sum) coding
+
+-   Helmert and reverse Helmert coding
+
+We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.
+
+*Estimated reading time: 1.5h*
+
+# Preamble
 
 {{< include 00-preamble.qmd >}}
+
+We will additionally use the following R packages in this tutorial.
+
+```{r libraries, warnings=FALSE}
+library(tidyboot)
+library(lmerTest)
+library(broom)
+library(languageR)
+```
 
 # Introduction
 
@@ -28,8 +48,6 @@ Most importantly, we should remember: any statistics of the data are just a tool
 
 First, we will shortly recap how linear regression models look like. Then, we will roughly familiarize ourselves with the data sets. Then, step by step we will look at different coding schemes: how they are applied in R and what a fitted regression model looks like.
 
-*Estimated reading time: 1.5h*
-
 # Categorical Variables Coding Schemes
 
 Why do we need to *code* categorical variables like gender or experimental conditions? 'We don't have to code continuous variables like reaction time!', you might say. The reason is that categorical variables (also called **factors**) are usually represented in a data set as strings, e.g. the factor *gender* could contain the **levels** (i.e. distinct categories) `female` and `male`. But we cannot represent different strings in a regression model. So we need to numerically indicate that a predictor has different levels - by (implicitly) recoding the levels of a variable to numbers, e.g. a 1 for each occurrence of `female` and -1 for each occurrence of `male` in our data set. How we choose these numbers is the focus of this tutorial.
@@ -39,17 +57,6 @@ In common terms, by recoding the levels numerically we indicate the **contrasts*
 To get a better understanding of what this means, we will dive right into an example.
 
 # Preparing the tools
-
-We will use the following R packages in this tutorial. If you are missing some of them, you can install them by running e.g. `install.packages('tidyverse')`. **NB**: we will fit the models using `brm` - this might take some time to compile!
-
-```{r libraries, warnings=FALSE}
-library(tidyverse)
-library(tidyboot)
-library(brms)
-library(lmerTest)
-library(broom)
-library(languageR)
-```
 
 ## Dataset
 
@@ -135,6 +142,8 @@ So both variables $x_1$ and $x_2$ can take either the value 0 or 1 (because we d
 Having set all the basics, we can now turn to computing a linear model of the mean pitch as predicted by the factors gender and context:
 
 ```{r dummy}
+#| results: hide
+
 # here, we only use fixed effects
 lm.dummy.FE <- brm(
   pitch ~ gender * context,
@@ -142,6 +151,10 @@ lm.dummy.FE <- brm(
   cores = 4,
   iter = 1000
 )
+```
+
+
+```{r}
 lm.dummy.FE.coefs <- fixef(lm.dummy.FE)[,1] %>% as.numeric() # get the estimated coefficients
 summary(lm.dummy.FE)
 ```
@@ -198,12 +211,17 @@ Hence now the `gender` is coded as -0.5 for `female` and 0.5 for `male`; `contex
 Let's again look at our regression model:
 
 ```{r}
+#| results: hide
 lm.contr.FE <- brm(
   pitch ~ gender_contr * context_contr,
   data = politeness_df,
   cores = 4,
   iter =  1000
 )
+```
+
+
+```{r}
 lm.contr.FE.coefs <- fixef(lm.contr.FE)[,1] %>% as.numeric() # get vector of estimated coefficients
 summary(lm.contr.FE)
 ```
@@ -216,12 +234,6 @@ y1
 ```
 
 We get the same result as before (as we should - the estimates should not depend on a coding scheme but only on the data). As a sanity check, we can again look at the intercept -- it matches the grand mean we computed in the beginning of this tutorial -- as it should.
-
-Your turn! Compute the pitch means for the other three conditions.
-
-```{r}
-# your code here
-```
 
 ## Deviation (Sum) Coding
 
@@ -245,10 +257,15 @@ Now the `gender` is coded as s 1 for `female` and -1 for `male`; `context` is co
 Below we fit a model with the sum-coded variables:
 
 ```{r}
+#| results: hide
 lm.dev.FE <- brm(pitch ~ context_dev * gender_dev,
                 data = politeness_df,
                 cores = 4,
                 iter = 1000)
+```
+
+
+```{r}
 lm.dev.FE.coefs <- fixef(lm.dev.FE)[,1] %>% as.numeric()
 summary(lm.dev.FE)
 ```
@@ -298,10 +315,15 @@ contrasts(politeness_df$context_helm) <- helm.matrix
 The linear model looks like this:
 
 ```{r}
+#| results: hide
 lm.helmert.FE <- brm(pitch ~ context_helm * gender_helm,
                 data = politeness_df,
                 cores = 4,
                 iter = 1000)
+```
+
+
+```{r}
 lm.helmert.FE.coefs <- fixef(lm.helmert.FE)[,1] %>% as.numeric()
 summary(lm.helmert.FE)
 ```
@@ -319,11 +341,14 @@ When you mix coding schemes or define your own schemes there might be no pre-def
 Let us explore how the interpretation of the model changes if we mix coding schemes:
 
 ```{r}
+#| results: hide
 lm.mixedCode.FE <- brm(pitch ~ context * gender_contr,
                 data = politeness_df,
                 cores = 4,
                 iter = 1000)
-lm.mixedCode.FE.coefs <- fixef(lm.mixedCode.FE)[,1] %>% as.numeric()
+```
+
+```{lm.mixedCode.FE.coefs <- fixef(lm.mixedCode.FE)[,1] %>% as.numeric()}
 summary(lm.mixedCode.FE)
 ```
 
@@ -381,10 +406,15 @@ So now the recoding of the categorical variable takes two numeric variables: e.g
 $$y = \beta_0 + \beta_1 * x_{1_2} + \beta_2 * x_{1_3} + \beta_3 * x_{2_2} + \beta_4 * x{2_3} + \beta_5 * x_{1_2}x_{2_2} + \beta_6 * x_{1_3}x_{2_2} + \beta_7 * x_{1_2}x_{2_3}  + \beta8 * x_{1_3}x_{2_3}$$
 
 ```{r}
+#| results: hide
 lm3.dummy.FE <- brm(RT ~ List * SOA,
                    data = latinsquare_df,
                    cores = 4,
                    iter = 1000)
+```
+
+
+```{r}
 lm3.dummy.FE.coefs <- fixef(lm3.dummy.FE)[,1] %>% as.numeric()
 summary(lm3.dummy.FE)
 ```
@@ -406,10 +436,15 @@ contrasts(latinsquare_df$SOA_contr) <-  dummy.matrix3 - contr.matrix3
 ```
 
 ```{r}
+#| results: hide
 lm3.simple.FE <- brm(RT ~ List_contr * SOA_contr,
                    data = latinsquare_df,
                    cores = 4,
                    iter = 1000)
+```
+
+
+```{r}
 lm3.simple.FE.coefs <- fixef(lm3.simple.FE)[,1] %>% as.numeric()
 summary(lm3.simple.FE)
 ```
@@ -429,10 +464,15 @@ contrasts(latinsquare_df$SOA_dev) <- contr.sum(3)
 For e.g. `SOA` our numeric variables now denote the effect of `long` SOA compared to the grand mean when $x_{2_2}$ is a 1 and $x_{2_3}$ is a 0; they denote the effect of `medium` SOA compared to the grand mean when $x_{2_2}$ is a 0 and $x_{2_3}$ is a 1; the effect of `short` SOA is never compared to the grand mean since it is always assigned a -1.
 
 ```{r}
+#| results: hide
 lm3.dev.FE <- brm(RT ~ List_dev * SOA_dev,
                    data = latinsquare_df,
                  cores = 4,
                  iter = 1000)
+```
+
+
+```{r}
 lm3.dev.FE.coefs <- fixef(lm3.dev.FE)[,1] %>% as.numeric()
 summary(lm3.dev.FE)
 ```
@@ -453,10 +493,15 @@ contrasts(latinsquare_df$SOA_helm) <- helm.matrix3
 ```
 
 ```{r}
+#| results: hide
 lm3.helm.FE <- brm(RT ~ List_helm * SOA_helm,
                    data = latinsquare_df,
                   cores = 4,
                   iter = 1000)
+```
+
+
+```{r}
 lm3.helm.FE.coefs <- fixef(lm3.helm.FE)[,1] %>% as.numeric()
 summary(lm3.helm.FE)
 ```
@@ -477,10 +522,15 @@ contrasts(latinsquare_df$SOA_rhelm) <- rhelm.matrix3
 ```
 
 ```{r}
+#| results: hide
 lm3.rhelm.FE <- brm(RT ~ List_rhelm * SOA_rhelm,
                    data = latinsquare_df,
                    iter = 1000,
                    cores = 4)
+```
+
+
+```{r}
 lm3.rhelm.FE.coefs <- fixef(lm3.rhelm.FE)[,1] %>% as.numeric()
 summary(lm3.rhelm.FE)
 ```

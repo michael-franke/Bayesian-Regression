@@ -74,10 +74,10 @@ But there are clear indicators that this is not a very good model, e.g., using a
 postPred_y <- 
   tidybayes::predicted_draws(
     object  = fit_temp_vanilla,
-    newdata = aida::data_WorldTemp |> select(year) |> filter(year <= 1800),
+    newdata = aida::data_WorldTemp |> dplyr::select(year) |> filter(year <= 1800),
     value   = "avg_temp",
     ndraws  = 4000) |> ungroup() |> 
-  select(.draw,year, avg_temp)
+  dplyr::select(.draw, year, avg_temp)
 
 sd_postPred <- postPred_y |> 
   group_by(.draw) |> 
@@ -149,7 +149,7 @@ summary(fit_temp_distributional)
 # for each year
 
 tidybayes::tidy_draws(fit_temp_distributional) |> 
-  select(.draw, b_sigma_Intercept, b_sigma_year) |> 
+  dplyr::select(.draw, b_sigma_Intercept, b_sigma_year) |> 
   cross_join(tibble(year = (1750:2020) / 1000)) |>
   mutate(sigma_predicted = exp(b_sigma_Intercept + b_sigma_year * year)) |> 
   group_by(year) |> 

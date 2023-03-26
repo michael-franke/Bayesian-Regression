@@ -66,7 +66,7 @@ But wait! As Bayesians, we would like to translate the data into an expression o
 
 ## Bayesian linear regression with `brms`
 
-The `brms` package allows us to run Bayesian regression models, both simple and rather complex. It uses a sampling method, so its output will be vectors of (corellated) samples from the posterior distribution of the model's parameters.
+The `brms` package allows us to run Bayesian regression models, both simple and rather complex. It uses a sampling method, so its output will be vectors of (correlated) samples from the posterior distribution of the model's parameters.
 
 So, to quantify evidence and uncertainty with posterior samples, let's run a simple linear regression model using `brms`. We use the R's standard notation at first (though `brms` extends this syntax substantially for more complex models) to specify a formula in which AUC is predicted by MAD.
 
@@ -98,7 +98,8 @@ If we need the main summary output in a tidy tibble format, we can use this func
 tidybayes::summarise_draws(model1)
 ```
 
-The model output suggests that the posterior mean of the Intercept is around `r tidybayes::summarise_draws(model1)[1, "mean"] |> deframe() |> round(0)` . The coefficient for MAD is estimated to be about `r tidybayes::summarise_draws(model1)[2, "mean"] |> deframe() |> round(0)`.
+The model output suggests that the posterior mean of the Intercept is around 500. 
+The coefficient for MAD is estimated to be about 450.
 
 To see how good a fit this is, we should manually draw this line into the graph from above.
 
@@ -275,18 +276,15 @@ dolphin_agg <- dolphin |>
 # let's have a look
 head(dolphin_agg)
 ```
-
 :::
 :::
-
 
 We saw previously that the area-under-the-curve (AUC) is likely related to the maximum absolute deviation (MAD). But what about reaction times (RTs)? Isn't it plausible that RTs are also related to AUC? The further I curve away from the target with the cursor, the longer it takes me to arrive at the target, right?
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 2
 
-Plot the relationship between RT and AUC in a scatter plot.
-Run a linear regression using `brms`. AUC is the dependent variable (i.e. the measure) and RT is the independent variables (i.e. the predictor). The formula writes: `AUC ~ RT`
+Plot the relationship between RT and AUC in a scatter plot. Run a linear regression using `brms`. AUC is the dependent variable (i.e. the measure) and RT is the independent variables (i.e. the predictor). The formula writes: `AUC ~ RT`
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -315,7 +313,6 @@ model1 <- brm(
 summary(model1)
 
 ```
-
 :::
 :::
 
@@ -342,7 +339,6 @@ ggplot(data = dolphin_agg,
   geom_point(size = 3, alpha = 0.3)
   
 ```
-
 :::
 :::
 
@@ -370,7 +366,6 @@ posteriors1 <- model1 |>
 head(posteriors1)
 
 ```
-
 :::
 :::
 
@@ -378,7 +373,6 @@ head(posteriors1)
 ## Exercise 5
 
 Plot the results with the `tidybayes::stat_halfeye()` function. Use a 95% credible interval for that. Add a vertical line at zero.
-
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -399,7 +393,6 @@ Plot the results with the `tidybayes::stat_halfeye()` function. Use a 95% credib
                  lty = "dashed")
 
 ```
-
 :::
 :::
 
@@ -412,10 +405,5 @@ Now: What is the picture telling us? Is there reason to believe in a relationshi
 ### Solution
 
 There is no compelling support for a belief in a relationship between AUC and RT. The value zero (no relationship) is contained in the 95% CrI and a non-trivial amount of posterior samples is larger than 0.
-
 :::
 :::
-
-
-
-

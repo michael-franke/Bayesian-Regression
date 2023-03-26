@@ -11,6 +11,8 @@ execute:
 
 website:
   title: "Bayesian Regression: Theory & Practice"
+  repo-url: https://github.com/quarto-dev/quarto-demo
+  repo-actions: [edit, issue]
   sidebar:
     style: "docked"
     search: true
@@ -30,32 +32,34 @@ website:
             text: Priors
           - href: practice-sheets/01d-predictives.qmd
             text: Predictions
-          - href: practice-sheets/xx-BRMS-cheat-sheet.qmd
-            text: Cheat sheet
-      - section: "02: Predictors"
-        contents:
-          - href: 02-priorPredictives-categPredictors.qmd
-            text: Overview
-          - href: practice-sheets/02b-catPreds-tutorial.qmd
-            text: Categorical predictors (tutorial)
-          - href: practice-sheets/02c-catPreds-execises.qmd
+          - href: practice-sheets/01e-contrast-coding-tutorial.qmd
+            text: Contrast coding (tutorial)
+          - href: practice-sheets/01f-catPreds-exercises.qmd
             text: Categorical predictors (hands-on)
+          - href: practice-sheets/01g-cheat-sheet.qmd
+            text: Cheat sheet
+      - section: "02: MCMC sampling"
+        contents:
+          - href: 02-MCMC.qmd
+            text: Overview
+          - href: practice-sheets/02a-MCMC-diagnostics.qmd
+            text: MCMC diagnostics (tutorial)
       - section: "03: GLMs & beyond"
         contents:
           - href: practice-sheets/03a-GLM-tutorial.qmd
             text: GLM (tutorial)
           - href: practice-sheets/03b-GLM-exercises.qmd
             text: GLM (exercises)
-          - href: practice-sheets/xx-mixture-models.qmd
-            text: mixture models
-          - href: practice-sheets/xx-distributional-models.qmd
+          - href: practice-sheets/03c-distributional-models.qmd
             text: distributional models
-      - section: "04: MCMC sampling"
+          - href: practice-sheets/03d-mixture-models.qmd
+            text: mixture models
+      - section: "04: Model comparison"
         contents:
-          - href: 04-MCMC.qmd
+          - href: 04-model-comparison.qmd
             text: Overview
-          - href: practice-sheets/04a-MCMC-diagnostics.qmd
-            text: MCMC diagnostics (tutorial)
+          - href: practice-sheets/04a-model-comparison.qmd
+            text: Model comparison (practice)
       - section: "05: Multi-level models"
         contents:
           - href: 05-hierarchical-models.qmd
@@ -64,25 +68,19 @@ website:
             text: Hierarchical models (tutorial)
           - href: practice-sheets/05b-hierarchical-models-exercises.qmd
             text: Hierarchical models (exercises)
-          - href: practice-sheets/xx-multi-membership.qmd
+          - href: practice-sheets/05c-multi-membership.qmd
             text: multi membership
-          - href: practice-sheets/xx-MLM-pooling.qmd
+          - href: practice-sheets/05d-MLM-pooling.qmd
             text: MLM-pooling
-      - section: "06: Model comparison"
+      - section: "06: Causal inference"
         contents:
-          - href: 06-model-comparison.qmd
-            text: Overview
-          - href: practice-sheets/06a-model-comparison.qmd
-            text: Model comparison (practice)
-      - section: "07: Causal inference"
-        contents:
-          - href: practice-sheets/07-causal-inference.qmd
+          - href: practice-sheets/06-causal-inference.qmd
             text: Causal inference (practice)
-      - section: "08: Non-linear models"
+      - section: "07: Non-linear models"
         contents:
-          - href: practice-sheets/08a-nonLinear.qmd
+          - href: practice-sheets/07a-nonLinear.qmd
             text: Custom non-linearity
-          - href: practice-sheets/08b-GAMs.qmd
+          - href: practice-sheets/07b-GAMs.qmd
             text: GAMs
 
 format:

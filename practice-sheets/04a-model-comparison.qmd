@@ -11,7 +11,7 @@ execute:
 callout-appearance: simple
 ---
 
-# Preamble 
+# Preamble
 
 {{< include 00-preamble.qmd >}}
 
@@ -135,12 +135,12 @@ if (rerun_models) {
     save_pars = save_pars(all = TRUE)
   )
   normal_bridge <- bridge_sampler(fit_n_4Bridge, silent = T)
-  write_rds(normal_bridge, "06-normal_bridge.rds")
+  write_rds(normal_bridge, "04-normal_bridge.rds")
   robust_bridge <- bridge_sampler(fit_r_4Bridge, silent = T)  
-  write_rds(robust_bridge, "06-robust_bridge.rds")
+  write_rds(robust_bridge, "04-robust_bridge.rds")
 } else {
-  normal_bridge <- read_rds("06-normal_bridge.rds")  
-  robust_bridge <- read_rds("06-robust_bridge.rds")
+  normal_bridge <- read_rds("04-normal_bridge.rds")  
+  robust_bridge <- read_rds("04-robust_bridge.rds")
 }
 
 bf_bridge <- bridgesampling::bf(robust_bridge, normal_bridge)
@@ -153,7 +153,6 @@ bf_bridge
 ```
 
 As you can see, this is a very clear result. If we had equal levels of credence in both models, after seeing the data, our degree of belief in the robust regression model should ... well, virtually infinitely higer than our degree of belief in the normal model.
-
 
 # Comparing LOO-CV and Bayes factors
 
@@ -203,9 +202,7 @@ fit_wide <- brm(
 
 ```
 :::
-
 :::
-
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1b
@@ -227,7 +224,6 @@ loo_compare(
 The models are pretty much incomparable (equally good/bad) based on the LOO-CV.
 :::
 :::
-
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1c
@@ -252,25 +248,23 @@ if (rerun_models) {
   )
   
   narrow_bridge <- bridge_sampler(fit_narrow_4Bridge, silent = T)
-  write_rds(narrow_bridge, "06-narrow_bridge.rds")
+  write_rds(narrow_bridge, "04-narrow_bridge.rds")
   
   wide_bridge   <- bridge_sampler(fit_wide_4Bridge, silent = T)
-  write_rds(wide_bridge, "06-wide_bridge.rds")
+  write_rds(wide_bridge, "04-wide_bridge.rds")
   
 } else {
-  narrow_bridge <- read_rds("06-narrow_bridge.rds")  
-  wide_bridge <- read_rds("06-wide_bridge.rds")
+  narrow_bridge <- read_rds("04-narrow_bridge.rds")  
+  wide_bridge <- read_rds("04-wide_bridge.rds")
 }
 
 bridgesampling::bf(narrow_bridge, wide_bridge)
 
 ```
 
-The Bayes factors in favor of the narrow model is about 10000. 
-That's massive evidence that, from a prior point of view, the narrow model is much better.
+The Bayes factors in favor of the narrow model is about 10000. That's massive evidence that, from a prior point of view, the narrow model is much better.
 :::
 :::
-
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1d
@@ -283,8 +277,6 @@ If all went well, you should have seen a difference between the LOO-based and th
 Since BF-based comparison looks at the models from the prior point of view, the model with wide priors is less precise, puts prior weight on a lot of "bad" paramter values and so achieves a very weak prior predicitive fit.
 
 The LOO-based estimates are identical because both models have rather flexible, not too strong priors, and so the data is able to produce roughly the same posteriors in both models.
-
-
 :::
 :::
 
@@ -310,8 +302,6 @@ ggplot(data = dolphin,
 
 ```
 
-
-
 ::: {.callout-caution collapse="false"}
 ## Exercise 2a
 
@@ -323,7 +313,6 @@ Set up four regression models and run them via `brms`:
 4.  Store in `model4_interaction_MaxRE` a model like `model2_interaction_FE` but with the maximal random effects structure licensed by the design of the experiment.
 
 ::: {.callout-tip collapse="true"}
-
 ### Solution
 
 ```{r}
@@ -347,7 +336,6 @@ model4_interaction_MaxRE = brm(
   data = dolphin
 ) 
 ```
-
 :::
 :::
 
@@ -358,7 +346,6 @@ This exercise and the next are meant to have you think more deeply about the rel
 
 To begin with, look at the summary of posterior estimates for model `model2_interaction_FE`. Based on these results, what would you expect: is the inclusion of the interaction term relevant for loo-based model comparison? In other words, do you think that `model2_interaction_FE` is better, equal or worse than `model2_NOinteraction_FE` under loo-based model comparison? Explain your answer.
 
-
 ::: {.callout-tip collapse="true"}
 ### Solution
 
@@ -368,10 +355,7 @@ model2_interaction_FE
 
 ```
 
-The coefficient for the interaction term is credibly different from zero,
-in fact quite large. We would therefore expect that the data "needs" the
-interaction term; a model without it is likely to fare worse.
-
+The coefficient for the interaction term is credibly different from zero, in fact quite large. We would therefore expect that the data "needs" the interaction term; a model without it is likely to fare worse.
 :::
 :::
 
@@ -397,7 +381,6 @@ The model `model2_NOinteraction_FE` is worse by `r loo_comp[2,1]` points of expe
 ```{r}
 1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
 ```
-
 :::
 :::
 
@@ -415,10 +398,7 @@ model4_interaction_MaxRE
 
 ```
 
-All the parameters from the RE structure, except for the correlation
-term, are credibly bigger than zero, suggesting that the data lends
-credence to these factors playing a role in the data-generating process.
-
+All the parameters from the RE structure, except for the correlation term, are credibly bigger than zero, suggesting that the data lends credence to these factors playing a role in the data-generating process.
 :::
 :::
 
@@ -442,19 +422,9 @@ loo_comp
 
 ```
 
-LOO-CV finds no noteworthy difference between these models.
-In tendency, the smaller model is even better.
-This is different from the previous case in 3.b/c which might
-have suggested that if a parameter $\theta$ is credibly different
-from 0, then we also prefer to have it in the model for predictive accuracy.
-But this is not the case in the current case (3.d/e) where the smaller model is preferred.
-An explanation for this could be that not all parameters are equal.
-The fixed effect terms have more impact on the variability of
-predictions than random effect terms.
-
+LOO-CV finds no noteworthy difference between these models. In tendency, the smaller model is even better. This is different from the previous case in 3.b/c which might have suggested that if a parameter $\theta$ is credibly different from 0, then we also prefer to have it in the model for predictive accuracy. But this is not the case in the current case (3.d/e) where the smaller model is preferred. An explanation for this could be that not all parameters are equal. The fixed effect terms have more impact on the variability of predictions than random effect terms.
 :::
 :::
-
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 3f
@@ -484,9 +454,5 @@ loo_compr <- loo_compare(
 # We find that this difference is substantial:
 1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
 ```
-
-
 :::
 :::
-
-

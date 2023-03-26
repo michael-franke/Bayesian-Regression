@@ -25,14 +25,16 @@ As a running example, we fit a multi-level model.
 ```{r}
 #| results: hide
 
+data_MC <- aida::data_MC_preprocessed |> 
+      mutate(condition = factor(as.character(block), 
+                                levels = c("goNoGo", "reaction", "discrimination")))
+
 fit_MC <- 
   brms::brm(
     # "brmsformula" object specifies the model to fit
     formula = RT ~ condition + (1 + condition + shape | submission_id),
     # data to fit model to
-    data = aida::data_MC_preprocessed |> 
-      mutate(condition = factor(as.character(block), 
-                                levels = c("goNoGo", "reaction", "discrimination"))),
+    data = data_MC,
     # "iter" is the number of iterations
     iter = 4000,
     # control parameters for MCMC
@@ -42,14 +44,50 @@ fit_MC <-
 
 ## Updating a model
 
-[fill me]{style="color:darkgreen"}
+Using `stats::update()`, refit a model based on an existing model fit, keeping everything as is, except for what is explicitly set:
 
-# Inspecting the model
+```{r}
+#| eval: false
 
-[fill me]{style="color:darkgreen"}
+# take existing fit, refit on smaller data set, just take 100 samples (all else equal)
+fit_first_five <- 
+  stats::update(
+    object = fit_MC,
+    iter = 100,
+    # use first five participants only
+    newdata = data_MC |> filter(submission_id >= 8550)
+  )
 
--   summary stats, tidy ...
--   shinystan
+```
+
+# General information about the model fit
+
+## Summaries
+
+Standard summary of the model fit:
+
+```{r}
+summary(fit_MC)
+```
+
+Same in tidy format:
+
+```{r}
+tidybayes::summarise_draws(fit_MC)
+```
+
+Summary of just the fixed effects:
+
+```{r}
+brms::fixef(fit_MC)
+```
+
+Summary of just the random effects (this is huge, so output suppressed):
+
+```{r}
+#| eval: false
+brms::ranef(fit_MC)
+```
 
 ## Retrieve names of model variables
 
@@ -62,8 +100,6 @@ tidybayes::get_variables(fit_MC)[1:10]
 [fill me]{style="color:darkgreen"}
 
 # Extracting samples
-
-[fill me]{style="color:darkgreen"}
 
 ## Tidy samples with `tidybayes`
 
@@ -117,16 +153,11 @@ tidybayes::tidy_draws(fit_MC) |>
 
 ## Extracting samples from the posterior predictive distribution
 
-A vanilla linear model (whether before or after being conditioned on some data), makes two kinds of predictions, namely:
+There are three kinds of commonly relevant variables a generalized linear model predicts:
 
-1.  the central tendency of data $y$ for some predictor $x$, and
-2.  the shape of the (hypothetical) data $y'$ for $x$.
-
-Generalized linear models often also disassociate a prediction of central tendency (point 1) above, from the original linear predictor that is used to compute that prediction of central tendency. So, *all* linear models also predict:
-
-3.  a linear predictor value given values of $x$,
-
-but for vanilla linear models (with Gaussian likelihood functions and the identity function as a link function), there is no difference between 1 and 3.
+1.  the central tendency of data $y$ for some predictor $x$,
+2.  the shape of the (hypothetical) data $y'$ for $x$, and
+3.  a linear predictor value given values of $x$.
 
 All of these measures can be obtained from a fitted model with different functions, e.g., from the `tidyverse` package. Here, it does not matter whether the model was fitted to data or it is a "prior model", so to speak, fit with the flag `sample_prior = "only"`.
 
@@ -177,28 +208,48 @@ aida::data_MT |>
 
 ```{r}
 # define the model as a "brmsformula" object
-myFormula <- brms::bf(RT ~ 1 + block + (1 + block | submission_id))
+myFormula <- brms::bf(RT ~ 1 + condition + (1 + condition | submission_id))
 
 # get prior information
 brms::get_prior(
   formula = myFormula,
-  data    = aida::data_MC_preprocessed,
+  data    = data_MC,
   family  = exgaussian()
   )
-
 ```
-
-[explain what that means]{style="color:darkgreen"}
 
 ## Setting priors
 
-[fill me]{style="color:darkgreen"}
+```{r}
+#| eval: false
+
+myPrior <- 
+  brms::prior("normal(30,100)",  class = "b", coef = "conditiondiscrimination") +
+  brms::prior("normal(-30,100)", class = "b", coef = "conditionreaction")
+
+fit_with_specified_prior <- 
+  brms::brm(
+    formula = myformula,
+    data    = data_MC,
+    prior   = myPrior,
+    family  = exgaussian()
+  )
+```
 
 ## Sampling from the prior
 
-[fill me]{style="color:darkgreen"}
+```{r}
+#| eval: false
 
-## Prior predictive checks
+fit_samples_from_prior_only <- 
+brms::brm(
+  formula = myformula,
+  data    = data_MC,
+  prior   = myPrior,
+  family  = exgaussian(),
+  sample_prior = "only"
+)
+```
 
 # Under the hood: Stan code, design matrices etc.
 

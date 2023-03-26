@@ -264,11 +264,17 @@ Set up a similar plotting pipeline for another model, e.g., the logistic regress
 Let's have a closer look at prior and posterior predictives, and the functions that we can use to explore them. Here, we fit a regression model with the "opinionated priors" from above, obtaining both posterior and prior samples for it.
 
 ```{r}
+#| results: hide
+
 fit_posterior <- brm(
     avg_temp ~ year,
     prior = prior_opinionated,
     data = aida::data_WorldTemp
   )
+```
+
+```{r}
+#| results: hide
 
 fit_prior <- stats::update(
     fit_posterior,
@@ -391,19 +397,14 @@ Make sure you understand how the code in the last code block works. Interpret th
 ::: {.callout-tip collapse="true"}
 ### Solution
 
-We see an estimated $p$-value of close to one, which is really bad (for the chosen test statistic).
-It means that the model never predicts data with a value of the test statistic that is that extreme.
-Notice that "extremeness" here means "very high or very low".
-So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.
-
+We see an estimated $p$-value of close to one, which is really bad (for the chosen test statistic). It means that the model never predicts data with a value of the test statistic that is that extreme. Notice that "extremeness" here means "very high or very low". So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.
 :::
 :::
 
 ::: {.callout-caution collapse="false"}
-## Exercise 7: [ambitious] Likelihood as test statistic
+## Exercise 7: \[ambitious\] Likelihood as test statistic
 
-Use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
-Note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
+Use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic. Note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
 
 Interpret the result you get (also in relation to the results from the previous exercise).
 
@@ -440,8 +441,7 @@ LH_data <- get_LH(aida::data_WorldTemp$avg_temp, ndraws = 1000)
 mean(LH_data > LH_postPred)
 ```
 
-<span style = "color:darkgreen"> try yourself; solution will follow </span>  
-
+[try yourself; solution will follow]{style="color:darkgreen"}
 :::
 :::
 

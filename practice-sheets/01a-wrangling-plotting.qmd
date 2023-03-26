@@ -11,7 +11,7 @@ execute:
 callout-appearance: simple
 ---
 
-# Preamble 
+# Preamble
 
 {{< include 00-preamble.qmd >}}
 
@@ -234,16 +234,15 @@ Now we can see that atypical categories exhibit relatively higher RTs, i.e., mor
 
 ### Exercise 1
 
-::: callout-caution
-**Exercise 1a**
+::: {.callout-caution collapse="false"}
+## Exercise 1a
 
 Take the dolphin data set and store a reduced variant of it as `dolphin_reduced`. The new data frame should contain only the following columns: `RT`, `AUC`, `group`, and `exemplar`.
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 dolphin_reduced <- dolphin |>
   select(RT, AUC, group, exemplar)
@@ -251,17 +250,18 @@ dolphin_reduced <- dolphin |>
 head(dolphin_reduced)
 
 ```
-
-::: callout-caution
-**Exercise 1b**
-
-We are for now only interested in those data that have whales as the exemplar. `filter()` only those rows and store them in a new dataframe called `whales_only`.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1b
+
+We are for now only interested in those data that have whales as the exemplar. `filter()` only those rows and store them in a new dataframe called `whales_only`.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 whales_only <- dolphin_reduced |> 
   filter(exemplar == "whale")
@@ -269,18 +269,18 @@ whales_only <- dolphin_reduced |>
 head(whales_only)
 
 ```
-
-::: callout-caution
-**Exercise 1c**
-
-Now filter for only those data that have RTs below 1500ms.
+:::
 :::
 
-```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+::: {.callout-caution collapse="false"}
+## Exercise 1c
 
+Now filter for only those data that have RTs below 1500ms.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
 
 whales_only2 <- whales_only |> 
   filter(RT < 1500)
@@ -288,17 +288,18 @@ whales_only2 <- whales_only |>
 head(whales_only2)
 
 ```
-
-::: callout-caution
-**Exercise 1d**
-
-We don't like that `AUC` is unstandardized. Use `mutate()` to create a new vector that represents scaled AUC values (scaling is achieved by the function `scale()`).
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1d
+
+We don't like that `AUC` is unstandardized. Use `mutate()` to create a new vector that represents scaled AUC values (scaling is achieved by the function `scale()`).
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 whales_only_scaled <- whales_only2 |> 
   mutate(AUC_scaled = scale(AUC))
@@ -306,17 +307,18 @@ whales_only_scaled <- whales_only2 |>
 head(whales_only_scaled)
 
 ```
-
-::: callout-caution
-**Exercise 1e**
-
-Calculate the mean scaled AUC ratings for both both groups.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1e
+
+Calculate the mean scaled AUC ratings for both both groups.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 whales_aggregate <- whales_only_scaled |> 
   group_by(group) |> 
@@ -325,17 +327,18 @@ whales_aggregate <- whales_only_scaled |>
 head(whales_aggregate)
 
 ```
-
-::: callout-caution
-**Exercise 1f**
-
-Do all of the above (a-e) in one pipeline.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1f
+
+Do all of the above (a-e) in one pipeline.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 whales_aggregate <- dolphin |>
   select(RT, AUC, group, exemplar) |> 
@@ -348,19 +351,23 @@ whales_aggregate <- dolphin |>
 head(whales_aggregate)
 
 ```
+:::
+:::
 
 ### Exercise 2
 
-::: callout-caution
-**Exercise 1a**
+::: {.callout-caution collapse="false"}
+## Exercise 2a
 
 Take the dolphin data set and store a reduced variant of it. The new data frame should contain only the columns `condition`, `group`, and `xpos_flips`, `correct`. And within the `correct` vector, we are only interested in the correct trials (= 1). Filter accordingly.
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+
+
+
 
 dolphin_sub <- dolphin |> 
   select(condition, group, xpos_flips, correct) |> 
@@ -369,17 +376,21 @@ dolphin_sub <- dolphin |>
 head(dolphin_sub)
 
 ```
-
-::: callout-caution
-**Exercise 2b**
-
-Create an aggregated data frame that contains the mean `xpos_flips` value and the standard deviation for `group` and `condition`.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2b
+
+Create an aggregated data frame that contains the mean `xpos_flips` value and the standard deviation for `group` and `condition`.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+
+
+
 
 dolphin_agg <- dolphin_sub |>
   group_by(group, condition) |> 
@@ -389,34 +400,42 @@ dolphin_agg <- dolphin_sub |>
 head(dolphin_agg)
 
 ```
-
-::: callout-caution
-**Exercise 2c**
-
-Use the `rename()` function to rename the new vectors for the mean `xflips` and their standard deviation to `xflips_mean` and `xflips_sd`.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2c
+
+Use the `rename()` function to rename the new vectors for the mean `xflips` and their standard deviation to `xflips_mean` and `xflips_sd`.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+
+
+
 
 dolphin_agg2 <- dolphin_agg |>
   rename(xflips_mean = mean_xpos_flips,
          xflips_sd = sd_xpos_flips)
 
 ```
-
-::: callout-caution
-**Exercise 2d**
-
-Do all of the above (a-c) in one pipeline.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2d
+
+Do all of the above (a-c) in one pipeline.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+
+
+
 
 dolphin |> 
   select(condition, group, xpos_flips, correct) |> 
@@ -428,6 +447,8 @@ dolphin |>
          xflips_sd = sd_xpos_flips)
 
 ```
+:::
+:::
 
 # Basic plotting with `ggplot2`
 
@@ -649,55 +670,48 @@ ggplot(dolphin, aes(x = MAD, y = AUC)) +
 
 ```
 
-::: callout-caution
-**Exercise 3a**
+::: {.callout-caution collapse="false"}
+## Exercise 3a
 
 (1) Change both the x-axis and the y-axis title to sensible and informative titles.
 
 (2) Change the plot title to something informative.
 
 (3) Change the scaling of the x-axis to display only MAD values between -500 and 500
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 ggplot(dolphin, aes(x = MAD, y = AUC, 
-                           
-                           # (d) add color aesthetic
-                           color = group)) +
+                    color = group)) +
   geom_point() +
-  
   # (1) axes titles
   xlab("\n maximal absolute deviation") +
   ylab("area-under-the-curve \n") +
-  
   # (2) change title
   ggtitle("MAD is correlated with AUC") +
-
   # (3) change x-axis (note that certain values are not displayed then. R will spit out a warning)
   scale_x_continuous(limits = c(-500,500))
 
 ```
+:::
+:::
 
-::: callout-caution
-**Exercise 4**
+::: {.callout-caution collapse="false"}
+## Exercise 3b
 
 (1) Plot AUC values as a function of group in a density plot (`geom_density`).
 
-(2)) Make the density curves semi-transparent with the `alpha` argument
+(2) Make the density curves semi-transparent with the `alpha` argument
 
-(3)) Add the aida_theme to the plot.
+(3) Add the mean values for both groups into the density plot as a line.
 
-(4) Add the mean values for both groups into the density plot as a line.
-:::
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solutions for a-c"
 
 # (1 - 3)
 ggplot(dolphin, aes(x = AUC, color = group, fill = group)) +
@@ -707,9 +721,6 @@ ggplot(dolphin, aes(x = AUC, color = group, fill = group)) +
 ```
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution for d"
 
 # (4) aggregate means and add to plot
 
@@ -728,3 +739,5 @@ ggplot(dolphin, aes(x = AUC, color = group, fill = group)) +
              lty = "dashed") 
  
 ```
+:::
+:::
