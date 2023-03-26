@@ -1,0 +1,12 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Categorical predictors"
+author: "Michael Franke"
+---
+
+# Part 2: Categorical predictors
+
+
+
+More on this topic can be found in [this chapter](https://michael-franke.github.io/intro-data-analysis/Chap-04-03-predictors.html) of the webbook.
+

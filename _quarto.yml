@@ -28,22 +28,28 @@ website:
             text: Wrangling & plotting
           - href: practice-sheets/01b-simple-regression.qmd
             text: Simple linear regression
+          - href: practice-sheets/01e-contrast-coding-tutorial.qmd
+            text: Categorical predictors
           - href: practice-sheets/01c-priors.qmd
             text: Priors
           - href: practice-sheets/01d-predictives.qmd
             text: Predictions
-          - href: practice-sheets/01e-contrast-coding-tutorial.qmd
-            text: Contrast coding (tutorial)
           - href: practice-sheets/01f-catPreds-exercises.qmd
-            text: Categorical predictors (hands-on)
+            text: "Exercises: Bayesian LMs"
           - href: practice-sheets/01g-cheat-sheet.qmd
             text: Cheat sheet
-      - section: "02: MCMC sampling"
+      - section: "02: Multi-level models"
         contents:
-          - href: 02-MCMC.qmd
+          - href: 02-hierarchical-models.qmd
             text: Overview
-          - href: practice-sheets/02a-MCMC-diagnostics.qmd
-            text: MCMC diagnostics (tutorial)
+          - href: practice-sheets/02a-hierarchical-models-tutorial.qmd
+            text: Hierarchical models (tutorial)
+          - href: practice-sheets/02b-hierarchical-models-exercises.qmd
+            text: Hierarchical models (exercises)
+          - href: practice-sheets/02c-multi-membership.qmd
+            text: multi membership
+          - href: practice-sheets/02d-MLM-pooling.qmd
+            text: MLM-pooling
       - section: "03: GLMs & beyond"
         contents:
           - href: practice-sheets/03a-GLM-tutorial.qmd
@@ -54,24 +60,18 @@ website:
             text: distributional models
           - href: practice-sheets/03d-mixture-models.qmd
             text: mixture models
-      - section: "04: Model comparison"
+      - section: "04: MCMC sampling"
         contents:
-          - href: 04-model-comparison.qmd
+          - href: 04-MCMC.qmd
             text: Overview
-          - href: practice-sheets/04a-model-comparison.qmd
+          - href: practice-sheets/04a-MCMC-diagnostics.qmd
+            text: MCMC diagnostics (tutorial)
+      - section: "05: Model comparison"
+        contents:
+          - href: 05-model-comparison.qmd
+            text: Overview
+          - href: practice-sheets/05a-model-comparison.qmd
             text: Model comparison (practice)
-      - section: "05: Multi-level models"
-        contents:
-          - href: 05-hierarchical-models.qmd
-            text: Overview
-          - href: practice-sheets/05a-hierarchical-models-tutorial.qmd
-            text: Hierarchical models (tutorial)
-          - href: practice-sheets/05b-hierarchical-models-exercises.qmd
-            text: Hierarchical models (exercises)
-          - href: practice-sheets/05c-multi-membership.qmd
-            text: multi membership
-          - href: practice-sheets/05d-MLM-pooling.qmd
-            text: MLM-pooling
       - section: "06: Causal inference"
         contents:
           - href: practice-sheets/06-causal-inference.qmd
