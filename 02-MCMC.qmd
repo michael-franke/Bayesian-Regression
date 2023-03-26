@@ -1,6 +1,6 @@
 ---
 title: "Bayesian Regression: Theory & Practice"
-subtitle: "Session 4: MCMC sampling & diagnostics"
+subtitle: "MCMC sampling & diagnostics"
 author: "Michael Franke"
 ---
 
@@ -16,7 +16,9 @@ This unit covers:
   + effective sample size
   + traceplots
   + divergent transitions
+- control parameters for `brms` model fits
 
-Here are [slides for session 4](slides/04-MCMC.html).
+
+We also take a peak at the Stan programming language.
 
 

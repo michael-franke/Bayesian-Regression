@@ -3,16 +3,20 @@ title: "Priors in `brms`: inspecting, setting & sampling"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
   cache: true
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
-This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`. The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution. How to obtain samples from the prior predictive distribution is covered in a separate chapter.
+This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`.
+The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution.
+How to obtain samples from the prior predictive distribution is covered in a separate chapter.
 
 # Preamble
 
@@ -20,7 +24,9 @@ This tutorial covers how to inspect, set and sample priors in Bayesian regressio
 
 # Set up example
 
-We work with the mouse-tracking data from the `aida` package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`. Here is the relevant data plot:
+We work with the mouse-tracking data from the `aida` package.
+As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`.
+Here is the relevant data plot:
 
 ```{r}
 # catchy name for the data
@@ -57,18 +63,26 @@ We can inspect the priors used in in a model fit like so:
 brms::prior_summary(model1)
 ```
 
-The table gives information about the kind of prior used for different parameters. Parameters are classified into different classes (column "class"). The "b" class contains the slope coeffiecients. Here, we only have one slope (for MAD), which is identified in the "coef" column. For more complex models, the other colums may be important (e.g., identifying groups in multi-level models, for parameters in distributional and non-linear models, as well as lower and upper bounded paramters).
+The table gives information about the kind of prior used for different parameters.
+Parameters are classified into different classes (column "class").
+The "b" class contains the slope coeffiecients.
+Here, we only have one slope (for MAD), which is identified in the "coef" column.
+For more complex models, the other colums may be important (e.g., identifying groups in multi-level models, for parameters in distributional and non-linear models, as well as lower and upper bounded paramters).
 
-This particular output tells us that the priors for the slope coefficient for the variable `MAD` was "flat". Per default, `brms` uses so-called *improper priors* for slope coefficients, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution since the support is infinite).
+This particular output tells us that the priors for the slope coefficient for the variable `MAD` was "flat".
+Per default, `brms` uses so-called *improper priors* for slope coefficients, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution since the support is infinite).
 
-In contrast, `brms` /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation. These priors are informed by the data. Look:
+In contrast, `brms` /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation.
+These priors are informed by the data.
+Look:
 
 ```{r}
 dolphin_agg |> pull(AUC) |> median()
 dolphin_agg |> pull(AUC) |> sd()
 ```
 
-We can change the priors used to fit the model with the `prior` attribute and the `brms::prior()` function. Here, we set it to a normal (with ridiculously small standard deviation).
+We can change the priors used to fit the model with the `prior` attribute and the `brms::prior()` function.
+Here, we set it to a normal (with ridiculously small standard deviation).
 
 ```{r}
 #| results: hide
@@ -79,7 +93,8 @@ model2 <- brm(
 )
 ```
 
-The `brms::prior()` function expects the prior to be specified as a Stan expression. Full documentation of the available functions for priors is in the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/index.html).
+The `brms::prior()` function expects the prior to be specified as a Stan expression.
+Full documentation of the available functions for priors is in the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/index.html).
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1a
@@ -105,7 +120,9 @@ model3 <- brm(
 ::: {.callout-caution collapse="false"}
 ## Exercise 1b
 
-Compare the mean posteriors for all three main parameters (intercept, slope for MAD and sigma) in all three models. What effect did changing the prior on the slope parameter have for models 2 and 3? Remember that the priors for these models are quite "unreasonable" in the sense that they are far away from the posterior obtained for model 1.
+Compare the mean posteriors for all three main parameters (intercept, slope for MAD and sigma) in all three models.
+What effect did changing the prior on the slope parameter have for models 2 and 3?
+Remember that the priors for these models are quite "unreasonable" in the sense that they are far away from the posterior obtained for model 1.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -127,19 +144,27 @@ rbind(
 
 ```
 
-We see that the Student-t prior in model 3 gives a very similar fit as for model 1. This is likely due to the heavier tails of the Student-t distribution.
+We see that the Student-t prior in model 3 gives a very similar fit as for model 1.
+This is likely due to the heavier tails of the Student-t distribution.
 
-We also see that the more restricted model 2 has a much lower mean posterior for the slope coefficient (because this parameter is "leashed close to zero" by the prior). Instead, model 2 compensates with a much higher intercept estimate.
+We also see that the more restricted model 2 has a much lower mean posterior for the slope coefficient (because this parameter is "leashed close to zero" by the prior).
+Instead, model 2 compensates with a much higher intercept estimate.
 :::
 :::
 
 The important upshot of this exercise is that **since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters** (who have to "go out of their way" to compensate for what the other parameter can or cannot do, so to speak).
 
-This raises the question of how to determine "good priors". This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**. That's the topic we attend to in the next section.
+This raises the question of how to determine "good priors".
+This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)).
+In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**.
+That's the topic we attend to in the next section.
 
 # Sample from prior
 
-Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
+Before going there, here is how we can obtain samples from the prior distribution over parameters of a model.
+Sampling from the prior only works if priors are not the improper (flat) default priors.
+Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior.
+(NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
 
 ```{r}
 #| results: hide

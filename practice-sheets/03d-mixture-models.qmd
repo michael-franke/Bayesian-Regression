@@ -14,7 +14,7 @@ callout-appearance: simple
 
 This tutorial discusses a minimal example of a mixture model. After introducing the main idea behind mixture models, a fictitious (minimal) data set is analyzed first with a hand-written Stan program, and then with a mixture regression model using `brms`.
 
-# Preamble 
+# Preamble
 
 {{< include 00-preamble.qmd >}}
 
@@ -267,9 +267,7 @@ The distribution looks plausible enough. The visual fit in these density plots i
 
 # A Gaussian mixture model in `brms`
 
-We can also run this finite mixture model in `brms`. We saw earlier already that fitting the parameters of a single Gaussian is like fitting an intercept-only simple linear regression model.
-We can add finite mixtures to `brms` by defining setting the `family` parameter to with the help of the `brms::mixture()` function.
-Here, we define a finite mixture of Gaussians, of course, but more flexibility is possible.
+We can also run this finite mixture model in `brms`. We saw earlier already that fitting the parameters of a single Gaussian is like fitting an intercept-only simple linear regression model. We can add finite mixtures to `brms` by defining setting the `family` parameter to with the help of the `brms::mixture()` function. Here, we define a finite mixture of Gaussians, of course, but more flexibility is possible.
 
 ```{r}
 #| results: hide
@@ -303,7 +301,6 @@ brms_fit_2e_GMM$model
 Now, your job. Look at the two previous outputs and answer the following questions:
 
 ::: {.callout-caution collapse="false"}
-
 ## Exercise 2a
 
 Is the `brms`-model the exact same as the model in the previous section (model coded directly in Stan)?
@@ -312,7 +309,6 @@ Is the `brms`-model the exact same as the model in the previous section (model c
 ### Solution
 
 No, the priors on $\mu$ and $\sigma$ are different.
-
 :::
 :::
 
@@ -325,7 +321,6 @@ What is the equivalent of the variable `alpha` from the model of the previous se
 ### Solution
 
 That's `ps`
-
 :::
 :::
 
@@ -338,7 +333,6 @@ What is the equivalent of the variable `p` from the model of Ex 2.b in this new 
 ### Solution
 
 That's `theta[1]`
-
 :::
 :::
 
@@ -351,7 +345,6 @@ Is the `brms` code generating posterior predictive samples?
 ### Solution
 
 No! This is not strictly necessary. These can be generated also later for a fitted object.
-
 :::
 :::
 
@@ -364,7 +357,6 @@ What is the prior probability in the `brms`-generated model of any given data po
 ### Solution
 
 We cannot say. It's in the variable `con_theta` but that is supplied from the outside. We can only guess. (A good guess would be: yes, it's also unbiased 50/50.)
-
 :::
 :::
 

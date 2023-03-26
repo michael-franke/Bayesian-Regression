@@ -3,12 +3,14 @@ title: "Wrangling & plotting"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 # Preamble
@@ -17,15 +19,21 @@ callout-appearance: simple
 
 # Exploring the data set
 
-Let's first explore the data set which we will be using during the course. It is rich and fun.
+Let's first explore the data set which we will be using during the course.
+It is rich and fun.
 
 We will be analyzing data from Experiment 1 of the following paper:
 
-Scherbaum, S., & Kieslich, P. J. (2018). Stuck at the starting line: How the starting procedure influences mouse-tracking data. Behavior Research Methods, 50(5), 2097-2110.
+Scherbaum, S., & Kieslich, P. J.
+(2018).
+Stuck at the starting line: How the starting procedure influences mouse-tracking data.
+Behavior Research Methods, 50(5), 2097-2110.
 
 [https://osf.io/7vrkz/](link%20to%20OSF)
 
-It's a methodological paper but it replicates a very intuitive finding. When you are categorizing animals into types (e.g. a 'dog' into the type 'mammal'), you perform better when the animal is prototypical (dog \--\> mammal) as opposed to atypical (dolphin \--\> mammal). This 'performing better' is measured in different ways: reaction time, accuracy (correct vs. incorrect) and several measurement of the cursor movement toward the correct answer.
+It's a methodological paper but it replicates a very intuitive finding.
+When you are categorizing animals into types (e.g. a 'dog' into the type 'mammal'), you perform better when the animal is prototypical (dog \--\> mammal) as opposed to atypical (dolphin \--\> mammal).
+This 'performing better' is measured in different ways: reaction time, accuracy (correct vs. incorrect) and several measurement of the cursor movement toward the correct answer.
 
 ## Loading and inspecting the data
 
@@ -99,7 +107,8 @@ Although the data set is already in good shape, here are some excursions into co
 
 ## Selecting columns
 
-For now, we are only interested in columns `RT`, `group`, `condition`, `category_correct`, and `correct`. We can use the `select()` function of `dplyr` to get rid of columns we don't need.
+For now, we are only interested in columns `RT`, `group`, `condition`, `category_correct`, and `correct`.
+We can use the `select()` function of `dplyr` to get rid of columns we don't need.
 
 ```{r}
 
@@ -115,7 +124,8 @@ dolphin_selected
 
 ## Filtering rows
 
-If we care only about a subset of rows, we can use the `filter()` function. For example, let's filter all trials in which the correct category was either a `fish` or a `mammal`
+If we care only about a subset of rows, we can use the `filter()` function.
+For example, let's filter all trials in which the correct category was either a `fish` or a `mammal`
 
 ```{r}
 
@@ -129,7 +139,8 @@ dolphin_filter1
 
 ```
 
-You can also `filter()` *against* particular conditions. For example, let's filter all rows that do not have `bird` as their correct category:
+You can also `filter()` *against* particular conditions.
+For example, let's filter all rows that do not have `bird` as their correct category:
 
 ```{r}
 
@@ -141,7 +152,8 @@ dolphin_filter2
 
 ```
 
-We can also filter according to multiple conditions at once, including numeric conditions. Here, we also filter for trials that have correct responses.
+We can also filter according to multiple conditions at once, including numeric conditions.
+Here, we also filter for trials that have correct responses.
 
 ```{r}
 
@@ -156,7 +168,9 @@ dolphin_filter3
 
 ## Grouping and summarizing
 
-We can also generate summary statistics of certain variables with a combination of `group_by()` & `summarise()`. Let's get the means and standard deviations of the reactions times for each level in the variable `condition`. We also include the minimum and maximum values for each condition.
+We can also generate summary statistics of certain variables with a combination of `group_by()` & `summarise()`.
+Let's get the means and standard deviations of the reactions times for each level in the variable `condition`.
+We also include the minimum and maximum values for each condition.
 
 ```{r}
 
@@ -177,9 +191,14 @@ dolphin_aggregate
 
 ```
 
-So we find that atypical categories are responded to slower than typical categories. Makes sense. Identifying a dolphin as a mammal might be difficult because it shares a lot of features with fish.
+So we find that atypical categories are responded to slower than typical categories.
+Makes sense.
+Identifying a dolphin as a mammal might be difficult because it shares a lot of features with fish.
 
-We can group according to many different factors simultaneously, and we can create multiple summary statistics at the same time. Here, we get summary statistics for each combination of all levels in variables `condition` and `group`. We use the `tidyboot` package to get bootstrapped 95% confidence intervalls. (Notice that these are more informative than standard deviations in the sense that they give an upper and lower deviation, not just one number for both directions, which can be misleading when the data is skewed (like reaction times typically are)):
+We can group according to many different factors simultaneously, and we can create multiple summary statistics at the same time.
+Here, we get summary statistics for each combination of all levels in variables `condition` and `group`.
+We use the `tidyboot` package to get bootstrapped 95% confidence intervalls.
+(Notice that these are more informative than standard deviations in the sense that they give an upper and lower deviation, not just one number for both directions, which can be misleading when the data is skewed (like reaction times typically are)):
 
 ```{r aggregate2, warning = F, message=F}
 
@@ -201,9 +220,15 @@ We can see here that the group that needed to click on a response are overall sl
 
 ## Changing and adding columns
 
-Often, we are interested in standardized measures because we do not know what a value of 1 means on any given scale. Is 1 a large difference or a small difference? For example when we want to explore the impact of several predictors on the same measurement, we want to know the relative size of a number. To achieve this, we standardize measures by dividing their mean by their respective standard deviations. We will use the `scale()` function for this and create a new variable in our data frame via `mutate()`.
+Often, we are interested in standardized measures because we do not know what a value of 1 means on any given scale.
+Is 1 a large difference or a small difference?
+For example when we want to explore the impact of several predictors on the same measurement, we want to know the relative size of a number.
+To achieve this, we standardize measures by dividing their mean by their respective standard deviations.
+We will use the `scale()` function for this and create a new variable in our data frame via `mutate()`.
 
-(Note that the `scale()` function creates an object that is of the matrix class. That is fine for the most part but might create issues later on. To avoid any issues, we wrap the `scale()` function in `as.numeric()` to store the results as a numeric vector.)
+(Note that the `scale()` function creates an object that is of the matrix class.
+That is fine for the most part but might create issues later on.
+To avoid any issues, we wrap the `scale()` function in `as.numeric()` to store the results as a numeric vector.)
 
 ```{r standardize, warning = F, message=F}
 
@@ -215,7 +240,8 @@ head(dolphin_standardize)
 
 ```
 
-If we now compare, say atypical and typical categories according to reaction times, we can use the standardized RT ratings. Let's do all of this in one "pipeline".
+If we now compare, say atypical and typical categories according to reaction times, we can use the standardized RT ratings.
+Let's do all of this in one "pipeline".
 
 ```{r pipeline, warning = F, message=F}
 
@@ -237,7 +263,8 @@ Now we can see that atypical categories exhibit relatively higher RTs, i.e., mor
 ::: {.callout-caution collapse="false"}
 ## Exercise 1a
 
-Take the dolphin data set and store a reduced variant of it as `dolphin_reduced`. The new data frame should contain only the following columns: `RT`, `AUC`, `group`, and `exemplar`.
+Take the dolphin data set and store a reduced variant of it as `dolphin_reduced`.
+The new data frame should contain only the following columns: `RT`, `AUC`, `group`, and `exemplar`.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -256,7 +283,8 @@ head(dolphin_reduced)
 ::: {.callout-caution collapse="false"}
 ## Exercise 1b
 
-We are for now only interested in those data that have whales as the exemplar. `filter()` only those rows and store them in a new dataframe called `whales_only`.
+We are for now only interested in those data that have whales as the exemplar.
+`filter()` only those rows and store them in a new dataframe called `whales_only`.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -294,7 +322,8 @@ head(whales_only2)
 ::: {.callout-caution collapse="false"}
 ## Exercise 1d
 
-We don't like that `AUC` is unstandardized. Use `mutate()` to create a new vector that represents scaled AUC values (scaling is achieved by the function `scale()`).
+We don't like that `AUC` is unstandardized.
+Use `mutate()` to create a new vector that represents scaled AUC values (scaling is achieved by the function `scale()`).
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -359,7 +388,10 @@ head(whales_aggregate)
 ::: {.callout-caution collapse="false"}
 ## Exercise 2a
 
-Take the dolphin data set and store a reduced variant of it. The new data frame should contain only the columns `condition`, `group`, and `xpos_flips`, `correct`. And within the `correct` vector, we are only interested in the correct trials (= 1). Filter accordingly.
+Take the dolphin data set and store a reduced variant of it.
+The new data frame should contain only the columns `condition`, `group`, and `xpos_flips`, `correct`.
+And within the `correct` vector, we are only interested in the correct trials (= 1).
+Filter accordingly.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -480,7 +512,10 @@ dolphin_agg
 
 ## Basic plots
 
-Now that we have pre-processed our data set, we are ready to visually explore it. Let's start very simple. Let's plot a bar plot. Let's also add a title to our plot.
+Now that we have pre-processed our data set, we are ready to visually explore it.
+Let's start very simple.
+Let's plot a bar plot.
+Let's also add a title to our plot.
 
 ```{r barebar, fig.width = 7, fig.align="center"}
 
@@ -491,7 +526,10 @@ ggplot(dolphin_agg, aes(x = condition, y = mean_RT)) +
 
 ```
 
-Ugh! What an ugly plot, right? But it's already telling a story: Atypical categories are responded to slower than typical categories. Let's add a measure of uncertainty, in our case the bootstrapped 95% confidence intervals, as error bars to the plot:
+Ugh!
+What an ugly plot, right?
+But it's already telling a story: Atypical categories are responded to slower than typical categories.
+Let's add a measure of uncertainty, in our case the bootstrapped 95% confidence intervals, as error bars to the plot:
 
 ```{r}
 
@@ -508,9 +546,15 @@ ggplot(dolphin_agg, aes(x = condition, y = mean_RT)) +
     
 ```
 
-We can observe a couple of things here. First, ggplot automatically adjust the axes based on the elements to be plotted unless we tell it not to. Second, the error bars are plotted *in front* of the bars, i.e. closer to the viewer. This visual ordering reflects the order of layers. We first plotted the bars and THEN the error bars.
+We can observe a couple of things here.
+First, ggplot automatically adjust the axes based on the elements to be plotted unless we tell it not to.
+Second, the error bars are plotted *in front* of the bars, i.e. closer to the viewer.
+This visual ordering reflects the order of layers.
+We first plotted the bars and THEN the error bars.
 
-Beyond bar plots, we can create other useful plots types. For example a point plot. Instead of a bar, we plot the mean RT as points.
+Beyond bar plots, we can create other useful plots types.
+For example a point plot.
+Instead of a bar, we plot the mean RT as points.
 
 ```{r point1, fig.width = 7, fig.align="center"}
 
@@ -524,7 +568,10 @@ ggplot(dolphin_agg, aes(x = condition, y = mean_RT)) +
 
 ```
 
-Or a line plot that connects the means with a line. For the line plot to work, we need to indicate a `group` aesthetic, i.e. the group that we want to connect with a line. If you have for example several interacting categories, you need to indicate which groups are supposed to be connected with lines (see below). Because we have only one group here, condition, we set `group` to `1`.
+Or a line plot that connects the means with a line.
+For the line plot to work, we need to indicate a `group` aesthetic, i.e. the group that we want to connect with a line.
+If you have for example several interacting categories, you need to indicate which groups are supposed to be connected with lines (see below).
+Because we have only one group here, condition, we set `group` to `1`.
 
 ```{r line1, fig.width = 7, fig.align="center"}
 
@@ -534,7 +581,11 @@ ggplot(dolphin_agg, aes(x = condition, y = mean_RT, group = 1)) +
  
 ```
 
-Yay, we are on a roll. Let's plot a box plot. Remember the box shows the median (middle vertical line) and the interquartile range (the middle 50% of the data within the box). Note that for the box plot, we do not plot aggregated values, so we need to refer to the *entire* data set. We also add the aesthetic `fill` here and set it to the variable `condition` to color code our boxes.
+Yay, we are on a roll.
+Let's plot a box plot.
+Remember the box shows the median (middle vertical line) and the interquartile range (the middle 50% of the data within the box).
+Note that for the box plot, we do not plot aggregated values, so we need to refer to the *entire* data set.
+We also add the aesthetic `fill` here and set it to the variable `condition` to color code our boxes.
 
 ```{r box1, fig.width = 7, fig.align="center"}
 
@@ -546,7 +597,8 @@ ggplot(dolphin, aes(x = condition, y = RT, fill = condition)) +
 
 ```
 
-While the above plots illustrate one continuous variable (`RT`) plotted against a categorical variable (`condition`), we can also plot two continuous variables against each other. For example, we could plot `RT` against `AUC` in a scatter plot.
+While the above plots illustrate one continuous variable (`RT`) plotted against a categorical variable (`condition`), we can also plot two continuous variables against each other.
+For example, we could plot `RT` against `AUC` in a scatter plot.
 
 ```{r scatter1, warning = F, fig.width = 6, fig.align="center"}
 
@@ -557,7 +609,9 @@ ggplot(dolphin_subset, aes(x = RT, y = AUC)) +
 
 ```
 
-Finally, one central plot type for our class. The density plot. It plots on the x-axis a continous value and on the y-axis the "density"" of these values. So high values on the y-axis means a lot of data at the corresponding x-values. The density curve can be outlined with `color` and filled with `fill`. To keep the two categories visually distinct, we add an argument to the `geom_density()` function: alpha. Alpha controls the transparency of the color! We will see a lot of these density plots in our class.
+Finally, one central plot type for our class.
+The density plot.
+It plots on the x-axis a continous value and on the y-axis the "density"" of these values. So high values on the y-axis means a lot of data at the corresponding x-values. The density curve can be outlined with `color` and filled with `fill`. To keep the two categories visually distinct, we add an argument to the `geom_density()` function: alpha. Alpha controls the transparency of the color! We will see a lot of these density plots in our class.
 
 ```{r density1, warning = F, fig.width = 6, fig.align="center"}
 
@@ -569,7 +623,12 @@ ggplot(dolphin, aes(x = RT, color = condition, fill = condition)) +
 
 ## Adjusting plot elements
 
-Okay, so we are now already capable of exploring our data visually with a bunch of plots. These plots are exceptionally ugly and of limited communicative value so far. Note that this is perfectly fine during an exploratory phase of data analysis. If we just eye-ball data and we have no trouble interpreting the plots, thats just fine. However, as soon as we want to communicate patterns to others with these graphs, we need to take a little bit more care of its communicative value. Let's look at ways we can tailor our plots to the needs of an audience.
+Okay, so we are now already capable of exploring our data visually with a bunch of plots.
+These plots are exceptionally ugly and of limited communicative value so far.
+Note that this is perfectly fine during an exploratory phase of data analysis.
+If we just eye-ball data and we have no trouble interpreting the plots, thats just fine.
+However, as soon as we want to communicate patterns to others with these graphs, we need to take a little bit more care of its communicative value.
+Let's look at ways we can tailor our plots to the needs of an audience.
 
 Let's go back to our bar plot and explore whether `condition` and `group` has an impact on `RT`?
 
@@ -588,7 +647,9 @@ ggplot(dolphin_agg2, aes(x = condition, y = mean_RT, fill = group)) +
 
 ```
 
-Hm... that doesn't work out, the bars are on top of each other, we need to tell ggplot to position the bars next to each other instead. We do that with position_dogde(). Note that ggplot assigns a default color coding scheme to your plots if you don't specify it by hand.
+Hm... that doesn't work out, the bars are on top of each other, we need to tell ggplot to position the bars next to each other instead.
+We do that with position_dogde().
+Note that ggplot assigns a default color coding scheme to your plots if you don't specify it by hand.
 
 ```{r bar4, fig.width = 6, fig.align="center"}
 
@@ -597,7 +658,9 @@ ggplot(dolphin_agg2, aes(x = condition, y = mean_RT, fill = group)) +
 
 ```
 
-Awww much better! Alternatively, we can plot the two categories into separate panels. We achieve this by facetting using the `facet_grid()` function.
+Awww much better!
+Alternatively, we can plot the two categories into separate panels.
+We achieve this by facetting using the `facet_grid()` function.
 
 ```{r bar5, fig.width = 6, fig.align="center"}
 
@@ -608,9 +671,16 @@ ggplot(dolphin_agg2, aes(x = group, y = mean_RT, fill = condition)) +
 
 ```
 
-Okay. We are getting somewhere. We already learned something again. Apparently, the effect of typiciality on RT is pretty similar across tasks. It does not look like we have an interaction here (more on interactions later).
+Okay.
+We are getting somewhere.
+We already learned something again.
+Apparently, the effect of typiciality on RT is pretty similar across tasks.
+It does not look like we have an interaction here (more on interactions later).
 
-Now let's make these plots ready to communicate information. We add appropriate axes titles. Note that we are using a little hack here: The "\n" inserts an empty line, creating visual distance from axis title to axis, thus making it easier to read it. Our audience will thank us.
+Now let's make these plots ready to communicate information.
+We add appropriate axes titles.
+Note that we are using a little hack here: The "\n" inserts an empty line, creating visual distance from axis title to axis, thus making it easier to read it.
+Our audience will thank us.
 
 ```{r bar6, fig.width = 6, fig.align="center"}
 
@@ -623,7 +693,9 @@ ggplot(dolphin_agg2, aes(x = group, y = mean_RT, fill = condition)) +
 
 ```
 
-The same graph as a point / line plot indicated to the audience whether there is an interaction pattern or not. Note that here we do not facet because we actually want the points to be plotted within the same horizontal space. We also have to specify the group aesthetic to tell ggplot which points to connect with lines.
+The same graph as a point / line plot indicated to the audience whether there is an interaction pattern or not.
+Note that here we do not facet because we actually want the points to be plotted within the same horizontal space.
+We also have to specify the group aesthetic to tell ggplot which points to connect with lines.
 
 ```{r line2, fig.width = 8, fig.align="center"}
 
@@ -638,7 +710,9 @@ ggplot(dolphin_agg2, aes(x = group, y = mean_RT, color = condition, group = cond
 
 ```
 
-These lines look pretty parallel and don't indicate a strong interaction pattern. But how do different exemplars differ? Let's aggregate for individual exemplars first and then create the same plot for the means of all exemplars.
+These lines look pretty parallel and don't indicate a strong interaction pattern.
+But how do different exemplars differ?
+Let's aggregate for individual exemplars first and then create the same plot for the means of all exemplars.
 
 ```{r line3, fig.width = 8, fig.align="center"}
 
@@ -656,11 +730,14 @@ ggplot(dolphin_agg3, aes(x = group, y = mean_RT, color = condition, group = exem
 
 ```
 
-It looks like "shark" and "rattlesnake" behave very different from their buddies in the `typical` condition. Interesting! We wouldn't have noticed if we had only looked at the overall means.
+It looks like "shark" and "rattlesnake" behave very different from their buddies in the `typical` condition.
+Interesting!
+We wouldn't have noticed if we had only looked at the overall means.
 
 ## Exercises for plotting
 
-Take the scatter plot below as a departure point. It plots AUC (area-under-the-curve) against MAD (maximal absolute deviation).
+Take the scatter plot below as a departure point.
+It plots AUC (area-under-the-curve) against MAD (maximal absolute deviation).
 
 ```{r}
 

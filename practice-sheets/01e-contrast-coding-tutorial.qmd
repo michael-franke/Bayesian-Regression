@@ -3,12 +3,14 @@ title: "A tutorial on contrast coding for (Bayesian) regression"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Polina Tsvilodub"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 Generalized (non-)linear mixed effect models are a powerful statistical tool that gains increasing popularity for data analysis in cognitive science and many other disciplines. **This tutorial will provide an** **overview of different categorical variable coding schemes commonly used in regression modeling**. In particular, it covers:
@@ -21,7 +23,7 @@ Generalized (non-)linear mixed effect models are a powerful statistical tool tha
 
 -   Helmert and reverse Helmert coding
 
-We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach.
+We will look at two example data sets from factorial-design experiments with categorical predictors and a continuous dependent variable which we will analyze using a Bayesian approach. We also show how the `faintr` package allows extraction of (samples of estimates for) cell means irrespective of encoding scheme.
 
 *Estimated reading time: 1.5h*
 
@@ -129,12 +131,11 @@ contrasts(politeness_df$gender)
 contrasts(politeness_df$context)
 ```
 
-But if we wish to explicitly assign a dummy (treatment) coding to a variable, we may do so by a built-in R function:
+But if we wish to explicitly assign a dummy (treatment) coding to a variable, we may do so by a built-in R function.
 
 ```{r}
-contrasts(politeness_df$gender) <- contr.treatment(2) # insert the number of levels here
-# check
-contrasts(politeness_df$gender)
+contrasts(politeness_df$gender) <- contr.treatment(n=2) # insert the number of levels here
+colnames(contrasts(politeness_df$gender)) <- "M" # manually declare the contrast level names
 ```
 
 So both variables $x_1$ and $x_2$ can take either the value 0 or 1 (because we dummy-code both categorical variables; see below for more). We already defined the referenc levels of the single variables, now we can define the overall reference level of our model (by combining the two individual reference levels) -- it is the mean pitch of female speakers in informal contexts.
@@ -145,7 +146,7 @@ Having set all the basics, we can now turn to computing a linear model of the me
 #| results: hide
 
 # here, we only use fixed effects
-lm.dummy.FE <- brm(
+fit_dummy_FE <- brm(
   pitch ~ gender * context,
   data = politeness_df,
   cores = 4,
@@ -153,10 +154,9 @@ lm.dummy.FE <- brm(
 )
 ```
 
-
 ```{r}
-lm.dummy.FE.coefs <- fixef(lm.dummy.FE)[,1] %>% as.numeric() # get the estimated coefficients
-summary(lm.dummy.FE)
+fit_dummy_FE.coefs <- fixef(fit_dummy_FE)[,1] %>% as.numeric() # get the estimated coefficients
+summary(fit_dummy_FE)
 ```
 
 Now how do we interpret the estimated coefficients?
@@ -170,9 +170,8 @@ Further, let us recall the numerical coding of our variables: for $x_1$ (gender)
 To get an estimate of a certain design cell ($y_i$) - let's start with the mean pitch of female speakers (0 for $x_1$) in informal contexts (0 for $x_2$) - we just insert the corresponding numeric values for the corresponding $x$ and the estimated value for the corresponding $\beta$. Thus we get:
 
 ```{r}
-
-y1 = lm.dummy.FE.coefs[1] + lm.dummy.FE.coefs[2]*0 +
-  lm.dummy.FE.coefs[3]*0 + lm.dummy.FE.coefs[4]*(0)
+y1 = fit_dummy_FE.coefs[1] + fit_dummy_FE.coefs[2]*0 +
+  fit_dummy_FE.coefs[3]*0 + fit_dummy_FE.coefs[4]*(0)
 y1
 ```
 
@@ -181,10 +180,63 @@ Hence, the mean pitch of female speakers in informal context corresponds to the 
 Let's now calculate the mean pitch of male speakers (1 for $x_1$) in informal contexts (0 for $x_2$):
 
 ```{r}
-y2 = lm.dummy.FE.coefs[1] + lm.dummy.FE.coefs[2]*1 +
-  lm.dummy.FE.coefs[3]*0 + lm.dummy.FE.coefs[4]*(1*0)
+y2 = fit_dummy_FE.coefs[1] + fit_dummy_FE.coefs[2]*1 +
+  fit_dummy_FE.coefs[3]*0 + fit_dummy_FE.coefs[4]*(1*0)
 y2
 ```
+
+### Quantifying uncertainty
+
+The previous estimate of the cell mean used the mean estimate for model paramters.
+This way, we get no information about the uncertainty in this estimate.
+But we can do the same kind of calculations we did before for the means of the estimates, but *for each of the samples from the posterior*, thus obtaining samples from a derived variable, for which we can quantify the uncertainty as usual.
+
+```{r}
+cell_means_BayesStats <- fit_dummy_FE |> 
+  tidybayes::tidy_draws() |> 
+  select(starts_with("b_")) |> 
+  mutate(
+    female_informal = b_Intercept,
+    female_polite   = b_Intercept + b_contextpol,
+    male_informal   = b_Intercept + b_genderM,
+    male_polite     = b_Intercept + b_contextpol + 
+                        b_genderM + `b_genderM:contextpol`
+  ) |> 
+  select(5:8) |> 
+  pivot_longer(cols = everything()) |>
+  group_by(name) |> 
+  reframe(aida::summarize_sample_vector(value)[-1])
+cell_means_BayesStats
+```
+
+That's a lot of manual labor.
+Thankfully, there is a package to make this simpler.
+
+### Extracting cell samples with `faintr`
+
+The `faintr` package allows to extract samples from different levels of categorical predictors, like so:
+
+```{r}
+# sample for male speakers in polite contexts
+faintr::extract_cell_draws(
+  fit = fit_dummy_FE,
+  group = gender == "M" & context == "pol"
+) |> pull(draws) |> 
+  aida::summarize_sample_vector(name = "male_polite")
+```
+
+The `faintr` package also allows to compare cells (e.g., "diagonally"):
+
+```{r}
+faintr::compare_groups(
+  fit = fit_dummy_FE,
+  higher  = gender == "F" & context == "inf",
+  lower   = gender == "M" & context == "pol"
+)
+```
+
+This compares the estimated mean pitch for male speakers in polite contexts against those of female speakers in informal contexts.
+Clearly, the hypothesis that polite male speakers have lower pitch than informal female speakers is supported by this data and analysis.
 
 ## Simple (Contrast) Coding
 
@@ -219,7 +271,6 @@ lm.contr.FE <- brm(
   iter =  1000
 )
 ```
-
 
 ```{r}
 lm.contr.FE.coefs <- fixef(lm.contr.FE)[,1] %>% as.numeric() # get vector of estimated coefficients
@@ -263,7 +314,6 @@ lm.dev.FE <- brm(pitch ~ context_dev * gender_dev,
                 cores = 4,
                 iter = 1000)
 ```
-
 
 ```{r}
 lm.dev.FE.coefs <- fixef(lm.dev.FE)[,1] %>% as.numeric()
@@ -322,7 +372,6 @@ lm.helmert.FE <- brm(pitch ~ context_helm * gender_helm,
                 iter = 1000)
 ```
 
-
 ```{r}
 lm.helmert.FE.coefs <- fixef(lm.helmert.FE)[,1] %>% as.numeric()
 summary(lm.helmert.FE)
@@ -348,9 +397,7 @@ lm.mixedCode.FE <- brm(pitch ~ context * gender_contr,
                 iter = 1000)
 ```
 
-```{lm.mixedCode.FE.coefs <- fixef(lm.mixedCode.FE)[,1] %>% as.numeric()}
-summary(lm.mixedCode.FE)
-```
+`{lm.mixedCode.FE.coefs <- fixef(lm.mixedCode.FE)[,1] %>% as.numeric()} summary(lm.mixedCode.FE)`
 
 Generally, the interpretation is just the combination of what we have learned about the individual coding schemes. Recall that the intercept of a dummy-coded model is the mean of the reference level -- since we dummy-coded `context`, the refernce level would be `informal` context. But it is not the intercept yet! We have the second predictor in our model -- the simple coded gender. In simple coded models the intercept is the mean across the levels of the variable. Now the intercept of our model with the two different predictors is the mean pitch in informal contexts - across genders.
 
@@ -413,7 +460,6 @@ lm3.dummy.FE <- brm(RT ~ List * SOA,
                    iter = 1000)
 ```
 
-
 ```{r}
 lm3.dummy.FE.coefs <- fixef(lm3.dummy.FE)[,1] %>% as.numeric()
 summary(lm3.dummy.FE)
@@ -443,7 +489,6 @@ lm3.simple.FE <- brm(RT ~ List_contr * SOA_contr,
                    iter = 1000)
 ```
 
-
 ```{r}
 lm3.simple.FE.coefs <- fixef(lm3.simple.FE)[,1] %>% as.numeric()
 summary(lm3.simple.FE)
@@ -470,7 +515,6 @@ lm3.dev.FE <- brm(RT ~ List_dev * SOA_dev,
                  cores = 4,
                  iter = 1000)
 ```
-
 
 ```{r}
 lm3.dev.FE.coefs <- fixef(lm3.dev.FE)[,1] %>% as.numeric()
@@ -500,7 +544,6 @@ lm3.helm.FE <- brm(RT ~ List_helm * SOA_helm,
                   iter = 1000)
 ```
 
-
 ```{r}
 lm3.helm.FE.coefs <- fixef(lm3.helm.FE)[,1] %>% as.numeric()
 summary(lm3.helm.FE)
@@ -528,7 +571,6 @@ lm3.rhelm.FE <- brm(RT ~ List_rhelm * SOA_rhelm,
                    iter = 1000,
                    cores = 4)
 ```
-
 
 ```{r}
 lm3.rhelm.FE.coefs <- fixef(lm3.rhelm.FE)[,1] %>% as.numeric()
