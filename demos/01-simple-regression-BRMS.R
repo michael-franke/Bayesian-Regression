@@ -64,39 +64,47 @@ dolphin <- aida::data_MT
 dolphin_agg <- dolphin |> 
   # only correct trials
   filter(correct == 1) |> 
-  # by-subject medians (for conveniennce / robustness)
+  # by-subject medians (for convenience / robustness)
   group_by(subject_id) |> 
   dplyr::summarize(
     AUC = median(AUC, na.rm = TRUE),
     MAD = median(MAD, na.rm = TRUE)) 
 
-
-
 ##################################################
 ## plotting
 ##################################################
 
-
-
-
+dolphin_agg |> 
+  ggplot(aes(x = MAD, y = AUC)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm")
 
 ##################################################
 ## fitting a model
 ##################################################
 
+fit_dolphin <- 
+  brms::brm(
+    formula = AUC ~ MAD,
+    data    = dolphin_agg
+  )
 
-
-
-
+summary(fit_dolphin)
 
 ##################################################
 ## inspect the fit
 ##################################################
 
+tidybayes::tidy_draws(fit_dolphin) |> 
+  select(starts_with("b_")) |> 
+  pivot_longer(cols = everything()) |> 
+  group_by(name) |> 
+  summarize(
+    aida::summarize_sample_vector(value)[-1]
+    )
 
-
-
-
+tidybayes::tidy_draws(fit_dolphin) |> 
+  select(b_Intercept, b_MAD, sigma) 
 
 
 
