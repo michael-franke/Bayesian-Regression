@@ -47,7 +47,7 @@ website:
           - href: practice-sheets/02b-hierarchical-models-exercises.qmd
             text: Hierarchical models (exercises)
           - href: practice-sheets/02c-multi-membership.qmd
-            text: multi membership
+            text: Multi memberships
           - href: practice-sheets/02d-MLM-pooling.qmd
             text: MLM-pooling
       - section: "03: GLMs & beyond"

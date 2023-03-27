@@ -3,12 +3,14 @@ title: "05b: Hierarchical regression models (exercises)"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 # Preamble
@@ -20,7 +22,7 @@ dolphin <- aida::data_MT
 my_scale <- function(x) c(scale(x))
 ```
 
-## Exercise 1: Logistic regression
+# Exercise 1: Logistic regression
 
 Consider the following model formula for the `dolphin` data set:
 
@@ -32,28 +34,28 @@ brms::bf(MAD ~ condition +
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 1a**
+::: {.callout-caution collapse="false"}
+## Exercise 1a
 
-Why is the random effect structure of this model questionable? Can we meaningfully estimate all parameters? (Tip: Think about what group levels vary across predictor levels)
+Why is the random effect structure of this model questionable? Can we meaningfully estimate all parameters? (Hint: Think about what group levels vary across predictor levels)
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+
+Factor `condition` is not crossed with `exemplar`.
+An exemplar is either typical or atypical, thus a random slope does not make sense.
+
+:::
 :::
 
-```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
-# Answer: `condition` is not crossed with `exemplar`. An exemplar is either typical or atypical, thus a random slope does not make sense.
-
-```
-
-::: {.callout-caution collapse="true"}
-**Exercise 1b**
+::: {.callout-caution collapse="false"}
+## Exercise 1b
 
 Use the following data frame:
 
 ```{r}
-#| eval: false
 
 # set up data frame
 dolphin_correct <- dolphin %>% 
@@ -65,15 +67,15 @@ dolphin_correct <- dolphin %>%
 
 Run a multilevel model that predicts `AUC_s` based on `condition.` Specify maximal random effect structures for `exemplar`s and `subject_id`s (ignore correlations between intercepts and slopes for now). Specify a `seed = 98`.
 
-If you encounter "divergent transition" warning, make them go away by refitting the model appropriately (Tip: Brms gives very useful, actionable advice)
+If you encounter "divergent transition" warning, make them go away by refitting the model appropriately (Hint: `brms` gives very useful, actionable advice)
 
 (This might take a couple of minutes, get used to it ;)
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 
 ```{r exercise1b, cache = TRUE, warnings = FALSE, messages = FALSE, results = 'hide'}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # refit with upped adapt_delta and max_treedepth
 xmdl_AUC2 <- brm(AUC_s ~ condition +
@@ -87,16 +89,18 @@ xmdl_AUC2
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 1c**
-
-You want to run a multilevel model that predicts `log_RT_s` based on `group`. You want to account for group-level variation of both `subject_id` and `exemplar`. What kind of groupings can be meaningfully estimated, given the dataset and the experimental design. You can check the crossing of different vectors with `xtabs()` for example.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1c
+
+You want to run a multilevel model that predicts `log_RT_s` based on `group`. You want to account for group-level variation of both `subject_id` and `exemplar`. What kind of groupings can be meaningfully estimated, given the dataset and the experimental design. You can check the crossing of different vectors with `xtabs()` for example.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # check crossing
 xtabs(~ group + subject_id, dolphin_correct)
@@ -109,18 +113,21 @@ xtabs(~ group + exemplar, dolphin_correct)
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 1d**
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 1d
 
 Run a multilevel model that predicts `log_RT_s` based on `group` and add maximal random effect structures licensed by the experimental design (ignore possible random intercept-slope interactions for now).
 
 Specify weakly informative priors as you see fit.
-:::
+
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 priors <- c(
   #priors for all fixed effects (group)
@@ -140,17 +147,19 @@ xmdl
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 1e**
-
-Extract the posterior means and 95% CrIs of touch vs. click `log_RT_s` and plot them.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1e
+
+Extract the posterior means and 95% CrIs of touch vs. click `log_RT_s` and plot them.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
- 
+
 # Extract the posteriors
 posteriors <- xmdl %>%
   spread_draws(b_Intercept, 
@@ -178,16 +187,18 @@ ggplot(data = posteriors,
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 1f**
-
-Add the posterior estimates for different `exemplar`s to the plot. (Tip: Check code from the previous "tutorial" to extract the random effect estimates.)
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1f
+
+Add the posterior estimates for different `exemplar`s to the plot. (Hint: Check code from the previous "tutorial" to extract the random effect estimates.)
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # extract the random intercepts for exemplars
 random_intc_matrix <- ranef(xmdl)$exemplar[, , "Intercept"] %>% 
@@ -240,18 +251,22 @@ ggplot(data = posteriors,
 
 ```
 
-## Exercise 2: Poisson regression
-
-::: {.callout-caution collapse="true"}
-**Exercise 2a**
-
-Run a multilevel poisson regression predicting `xpos_flips` based on `group`, `log_RT_s`, and their two-way interaction. Specify maximal random effect structures for `exemplar`s and `subject_id`s licensed by the design (ignore correlations between intercepts and slopes for now). (Tip: allow groupings to differ regarding the interaction effect if licensed by the design.) Specify weakly informative priors.
+:::
 :::
 
+
+# Exercise 2: Poisson regression
+
+::: {.callout-caution collapse="false"}
+## Exercise 2a
+
+Run a multilevel poisson regression predicting `xpos_flips` based on `group`, `log_RT_s`, and their two-way interaction. Specify maximal random effect structures for `exemplar`s and `subject_id`s licensed by the design (ignore correlations between intercepts and slopes for now). (Hint: allow groupings to differ regarding the interaction effect if licensed by the design.) Specify weakly informative priors.
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 priors <- c(
   #priors for all fixed effects
@@ -271,16 +286,20 @@ poisson_mdl
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 2b**
 
-Extract and plot the population level estimates for both click and touch group as a regression line into a scatter plot (x = b_log_RT_s, y = xpos_flips).
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2b
+
+Extract and plot the population level estimates for both click and touch group as a regression line into a scatter plot (x = b_log_RT_s, y = xpos_flips).
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # extract posterior means for model coefficients
 predicted_Poisson_values <- poisson_mdl %>%
@@ -314,16 +333,18 @@ ggplot(data = predicted_Poisson_values, aes(x = log_RT, y = pred_m)) +
 
 ```
 
-::: {.callout-caution collapse="true"}
-**Exercise 2c**
-
-Extract the respective subject-specific estimates from the model and plot them into the same plot (use thinner lines).
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2c
+
+Extract the respective subject-specific estimates from the model and plot them into the same plot (use thinner lines).
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # extract the random effects for subject_id
 
@@ -374,3 +395,8 @@ ggplot(data = predicted_Poisson_values, aes(x = log_RT, y = pred_m)) +
   xlim(-5,10)
 
 ```
+
+:::
+:::
+
+

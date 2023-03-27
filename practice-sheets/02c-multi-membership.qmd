@@ -3,16 +3,21 @@ title: "Multi-membership models"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
   cache: true
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
-Multi-membership models used in cases where group-level effects are plausible but elements do not necessarily belong just to a single group. For example, if we want to include group-level effects for native language, some individuals may have more than one native language. Individuals with more than one native language would belong to multiple groups, whence the term multi-membership models. Moreover, there are cases where membership in a group is a matter of degree: if a grouping of individuals is by "country of residence", for example, some people might spend variable amounts of time in different countries.
+Multi-membership models are useful in cases where group-level effects are plausible but elements do not necessarily belong just to a single group.
+For example, if we want to include group-level effects for the native language (of participants in an experiment), some individuals may have more than one.
+Individuals with more than one native language would belong to multiple groups, whence the term multi-membership models.
+Moreover, there are cases where membership in a group is a matter of degree: if a grouping of individuals is by "country of residence", for example, some people might spend variable amounts of time in different countries, and our model may want to account for that.
 
 # Preamble
 
@@ -20,13 +25,18 @@ Multi-membership models used in cases where group-level effects are plausible bu
 
 # Multi-membership group-level effects
 
-To understand multi-membership models, consider first a normal (non-multi-membership) group-level modeling approach. Say that each observation $i$ belongs to exactly one of $k$ categories $c(i) \in \{1, \dots, k\}$. A group-level intercept would then consist in a sampling additive offsets $\vec{u} = \langle u_{1}, \dots, u_{k} \rangle$ for each category. The linear predictor for observation $i$ is computed by adding the appropriate group-level offset to the population-level intercept, like so:
+To understand multi-membership models, consider first a normal (non-multi-membership) group-level modeling approach.
+Say that each observation $i$ belongs to exactly one of $k$ categories $c(i) \in \{1, \dots, k\}$.
+A group-level intercept consists of a vector of additive offsets $\vec{u} = \langle u_{1}, \dots, u_{k} \rangle$, one adjustment $u_{i}$ for each category $i$.
+The linear predictor for observation $i$ is computed by adding the appropriate group-level offset to the population-level intercept, like so:
 
 $$
 \eta_i = \beta_0 + u_{c(i)} + \dots
 $$
 
-Instead of an indexing function $c(i)$, which returns the category index for each observation $i$, this can also be written using a *one-hot vector encoding*. Let, $\vec{\delta}_i$ be a vector of length $k$ which contains only zeros, except in position $c(i)$, where it contains a 1. Then we can equivalently write the equation for the linear predictor term as:
+Instead of an indexing function $c(i)$, which returns the category index for each observation $i$, this can also be written using a *one-hot vector encoding*.
+Let, $\vec{\delta}_i$ be a vector of length $k$ which contains only zeros, except in position $c(i)$, where it contains a 1.
+Then we can equivalently write the equation for the linear predictor term as:
 
 $$
 \eta_i = \beta_0 + \vec{u} \cdot \vec{\delta}_i + \dots
@@ -34,19 +44,24 @@ $$
 
 For example, if there are only four categories, and if observation $i$ belongs to the third category ($c(i)=3$), we have $\delta_i = \langle 0,0,1,0 \rangle$, so that the dot product $\vec{u} \cdot \vec{\delta}_i$ will just return the value of $\vec{u}$ at position 3.
 
-From here, it's just one step further to a multi-membership model. Instead of a one-hot vector encoding for group-membership, consider a vector of (normalized) weights $\vec{w}_i$ given the relative degree to which observation $i$ belongs to each category. The linear predictor is then:
+From here, it's just one step further to a multi-membership model.
+Instead of a one-hot vector encoding for group-membership, consider a vector of (normalized) weights $\vec{w}_i$ given the relative degree to which observation $i$ belongs to each category.
+The linear predictor is then:
 
 $$
 \eta_i = \beta_0 + \vec{u} \cdot \vec{w}_i + \dots
 $$
 
-and that's all to it. Similar considerations apply to random slopes.
+and that's all to it.
+Similar considerations apply to random slopes.
 
 Importantly, the weights $\vec{w}_i$ are given (from observation).
+(I am not aware that `brms` allows to estimate the weights as well. If that would be a requirement, directly coding the model in Stan might be necessary.)
 
 # Simulated data set of multi-membership effects
 
-To explore how a multi-membership model can recover the true effects of weighted membership, we use a simulated data set based on a vanilla linear regression (with one predictor term). The true population-level parameters are:
+To explore how a multi-membership model can recover the true effects of weighted membership, we use a simulated data set based on a vanilla linear regression (with one predictor term).
+The true population-level parameters are:
 
 ```{r }
 # true parameters (population-level)
@@ -97,7 +112,7 @@ To run a multi-membership model in `brms`, there is special syntax for the group
 Writing `+ (1 | mm(g1, g2))` indicates random intercepts for multi-membership as indicated by the vectors `g1` and `g2`.
 Without further information, this is interpreted as belonging equally to each group (weights 0.5 for each, if we have two possible group memberships).
 If membership is weighted, as indicated in our data set in columns `w1` and `w2`, this can be expressed as: `+ ( 1 | mm(g1, g2, weights = cbind(w1, w2))`.
-NB: the `weights` argument expects a matrix, so that we need to include `cbind()` here.
+(NB: the `weights` argument expects a matrix, so that we need to include `cbind()` here.)
 
 ```{r}
 #| results: hide
@@ -119,6 +134,8 @@ tidybayes::summarise_draws(fit_mm) |>
   filter(grepl("r_",variable)) |> 
   select(variable, q5, mean, q95)
 ```
+
+# Exercises
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1a: Biased group membership
@@ -155,7 +172,6 @@ data_multiMember |>
   geom_point(aes(x = x ,y = y_pop), color = project_colors[3], alpha = 0.5) +
   geom_point(color = project_colors[1], alpha = 0.5)
 ```
-
 :::
 :::
 
@@ -165,7 +181,7 @@ data_multiMember |>
 Fit a multi-membership model to the new data and check if group-level parameters are recoverable still.
 How do you interpret the results: did the model recover the true parameters or not?
 
-[If you want: Think about what influences recoverability.]
+\[If you want: Think about what influences recoverability.\]
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -184,21 +200,18 @@ tidybayes::summarise_draws(fit_mm) |>
 ```
 
 The recovery is not as immaculate as without the bias, but it is still okay.
-
 :::
 :::
-
 
 ::: {.callout-caution collapse="false"}
-## Exercise 1c: [BONUS] Compare multi-membership model to vanilla
+## Exercise 1c: Compare multi-membership model to vanilla
 
-Run a vanilla regression model for the biased data, i.e., without group-level effects. 
+Run a vanilla regression model for the biased data, i.e., without group-level effects.
 Compare the models based on a simple posterior predictive check with `pp_check()`.
 What do you conclude from this?
 
-Compare the models based on their posterior predicitive adequacy, e.g., using LOO model comparison (if you can).
+Compare the models based on their posterior predicitive adequacy, e.g., using LOO model comparison (if you can; maybe you have not learned about this yet).
 Interpret the results.
-
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -221,6 +234,12 @@ loo_compare(loo(fit_mm), loo(fit_vanilla))
 The visual PPC does not distinguish between these models (because it is sensitive only to the overal distribution of the response variable).
 
 The LOO-based model comparison is more informative: The vanilla model appears to be substantially worse.
-
 :::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+Can you think of an example from your own line of work where multi-membership group-level effects might be plausible, possibly even mandatory?
+
 :::
