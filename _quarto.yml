@@ -11,7 +11,7 @@ execute:
 
 website:
   title: "Bayesian Regression: Theory & Practice"
-  repo-url: https://github.com/quarto-dev/quarto-demo
+  repo-url: https://github.com/michael-franke/Bayesian-Regression
   repo-actions: [edit, issue]
   sidebar:
     style: "docked"
