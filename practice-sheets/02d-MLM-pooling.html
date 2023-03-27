@@ -237,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">multi membership</a>
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi memberships</a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -365,7 +365,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#different-ways-to-a-mean" id="toc-different-ways-to-a-mean" class="nav-link" data-scroll-target="#different-ways-to-a-mean">Different ways to a mean</a></li>
   <li><a href="#group-level-effects-as-smoothing-terms" id="toc-group-level-effects-as-smoothing-terms" class="nav-link" data-scroll-target="#group-level-effects-as-smoothing-terms">Group-level effects as smoothing terms</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/quarto-dev/quarto-demo/edit/main/practice-sheets/02d-MLM-pooling.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/quarto-dev/quarto-demo/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/02d-MLM-pooling.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -494,7 +494,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>[1] 1.264779</code></pre>
 </div>
 </div>
-<p>But should we not, somehow, also take into account that these measurements are from different counties? Okay, so let’s just calculate the mean log-random measured for each county:</p>
+<p>But should we not, somehow, also take into account that these measurements are from different counties? Okay, so let’s just calculate the mean log-random measured for each county, and then take the mean of all those means:</p>
 <div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-4_9357499b22e0691b18b2c7dfe2c042db">
 <details open="">
 <summary>Toggle code</summary>
@@ -537,9 +537,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 # ℹ 75 more rows</code></pre>
 </div>
 </div>
-<p>The sample mean does not distinguish at all which observation came from which county. The mean-of-means, on the other hand, puts “counties first”, so to speak, and does not acknowledge that the number of observations each county contributed. To understand how this can yield a difference, look at this picture:</p>
-<div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-6_96e30a96f68d1f8b2fbb583032dd2f78">
-<details open="">
+<p>The sample mean does not distinguish at all which observation came from which county. The mean-of-means, on the other hand, puts “counties first”, so to speak, and does not acknowledge that the number of observations each county contributed might be different. To understand how this can yield a difference, look at this picture:</p>
+<div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-6_4984cde515326e63e051b0d70522554c">
+<details>
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_radon <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">|&gt;</span> </span>
@@ -552,9 +552,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> empirical_mean), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> emp_mean_of_means), <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> n_obs_by_county), <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> empirical_mean <span class="sc">-</span> <span class="fl">0.4</span>, <span class="at">y =</span> <span class="dv">70</span>, <span class="at">label =</span> <span class="st">"sample mean"</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> emp_mean_of_means <span class="sc">+</span> <span class="fl">0.52</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">label =</span> <span class="st">"mean-of-means"</span>, <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> empirical_mean <span class="sc">-</span> <span class="fl">0.4</span>, <span class="at">y =</span> <span class="dv">70</span>, </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"sample mean"</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> emp_mean_of_means <span class="sc">+</span> <span class="fl">0.52</span>, <span class="at">y =</span> <span class="dv">20</span>, </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"mean-of-means"</span>, <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">size =</span> <span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="02d-MLM-pooling_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" style="width:100.0%"></p>
@@ -657,7 +659,7 @@ Solution
 </div>
 </div>
 </div>
-<p>In between these two options (no <code>county</code> variable vs.&nbsp;<code>county</code>) as a population-level effect, there is a middle path: treating <code>county</code> as a group-level random intercept.</p>
+<p>In between these two options (no <code>county</code> variable vs.&nbsp;<code>county</code> as a population-level effect), there is a middle path: treating <code>county</code> as a group-level random intercept.</p>
 <div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-11_42be72104a831c316b02f81fa20d4642">
 <details open="">
 <summary>Toggle code</summary>
@@ -687,8 +689,8 @@ Solution
 </div>
 <p>This estimate is nuanced. It does take all data points into account (unlike the mean-of-mean). But (unlike the sample mean), it does weigh some data observations more heavily than others. In particular, counties with few but extreme observations receive, so to speak, less attention because “we explain away these observations as flukes for a given county”. In other words, we can think of group-level modeling also as a way of regularizing inference to differentially weigh observations, depending on which group they originated from.</p>
 <p>Okay, this may sound like a plausible rationalization of what one could do, but how do we know that the model actually behaves in this way? – By looking at what the model would predict for different counties. So, here is a plot of the <em>a posteriori</em> expected measurement for each county (ordered by size) together with the empirically observed mean-by-county:</p>
-<div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-13_6ef3b6759a463c1250a3d8fcc9a7d95c">
-<details open="">
+<div class="cell" data-hash="02d-MLM-pooling_cache/html/unnamed-chunk-13_6d804397e49be0deb6a0b136d28f11ac">
+<details>
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plotData_RE <span class="ot">&lt;-</span> data_radon <span class="sc">|&gt;</span> </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">|&gt;</span> </span>
@@ -721,15 +723,13 @@ Solution
 <p><img src="02d-MLM-pooling_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" style="width:100.0%"></p>
 </div>
 </div>
-<p><br>
-This graph shows the counties on the <span class="math inline">\(y\)</span>-axis, ordered number of observation from highest on the top to lowest on the bottom. The black dots are the means of the posterior predictive for each county (the gray error bars are 95% credible intervals for these estimates. The red dots are the empirically observed means for each county (the red lines indicating the differences between prediction and observation for each county).</p>
+<p>This graph shows the counties on the <span class="math inline">\(y\)</span>-axis, ordered number of observation from highest on the top to lowest on the bottom. The black dots are the means of the posterior predictive for each county (the gray error bars are 95% credible intervals for these estimates. The red dots are the empirically observed means for each county (the red lines indicating the differences between prediction and observation for each county).</p>
 <p>This graph shows:</p>
 <ol type="1">
 <li>The higher the number of observations, the less uncertainty about the prediction.</li>
 <li>The higher the number of observations, the less difference between prediction and observation.</li>
 </ol>
 <p>It is the latter observation that lends credence to the interpretation above: the effect of random effects is differential weighing of observations in a data-driven manner; low certainty cases receive less weight, as they should.</p>
-<p><span style="color:darkgreen"> add an exercise if you can, please </span></p>
 
 
 </section>

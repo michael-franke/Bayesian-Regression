@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke &amp; Timo Roettger">
 
-<title>Bayesian Regression: Theory &amp; Practice - 05a: Hierarchical regression models (tutorial)</title>
+<title>Bayesian Regression: Theory &amp; Practice - Hierarchical regression models (tutorial)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">05a: Hierarchical regression models (tutorial)</h1>
+      <h1 class="quarto-secondary-nav-title">Hierarchical regression models (tutorial)</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -236,7 +236,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">multi membership</a>
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi memberships</a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,14 +367,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#multilevel-models" id="toc-multilevel-models" class="nav-link" data-scroll-target="#multilevel-models">Multilevel models</a></li>
   <li><a href="#selecting-a-random-effects-structure" id="toc-selecting-a-random-effects-structure" class="nav-link" data-scroll-target="#selecting-a-random-effects-structure">Selecting a random effects structure</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/quarto-dev/quarto-demo/edit/main/practice-sheets/02a-hierarchical-models-tutorial.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/quarto-dev/quarto-demo/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/02a-hierarchical-models-tutorial.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">05a: Hierarchical regression models (tutorial)</h1>
+<h1 class="title d-none d-lg-block">Hierarchical regression models (tutorial)</h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -471,7 +471,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <section id="the-independence-assumption" class="level2">
 <h2 class="anchored" data-anchor-id="the-independence-assumption">The independence assumption</h2>
-<p>Last week, we ended on a conundrum. We looked at the probability of observing a straight trajectory predicted by response latency. Here is the plot for all data in the click group plus a logistic smooth term:</p>
+<p>One way to motivate multi-level modeling is by noting that, without group-level terms, the model would be making strong (possibly) implausible independence assumptions.</p>
+<p>As a motivating example, let us look at the probability of observing a straight trajectory predicted by response latency in the mouse tracking data set. Here a the plot for all data in the click group plus a logistic smooth term:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -489,7 +490,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg,</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> log_RT_s, <span class="at">y =</span> straight_numeric)) <span class="sc">+</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>],</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"binomial"</span>), </span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">fullrange =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"overall relationship"</span>) <span class="sc">+</span></span>
@@ -499,7 +500,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="02a-hierarchical-models-tutorial_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>This picture suggest a negative relationship between the probability of observing straight trajectories (y) and peoples’ response times (x) (i.e.&nbsp;line goes down).</p>
+<p>This picture suggest a negative relationship between the probability of observing straight trajectories (y) and people’s response times (x) (i.e.&nbsp;line goes down).</p>
 <p>But this analysis looked at all responses at once and disregarded that responses came from groups of sources. For example, responses that come from one and the same participant are dependent on each other because participants (<code>subject_id</code>) might differ in characteristics relevant to the task, like how fast they move and how many times they move to the target in a straight trajectory. Another group of data points is related to different stimuli (<code>exemplars</code>). Different stimuli might have some inherent properties that lead to different response times and different proportions of straight trajectories. So analyzing the data without telling the model about these groups violates an important assumption of linear models. The <strong>independence assumption</strong>.</p>
 <p>Let’s look at these groups individually, starting by aggregating over over <code>subject_id</code>s and <code>exemplar</code>s and plot the results.</p>
 <div class="cell">
@@ -518,7 +519,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we use the geom_smooth function here as a rough proxy of the relationship </span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">color =</span> project_colors[<span class="dv">2</span>],</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"binomial"</span>), </span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">fullrange =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Proportion of straight trajs"</span>) <span class="sc">+</span></span>
@@ -548,7 +549,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> log_RT_s, <span class="at">y =</span> straights<span class="sc">/</span>total)) <span class="sc">+</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">color =</span> project_colors[<span class="dv">2</span>],</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"binomial"</span>), </span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">fullrange =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Proportion of straight trajs"</span>) <span class="sc">+</span></span>
@@ -567,7 +568,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="multilevel-models" class="level1">
 <h1>Multilevel models</h1>
-<p>Let’s assume the following simple model. This model assumes that all data points are independent. We know they are not. But bear with me. This model predicts the the probability of straight trajectories from the predictor <code>log_RT_s</code>. Predictors are also called <strong>fixed effects</strong>.</p>
+<p>Let’s assume the following simple model. This model assumes that all data points are independent. We know they are not. But we may just assume for the moment. This model predicts the the probability of straight trajectories from the predictor <code>log_RT_s</code>. Predictors are also called <strong>fixed effects</strong>.</p>
 <div class="cell" data-warnings="false" data-messages="false" data-hash="02a-hierarchical-models-tutorial_cache/html/unnamed-chunk-6_c93ea477d6be71d3a200fa49ed0414c4">
 <details open="">
 <summary>Toggle code</summary>
@@ -600,7 +601,7 @@ and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<p>We get an intercept of 0.8 log-odds (corresponds to ~69%), i.e.&nbsp;the probability of a straight trajectory at <code>log_RT_s == 0</code>. With every unit of <code>log_RT_s</code> the log-odd value becomes smaller by 0.23. This negative slope has a 95% CrI of -0.36 to -0.09. Let’s plot these results in a scatter plot.</p>
+<p>We get an intercept of 0.8 log-odds (corresponds to ~69%), i.e.&nbsp;the probability of a straight trajectory at <code>log_RT_s == 0</code>. (If you are unfamiliar with logistic regression, just accept this for now and learn more details later.) With every unit of <code>log_RT_s</code> the log-odd value becomes smaller by 0.23. This negative slope has a 95% CrI of -0.36 to -0.09. Let’s plot these results in a scatter plot.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -622,7 +623,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>), <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> log_RT_s, <span class="at">y =</span> straight_numeric)) <span class="sc">+</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pred_low, <span class="at">ymax =</span> pred_high), <span class="at">alpha=</span><span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>]) <span class="sc">+</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"probability of straight trajectory"</span>) <span class="sc">+</span>  </span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Model that ignores groupings"</span>,</span>
@@ -704,7 +705,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>), <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> log_RT_s, <span class="at">y =</span> straight_numeric)) <span class="sc">+</span></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pred_low, <span class="at">ymax =</span> pred_high), <span class="at">alpha=</span><span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>]) <span class="sc">+</span></span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"probability of straight trajectory"</span>) <span class="sc">+</span></span>
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Model with varying intercepts"</span>,</span>
@@ -806,7 +807,7 @@ $subject_id
 1107  0.07738874 0.4758695 -0.85215735  1.0146667</code></pre>
 </div>
 </div>
-<p>Note how much people/stimuli actually differ. With that information we can compare the individual groups with the overall population estimates. Let’s do that for <code>subject_id</code>s. A little bit of data wrangling is required (and I am sure there are much more elegant ways to do this).</p>
+<p>Note how much people/stimuli actually differ. With that information we can compare the individual groups with the overall population estimates. Let’s do that for <code>subject_id</code>s. A little bit of data wrangling is required (and, yes, there are likely much more elegant ways to do this).</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -831,7 +832,7 @@ $subject_id
 <span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> random_df, </span>
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> log_RT, <span class="at">y =</span> pred_m, <span class="at">group =</span> subject_id),</span>
 <span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>]) <span class="sc">+</span></span>
 <span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"probability of straight trajectory"</span>) <span class="sc">+</span></span>
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Model with varying intercepts"</span>,</span>
@@ -844,7 +845,6 @@ $subject_id
 <p>But wait. It’s not only the case that different people/stimuli might have different baselines. Different people/stimuli might actually differ in terms of the investigated relationship between probability between straight trajectories and response time. There might be some people who produce less curvy movements for faster responses. Moreover, the degree of the relationships might differ quite a bit across groupings. We can inform our model about this. So basically we allow the model not only to vary the intercepts for each group level but also how much they are affected by the predictor. We call these varying effects <em>random slopes</em>.</p>
 <p>Here we will specify uncorrelated slopes by the notation <code>(PREDICTOR || GROUP)</code>. This does not estimate possible correlations between intercepts and slopes. Keep that in mind, as this is another piece of information that you might want to estimate. We don’t do that here to keep our models relatively slim and easy to fit. If we want to estimate this correlation as well, we write <code>(PREDICTOR | GROUP)</code>.</p>
 <p>Let’s also specify some weakly informative priors to speed up sampling.</p>
-<p>(Note the sampling will take a couple of minutes or so. Each grouping level represents yet another parameter to estimate.)</p>
 <div class="cell" data-hash="02a-hierarchical-models-tutorial_cache/html/unnamed-chunk-14_a859b080252914b36f2d87679a91cd2c">
 <details open="">
 <summary>Toggle code</summary>
@@ -952,7 +952,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> random_slope_df, </span>
 <span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> log_RT, <span class="at">y =</span> pred_m, <span class="at">group =</span> subject_id),</span>
 <span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>]) <span class="sc">+</span></span>
 <span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"probability of straight trajectory"</span>) <span class="sc">+</span></span>
 <span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Model with varying slopes"</span>,</span>
@@ -972,7 +972,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>), <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> log_RT_s, <span class="at">y =</span> straight_numeric)) <span class="sc">+</span></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pred_low, <span class="at">ymax =</span> pred_high), <span class="at">alpha=</span><span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>, <span class="at">color =</span> project_colors[<span class="dv">2</span>]) <span class="sc">+</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"probability of straight trajectory"</span>) <span class="sc">+</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Model with varying slopes"</span>,</span>
@@ -994,7 +994,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>As to the <strong>first approach</strong>, to avoid overconfident claims, some researchers suggest to “keep it maximal” (See also https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3881361/), i.e., to add all sources of random variation to the model that makes sense. That means, we add varying intercepts for all grouping variables we want to infer over, as well as varying slopes for predictors; at least where this is in principle reasonable.</p>
 <p>What does “making sense” or “being in principle reasonable” mean? One way of thinking about this is whether a given random variation might make any sense conceptually speaking (e.g., is it imaginable that some people generally react faster than others? - totally!; is it imaginable that some participants are faster in certain tasks but slower in others? - yes!). If you think about it in this way, you probably do want to include almost anything. After all, being “imaginable” is a rather weak requirement. And including all “in principle imaginable” sources of variation is prudent, and that’s what motivates the idea to “keep it maximal”.</p>
 <p>But running very complex models with a lot of predictors and their corresponding random effect is computationally very expensive. So keeping it maximal, might mean not being able to run it on <em>your</em> machine, or it might mean not being able to run it on <em>any</em> machine. This is because in order to meaningfully estimate group-level variance, there needs to be a sufficient amount of data available in the first place. If the model cannot estimate the variance, including certain random effect might be useless for inference, and worse: it may impede proper fitting of the model. So one important step in your modelling workflow is finding the right model specification.</p>
-<p>On particularly important case of data-sparsity should always be kept in mind: <strong>you can only meaningfully estimate random effects licensed by the data set</strong> (or sometimes this is phrased as “licensed by the (experimental) design”). For example, if your data is based on a between-subject experiment, i.e.&nbsp;each subject only contributes data to one level of a predictor, than it doesn’t make sense to include by-subject random slopes for that predictor. You cannot ever, by the design of the experiment, have data that would allow your to estimate this random variation.</p>
+<p>On particularly important case of data-sparsity should always be kept in mind: <strong>you can only meaningfully estimate random effects licensed by the data set</strong> (or sometimes this is phrased as “licensed by the (experimental) design”). For example, if your data is based on a between-subject experiment, i.e., each subject only contributes data to one level of a predictor, than it doesn’t make sense to include by-subject random slopes for that predictor. You cannot ever, by the design of the experiment, have data that would allow you to estimate this random variation.</p>
 <p>As to the <strong>second approach</strong>, another possible approach is “let the data decide” which random effect structure to use. After all, if we include some random effect but obtain a posterior that tells us that the “contribution” of this random effect is very small, we can decide to exclude it. Perhaps more stringently, we can use <em>model comparison</em> to select between different models, all including the same fixed-effects structure but differing in their inclusion of random effects.</p>
 <p>Which approach is better? — Most likely: Neither is. It depends, as usual, on what you want to do. If you use your models in a science context to draw conclusions about parameter values of interest, based on the model and the data, the first approach is more cautious and prudent, safe-guarding us against erroneous conclusions. If you use models in a more engineering context to make predictions it may seem quite fine to prune a complex model of all the random stuff that the data does not strongly require.</p>
 
