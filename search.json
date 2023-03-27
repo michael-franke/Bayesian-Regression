@@ -627,7 +627,7 @@
     "href": "01-basics.html",
     "title": "Bayesian Regression: Theory & Practice",
     "section": "",
-    "text": "The first part introduces the basics of BDA and linear regression modeling.\n\nThere are five mostly self-contained tutorials, covering:\n\nbasics of data wrangling (in the tidyverse) and plotting (with ggplot2),\nsimple linear regression models (with brms),\nhow to specify priors in brms,\nwhy and how to inspect a model’s predictive distribution(s),\ncontrast coding of categorical predictor variables.\n\nThere is also a sheet with additional exercises (simple linear regression with metric and categorical variables).\nThere is also a sort of “cheat sheet” with common operations and functions when working with brms."
+    "text": "The first part introduces the basics of BDA and linear regression modeling.\nHere are slides for session 1.\nThere are five mostly self-contained tutorials, covering:\n\nbasics of data wrangling (in the tidyverse) and plotting (with ggplot2),\nsimple linear regression models (with brms),\nhow to specify priors in brms,\nwhy and how to inspect a model’s predictive distribution(s),\ncontrast coding of categorical predictor variables.\n\nThere is also a sheet with additional exercises (simple linear regression with metric and categorical variables).\nThere is also a sort of “cheat sheet” with common operations and functions when working with brms."
   },
   {
     "objectID": "index.html",
