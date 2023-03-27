@@ -2,4 +2,4 @@
 
 Course material for "Bayesian regression modeling: theory &amp; practice".
 
-See rendered version of this material [here](https://michael-franke.github.io/Bayesian-regression/).
+See rendered version of this material [here](https://michael-franke.github.io/Bayesian-Regression/).
