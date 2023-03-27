@@ -6,7 +6,7 @@ author: "Michael Franke"
 
 The first part introduces the basics of BDA and linear regression modeling.
 
-<!-- Here are [slides for session 1](slides/01-intro-simpleRegress.pdf). -->
+Here are [slides for session 1](slides/01-intro-simpleRegress.pdf).
 
 There are five mostly self-contained tutorials, covering:
 
