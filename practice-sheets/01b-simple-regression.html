@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke &amp; Timo Roettger">
 
-<title>Bayesian Regression: Theory &amp; Practice - Bayesian regression: theory &amp; practice</title>
+<title>Bayesian Regression: Theory &amp; Practice - Simple linear regression</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Bayesian regression: theory &amp; practice</h1>
+      <h1 class="quarto-secondary-nav-title">Simple linear regression</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -184,11 +184,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="../practice-sheets/01b-simple-regression.html" class="sidebar-item-text sidebar-link active">Simple linear regression</a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01e-contrast-coding-tutorial.html" class="sidebar-item-text sidebar-link">Categorical predictors</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link">Priors</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01d-predictives.html" class="sidebar-item-text sidebar-link">Predictions</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01f-catPreds-exercises.html" class="sidebar-item-text sidebar-link">Exercises: Bayesian LMs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01g-cheat-sheet.html" class="sidebar-item-text sidebar-link">Cheat sheet</a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">02: Priors, predictions &amp; categorical predictors</a>
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">02: Multi-level models</a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -196,29 +221,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../02-priorPredictives-categPredictors.html" class="sidebar-item-text sidebar-link">Overview</a>
+  <a href="../02-hierarchical-models.html" class="sidebar-item-text sidebar-link">Overview</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02a-predictives.html" class="sidebar-item-text sidebar-link">Prior &amp; posterior predictives</a>
+  <a href="../practice-sheets/02a-hierarchical-models-tutorial.html" class="sidebar-item-text sidebar-link">Hierarchical models (tutorial)</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02b-catPreds-tutorial.html" class="sidebar-item-text sidebar-link">Categorical predictors (tutorial)</a>
+  <a href="../practice-sheets/02b-hierarchical-models-exercises.html" class="sidebar-item-text sidebar-link">Hierarchical models (exercises)</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02c-catPreds-execises.html" class="sidebar-item-text sidebar-link">Categorical predictors (hands-on)</a>
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">multi membership</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLM-pooling</a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">03: Generalized linear model</a>
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">03: GLMs &amp; beyond</a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -232,6 +262,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../practice-sheets/03b-GLM-exercises.html" class="sidebar-item-text sidebar-link">GLM (exercises)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">distributional models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">mixture models</a>
   </div>
 </li>
       </ul>
@@ -258,7 +298,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">05: Hierarchical models</a>
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">05: Model comparison</a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -266,24 +306,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../05-hierarchical-models.html" class="sidebar-item-text sidebar-link">Overview</a>
+  <a href="../05-model-comparison.html" class="sidebar-item-text sidebar-link">Overview</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/05a-hierarchical-models-tutorial.html" class="sidebar-item-text sidebar-link">Hierarchical models (tutorial)</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/05b-hierarchical-models-exercises.html" class="sidebar-item-text sidebar-link">Hierarchical models (exercises)</a>
+  <a href="../practice-sheets/05a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison (practice)</a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">06: Model comparison</a>
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">06: Causal inference</a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -291,19 +326,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../06-model-comparison.html" class="sidebar-item-text sidebar-link">Overview</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/06a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison (practice)</a>
+  <a href="../practice-sheets/06-causal-inference.html" class="sidebar-item-text sidebar-link">Causal inference (practice)</a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">07: Causal inference</a>
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">07: Non-linear models</a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -311,7 +341,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/07-causal-inference.html" class="sidebar-item-text sidebar-link">Causal inference (practice)</a>
+  <a href="../practice-sheets/07a-nonLinear.html" class="sidebar-item-text sidebar-link">Custom non-linearity</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/07b-GAMs.html" class="sidebar-item-text sidebar-link">GAMs</a>
   </div>
 </li>
       </ul>
@@ -325,24 +360,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#simple-linear-regression" id="toc-simple-linear-regression" class="nav-link active" data-scroll-target="#simple-linear-regression">Simple linear regression</a>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
+  <li><a href="#simple-linear-regression" id="toc-simple-linear-regression" class="nav-link" data-scroll-target="#simple-linear-regression">Simple linear regression</a>
   <ul class="collapse">
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data wrangling</a></li>
   <li><a href="#visual-assessment" id="toc-visual-assessment" class="nav-link" data-scroll-target="#visual-assessment">Visual assessment</a></li>
   <li><a href="#bayesian-linear-regression-with-brms" id="toc-bayesian-linear-regression-with-brms" class="nav-link" data-scroll-target="#bayesian-linear-regression-with-brms">Bayesian linear regression with <code>brms</code></a></li>
   <li><a href="#extracting-posterior-distributions-and-plotting-them" id="toc-extracting-posterior-distributions-and-plotting-them" class="nav-link" data-scroll-target="#extracting-posterior-distributions-and-plotting-them">Extracting posterior distributions and plotting them</a></li>
-  <li><a href="#exercises-for-simple-regression-modeling" id="toc-exercises-for-simple-regression-modeling" class="nav-link" data-scroll-target="#exercises-for-simple-regression-modeling">Exercises for simple regression modeling</a></li>
   </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/quarto-dev/quarto-demo/edit/main/practice-sheets/01b-simple-regression.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/quarto-dev/quarto-demo/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Bayesian regression: theory &amp; practice</h1>
-<p class="subtitle lead">01b: Simple linear regression</p>
+<h1 class="title d-none d-lg-block">Simple linear regression</h1>
+<p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
 
@@ -363,66 +399,74 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
+<p>This is a very basic tutorial for running a simple Bayesian regression with <code>brms</code>. You will learn how to specify and run the model, and to extract, plot, and visualize posterior samples.</p>
+<section id="preamble" class="level1">
+<h1>Preamble</h1>
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
-<div class="cell">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-1_2caf6d8038ee85688ac428efb7450ef2">
 <details>
-<summary>Reveal code</summary>
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pckgs_needed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"brms"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"remotes"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidybayes"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bridgesampling"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shinystan"</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pckgs_installed <span class="ot">&lt;-</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>pckgs_2_install <span class="ot">&lt;-</span> pckgs_needed[<span class="sc">!</span>(pckgs_needed <span class="sc">%in%</span> pckgs_installed)]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(pckgs_2_install)) {</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pckgs_2_install)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># install additional packages from GitHub (unless installed)</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"aida"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/aida-package"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"faintr"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/faintr"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstan"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstanarm"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"remotes"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidybayes"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bridgesampling"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shinystan"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mgcv"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pckgs_installed <span class="ot">&lt;-</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pckgs_2_install <span class="ot">&lt;-</span> pckgs_needed[<span class="sc">!</span>(pckgs_needed <span class="sc">%in%</span> pckgs_installed)]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(pckgs_2_install)) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pckgs_2_install)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># install additional packages from GitHub (unless installed)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"aida"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/aida-package"</span>)</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"cspplot"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CogSciPrag/cspplot"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"faintr"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/faintr"</span>)</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pckgs_needed, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aida)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faintr)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cspplot)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># these options help Stan run faster</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"cspplot"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CogSciPrag/cspplot"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pckgs_needed, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aida)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faintr)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cspplot)</span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># use the CSP-theme for plotting</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_csp</span>())</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># these options help Stan run faster</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># global color scheme from CSP</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>project_colors <span class="ot">=</span> cspplot<span class="sc">::</span><span class="fu">list_colors</span>()[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>),<span class="st">"hex"</span>, drop <span class="ot">=</span> <span class="cn">TRUE</span>]</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># use the CSP-theme for plotting</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_csp</span>())</span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># setting theme colors globally</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>scale_colour_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(..., <span class="at">values =</span> project_colors)</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>scale_fill_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(..., <span class="at">values =</span> project_colors)</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># global color scheme from CSP</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>project_colors <span class="ot">=</span> cspplot<span class="sc">::</span><span class="fu">list_colors</span>() <span class="sc">|&gt;</span> <span class="fu">pull</span>(hex)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># names(project_colors) &lt;- cspplot::list_colors() |&gt; pull(name)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># setting theme colors globally</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>scale_colour_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>scale_fill_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+</section>
 <section id="simple-linear-regression" class="level1">
 <h1>Simple linear regression</h1>
 <p>Let’s use the <code>dolphin</code> data set to practice Bayesian linear regression modeling.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/load-data_3f529a93e850ff2d56d99c78ef7632b8">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dolphin <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_MT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -430,9 +474,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>First, we will massage the data a little bit. We only want to look at those rows in which the participant selected the correct response. And instead of looking at all the data, we will only deal with the median values for each participant. In this way, we get a more robust signal (but really we do this here for more practical purposes (faster fitting, less clutter)).</p>
 <section id="data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="data-wrangling">Data wrangling</h2>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/wrangle-data_a0807687ad8912e04034f427f41d41e7">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="ot">&lt;-</span> dolphin <span class="sc">|&gt;</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(correct <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
@@ -460,9 +504,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="visual-assessment" class="level2">
 <h2 class="anchored" data-anchor-id="visual-assessment">Visual assessment</h2>
 <p>Before we start thinking about statistical inference, we always want to get a feel for the data visually. You basically always want to plot the data.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/plot-data_6f4e3772194b91ca97989231d20479ae">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MAD, </span>
@@ -470,22 +514,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="01b-simple-regression_files/figure-html/plot-data-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>This graph displays the distribution of AUC and MAD values.</p>
-<p>Looking at the plot, we can see that there is a strong relationship between AUC and MAD. And that makes a lot of sense. The larger the cursor strives toward the competitor, the larger is the overall area under the curve. Heureka! Our hypothesis is confirmed.</p>
+<p>This graph displays the distribution of AUC and MAD values. We can see that there is a strong relationship between AUC and MAD. And that makes a lot of sense. The more the cursor strives toward the competitor, the larger is the overall area under the curve. Heureka! Our hypothesis is confirmed.</p>
 <p>But wait! As Bayesians, we would like to translate the data into an expression of <strong>evidence</strong>: do the data provide evidence for our research hypotheses? Also, notice that there is some variability. We want precise estimates of potential effects. We also want a measure of how certain we can be about these estimates.</p>
 </section>
 <section id="bayesian-linear-regression-with-brms" class="level2">
 <h2 class="anchored" data-anchor-id="bayesian-linear-regression-with-brms">Bayesian linear regression with <code>brms</code></h2>
-<p>The <code>brms</code> package allows us to run Bayesian regression models, both simple and rather complex. It uses a sampling method, so its output will be vectors of (corellated) samples from the posterior distribution of the model’s parameters. (We will learn how this sampling method works later).</p>
-<p>So, to quantify evidence and uncertainty with posterior samples, let’s run a simple linear regression model using <code>brms</code>. We use the R notation that some of your might already be familiar with when using <code>lm()</code>. We specify a formula in which AUC is predicted by MAD.</p>
+<p>The <code>brms</code> package allows us to run Bayesian regression models, both simple and rather complex. It uses a sampling method, so its output will be vectors of (correlated) samples from the posterior distribution of the model’s parameters.</p>
+<p>So, to quantify evidence and uncertainty with posterior samples, let’s run a simple linear regression model using <code>brms</code>. We use the R’s standard notation at first (though <code>brms</code> extends this syntax substantially for more complex models) to specify a formula in which AUC is predicted by MAD.</p>
 <p><code>AUC ~ MAD</code></p>
-<p>When you run this code, the <code>brms</code> package generates Stan code and runs the Stan program in the background. Stan code is executed in C++, and the model will be ‘compiled’ (you get information about this in the console output). We will learn later what this compilation does (spoiler: it computes gradients for all stochastic nodes in the model). The only thing that is relevant for you at the moment is this: This compilation can take quite a while (especially for complex models) before anything happens.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<p>When you run this code, the <code>brms</code> package generates Stan code and runs the Stan program in the background. Stan code is executed in C++, and the model will be ‘compiled’ (you get information about this in the console output). You we will want to learn later what this compilation does (spoiler: it computes gradients for all stochastic nodes in the model). The only thing that is relevant for you at the moment is this: This compilation can take quite a while (especially for complex models) before anything happens.</p>
+<div class="cell" data-hash="01b-simple-regression_cache/html/fit-model_9419cc7e87c583e19d02a0e9a91d0e02">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the model </span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">=</span> <span class="fu">brm</span>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model formula</span></span>
@@ -495,9 +538,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/summarize-model_b8132ee7f20899d2770d5832aae72daa">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -510,12 +553,12 @@ Formula: AUC ~ MAD
 
 Population-Level Effects: 
           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept   517.00   1853.56 -3135.22  4107.37 1.00     4020     3072
-MAD         454.87     16.04   423.36   485.96 1.00     3986     3036
+Intercept   523.92   1881.53 -3088.78  4333.60 1.00     3974     2824
+MAD         455.31     16.52   421.98   488.32 1.00     3315     2891
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma 17182.05   1183.01 15019.53 19655.38 1.00     4334     3058
+sigma 17220.72   1206.85 15045.93 19800.29 1.00     3825     2633
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -524,28 +567,28 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>The output of such a model looks very familiar if you have worked with lm() before. We want to look at what is here called “Population-Level Effects”, which is a small table in this case. The first column contains the names of our coefficients; the <code>Estimate</code> column gives us the posterior mean of these coefficients; the <code>Est.Error</code> give us the standard error; the <code>l-95%</code>and <code>u-95%</code> give us the lower and upper limit of the 95% Credible Interval (henceforth CrI). The column <code>Rhat</code> (R^) which is a diagnostic of chain convergence and should not diverge much from 1 (rule of thumb: should by &lt;1.1). Again, more about that later. The <code>Bulk_ESS</code> and <code>Tail_ESS</code> columns give us numbers of “useful” samples. This number should be sufficiently high. If its not, <code>brms</code> will give you a convenient warning (more about that later, so don’t worry for now). If that happens, you need to increase the chains and / or the number of iterations in order to increase the overall number of samples (again, don’t worry for now).</p>
 <p>If we need the main summary output in a tidy tibble format, we can use this function from the <code>tidybayes</code> package:</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/use-tidybayes-summary_75d5413635693a1812879ea92016a19a">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 10
-  variable    mean  median      sd     mad      q5     q95  rhat ess_b…¹ ess_t…²
-  &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-1 b_Inter…   517.    529.  1.85e+3 1.83e+3 -2523.   3581.   1.00   4020.   3072.
-2 b_MAD      455.    455.  1.60e+1 1.54e+1   429.    482.   1.00   3986.   3036.
-3 sigma    17182.  17127.  1.18e+3 1.19e+3 15399.  19182.   1.00   4334.   3058.
-4 lprior     -22.3   -22.3 3.03e-2 2.88e-2   -22.4   -22.3  1.00   4093.   2614.
-5 lp__     -1218.  -1218.  1.23e+0 1.01e+0 -1221.  -1217.   1.00   2056.   2659.
-# … with abbreviated variable names ¹​ess_bulk, ²​ess_tail</code></pre>
+  variable       mean  median        sd       mad      q5     q95  rhat ess_bulk
+  &lt;chr&gt;         &lt;num&gt;   &lt;num&gt;     &lt;num&gt;     &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;    &lt;num&gt;
+1 b_Intercept   524.    507.  1882.     1868.     -2532.   3563.   1.00    3974.
+2 b_MAD         455.    456.    16.5      16.2      428.    482.   1.00    3315.
+3 sigma       17221.  17153.  1207.     1169.     15342.  19323.   1.00    3825.
+4 lprior        -22.3   -22.3    0.0302    0.0295   -22.4   -22.3  1.00    3828.
+5 lp__        -1218.  -1218.     1.26      1.04   -1221.  -1217.   1.00    2187.
+# ℹ 1 more variable: ess_tail &lt;num&gt;</code></pre>
 </div>
 </div>
-<p>The model output suggests that the posterior mean of the Intercept is around 517 . The coefficient for MAD is estimated to be about 455.</p>
+<p>The model output suggests that the posterior mean of the Intercept is around 500. The coefficient for MAD is estimated to be about 450.</p>
 <p>To see how good a fit this is, we should manually draw this line into the graph from above.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/plot-model-fit_4b26bcc43095e76a71e25eb67ee88464">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract model parameters:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>model_intercept <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">1</span>,<span class="dv">1</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>model_slope <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">2</span>,<span class="dv">1</span>]</span>
@@ -558,14 +601,14 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="01b-simple-regression_files/figure-html/plot-model-fit-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Looking at the graph, it does make sense, right? The red line seems to capture the main trend pretty well.</p>
 <p>Now is there a relationship between AUC and MAD? What would it mean if there was <em>no</em> relationship between these two measures? Well no relationship would mean a slope of 0. How would that look like?</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-2_26e7bf01244ce7d302d38f41d67c503b">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MAD, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
@@ -574,7 +617,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>These lines look quite different indeed. But Bayesian data analysis does not give us only one single line. It gives us <em>infinitely many</em> lines, weighted by plausibility. Let’s explore this universe of weighted predictions.</p>
@@ -582,9 +625,9 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <section id="extracting-posterior-distributions-and-plotting-them" class="level2">
 <h2 class="anchored" data-anchor-id="extracting-posterior-distributions-and-plotting-them">Extracting posterior distributions and plotting them</h2>
 <p>We can interpret and visualize our coefficients immediately. We can create a data frame with all posterior samples for each parameter and plot those distributions for all coefficients. Let’s first see what coefficients there are with the <code>get_variables()</code> function from the <code>tidybayes</code> package.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-3_c6c41edee16d859acef218fb6de3f76a">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect parameters</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">get_variables</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -595,9 +638,9 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
 <p>Everything that is preceded by a <code>b_</code> is a population level coefficients, i.e.&nbsp;our predictors. Now let’s wrangle this data frame to get what we need. You don’t have to entirely understand the following code, but make sure you understand it well enough to recycle it later on.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/posteriors1_3acad99d8830b93bb259966a02e72e93">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># wrangle data frame</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>posteriors1 <span class="ot">&lt;-</span> model1 <span class="sc">|&gt;</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">spread_draws</span>(b_MAD, b_Intercept) <span class="sc">|&gt;</span></span>
@@ -609,23 +652,23 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 4,000 × 2
    b_MAD b_Intercept
    &lt;dbl&gt;       &lt;dbl&gt;
- 1  465.       -872.
- 2  454.        165.
- 3  470.       -845.
- 4  476.        157.
- 5  435.        908.
- 6  452.       -598.
- 7  469.      -2528.
- 8  462.      -1183.
- 9  446.        520.
-10  443.      -2153.
-# … with 3,990 more rows</code></pre>
+ 1  457.       -729.
+ 2  473.      -1044.
+ 3  441.       1984.
+ 4  469.      -4120.
+ 5  450.       2933.
+ 6  456.      -1841.
+ 7  442.       2630.
+ 8  455.        523.
+ 9  436.       1414.
+10  467.      -1296.
+# ℹ 3,990 more rows</code></pre>
 </div>
 </div>
-<p>Now that we know how to extract posterior samples, let’s actually take a bunch of these samples and plot them as lines into our scatter plot from above. In this code chunk we generate a subsample of 100 parameter pairs.</p>
-<div class="cell" data-layout-align="center">
-<details>
-<summary>Reveal code</summary>
+<p>Now that we know how to extract posterior samples, let’s actually take a bunch of these samples and plot them as lines into our scatter plot from above. In this code chunk we generate a subsample of 100 parameter pairs. (There are methods to directly sample from the posterior values of the linear predictor, which is what you want to use for complex models, but here we go full hands-on.)</p>
+<div class="cell" data-layout-align="center" data-hash="01b-simple-regression_cache/html/regressionLines_ce01c5110f77b5702dd0ee8854636496">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># wrangle data frame</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>posteriors2 <span class="ot">&lt;-</span> model1 <span class="sc">|&gt;</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># parameter 'ndraws' requests 100 random subsamples</span></span>
@@ -652,9 +695,9 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>Given our model, assumptions and data, these are 100 plausible regression lines. As you can see they are very similar.</p>
 <p>Using this pipeline we can also calculate the mean of the posteriors and any kind of Credible Interval (CrI). We first extract the posterior and bring them into a tidy form. Let’s only look at the coefficient for MAD here.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/posteriors2_69cdb5e508a9df1f11aa01bbbfa6c43e">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>posteriors3 <span class="ot">&lt;-</span> model1 <span class="sc">|&gt;</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># use the gather_draws() function for "long data"</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>   tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(b_MAD) <span class="sc">|&gt;</span> </span>
@@ -671,18 +714,18 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 # Groups:   parameter [1]
   parameter posterior
   &lt;chr&gt;         &lt;dbl&gt;
-1 b_MAD          465.
-2 b_MAD          454.
-3 b_MAD          470.
-4 b_MAD          476.
-5 b_MAD          435.
-6 b_MAD          452.</code></pre>
+1 b_MAD          457.
+2 b_MAD          473.
+3 b_MAD          441.
+4 b_MAD          469.
+5 b_MAD          450.
+6 b_MAD          456.</code></pre>
 </div>
 </div>
 <p>And then calculate the mean, the lower and the upper bound of a 90% CrI, using the function <code>tidybayes::hdi()</code>.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/posteriors3_8872b5e0d95f1bc802034e6717a46583">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get posteriors for the relevant coefficients</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>posteriors3_agg <span class="ot">&lt;-</span> posteriors3 <span class="sc">|&gt;</span> </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(parameter) <span class="sc">|&gt;</span> </span>
@@ -697,13 +740,13 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 1 × 4
   parameter `90lowerCrI` mean_posterior `90higherCrI`
   &lt;chr&gt;            &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;
-1 b_MAD             424.           455.          486.</code></pre>
+1 b_MAD             421.           455.          487.</code></pre>
 </div>
 </div>
 <p>Now we use this newly created data frame to plot the posterior distributions of all population-level coefficients. Again, we use our new best friend, the <code>tidybayes</code> package which offers some sweet extensions to <code>ggplot</code>’s <code>geom_</code> family of functions. We also add a reference point to compare the posteriors against. A common and reasonable reference point is 0. Remember a slope coefficient of zero would correspond to a flat regression line.</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-4_8beb424e07196c4eb17735907408f8b3">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the regression coefficients</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>posteriors1 <span class="sc">|&gt;</span> </span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"parameter"</span>, <span class="at">values_to =</span> <span class="st">"posterior"</span>) <span class="sc">|&gt;</span> </span>
@@ -721,31 +764,31 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
-<details>
-<summary>Reveal code</summary>
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>posteriors3_agg[<span class="dv">1</span>,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 1
   `90lowerCrI`
          &lt;dbl&gt;
-1         424.</code></pre>
+1         421.</code></pre>
 </div>
 </div>
-<p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 423.9779831 and about 486.4311161 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
+<p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 420.74 and about 486.84 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
 <p>That’s helpful because we can relate this distribution to relevant values, for example the value 0 (dashed line). If you look at the coefficient, you can see that the posterior distribution does not include the value zero or any small-ish “Region of Practical Equivalence” around it. In fact, the posterior is really far away from zero. Thus, if we believe in the data and the model, we can be very certain that this coefficient is not zero. In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that ‘no relationship’ is not a very plausible scenario).</p>
 <p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s calculate the amount of posterior samples that are larger than 450. The following code chunk does this for us:</p>
-<div class="cell">
-<details>
-<summary>Reveal code</summary>
+<div class="cell" data-hash="01b-simple-regression_cache/html/posterior_probability_d265c2bf20fe1a67d11692da6d3e3143">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hypothesis</span>(model1, <span class="st">'MAD &gt; 450'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
        Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob
-1 (MAD)-(450) &gt; 0     4.87     16.04   -21.32    31.86       1.71      0.63
+1 (MAD)-(450) &gt; 0     5.31     16.52   -21.92     32.3       1.72      0.63
   Star
 1     
 ---
@@ -757,22 +800,37 @@ Posterior probabilities of point hypotheses assume equal prior probabilities.</c
 </div>
 <p>The results tell us that more than 60% of all posterior samples are larger than 450. It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here ’MAD &gt; 450).</p>
 </section>
-<section id="exercises-for-simple-regression-modeling" class="level2">
-<h2 class="anchored" data-anchor-id="exercises-for-simple-regression-modeling">Exercises for simple regression modeling</h2>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+</section>
+<section id="exercises" class="level1">
+<h1>Exercises</h1>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1a</strong></p>
+<div class="callout-caption-container flex-fill">
+Exercise 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Massage the data and create a new dataset that contains only correct responses and only the mean values of the RT and the AUC measurement for each participant (<code>subject_id</code>). Print out the <code>head</code> of the dataset.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-caption-container flex-fill">
+Solution
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-5_c7ba758328223141c8ed74d51a6f88c5">
+<details open="">
+<summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="ot">&lt;-</span> dolphin <span class="sc">|&gt;</span> </span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(correct <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
@@ -783,141 +841,276 @@ Posterior probabilities of point hypotheses assume equal prior probabilities.</c
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  subject_id     AUC    RT
+       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+1       1001 101423.  930.
+2       1002  94808. 1581.
+3       1003  12970. 3552.
+4       1004  44911. 1580.
+5       1005  62362. 1328.
+6       1006  88386. 1375.</code></pre>
 </div>
-<p>We know from the previous exercises (walkthrough) that the area-under-the-curve (AUC) is related to the maximum absolute deviation (MAD). But what about reaction times (RTs)? Isn’t it plausible that RTs are also related to AUC? The further I curve away from the target with the cursor, the longer it takes me to arrive at the target, right?</p>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>We saw previously that the area-under-the-curve (AUC) is likely related to the maximum absolute deviation (MAD). But what about reaction times (RTs)? Isn’t it plausible that RTs are also related to AUC? The further I curve away from the target with the cursor, the longer it takes me to arrive at the target, right?</p>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1b</strong></p>
-<p>Plot the relationship between RT and AUC in a scatterplot.</p>
+<div class="callout-caption-container flex-fill">
+Exercise 2
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> RT, </span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Plot the relationship between RT and AUC in a scatter plot. Run a linear regression using <code>brms</code>. AUC is the dependent variable (i.e.&nbsp;the measure) and RT is the independent variables (i.e.&nbsp;the predictor). The formula writes: <code>AUC ~ RT</code></p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1c</strong></p>
-<p>Run a linear regression using <code>brms</code>. AUC is the dependent variable (i.e.&nbsp;the measure) and RT is the independent variables (i.e.&nbsp;the predictor). The formula writes: <code>AUC ~ RT</code></p>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-6_df3c3103f829a5e9b3067d7e401d4092">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> RT, </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the model </span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model formula</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> RT, </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># data</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-7_d5554e67af07281631d5b0e06d122450">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the model </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model formula</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> RT, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># data</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1d</strong></p>
-<p>Look at the model output. Think of it in terms of a line in the scatterplot from (1b). Where does the regression line cross the y-axis, what is the slope of the line? Draw a scatterplot of AUC against RT and add the predicted values as a line.</p>
+<div class="callout-caption-container flex-fill">
+Exercise 3
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Look at the model output from the previous exercise. Think of it in terms of a line in the scatter plot. Where does the regression line cross the y-axis, what is the slope of the line? Draw a scatter plot of AUC against RT and add the predicted values as a line.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract model parameters:</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>model_intercept <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">1</span>,<span class="dv">1</span>]</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>model_slope <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> RT, </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> model_intercept, <span class="at">slope =</span> model_slope),</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-8_fbeacb8df7d214db3afd2b9d8fc0e706">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract model parameters:</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>model_intercept <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>model_slope <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> RT, </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> model_intercept, <span class="at">slope =</span> model_slope),</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>That doesn’t really look like a tight linear relationship, right? If there is any relationship, AUC values become lower with longer reaction times (the line has a negative slope).</p>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<p>So, create a new data frame which contains the extracted posteriors for <code>b_RT</code> from the model output (use the <code>spread_draws()</code> function). Print out the <code>head</code> of the new data set.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1e</strong></p>
-<p>Now create a new data frame which contains the extracted posteriors for <code>b_RT</code> from the model output (use the <code>spread_draws()</code> function). Print out the <code>head</code> of the new dataset.</p>
+<div class="callout-caption-container flex-fill">
+Solution
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get posteriors for the relevant coefficients</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>posteriors1 <span class="ot">&lt;-</span> model1 <span class="sc">|&gt;</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use the spread_draws() function of tidybayes for all relevant parameters</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread_draws</span>(b_RT) <span class="sc">|&gt;</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select only those columns that are relevant</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(b_RT) <span class="sc">|&gt;</span> </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># bring into long format</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(<span class="at">key =</span> <span class="st">"parameter"</span>, <span class="at">value =</span> <span class="st">"posterior"</span>)</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(posteriors1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-9_e8722c140e044005cb1839cce364c739">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get posteriors for the relevant coefficients</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>posteriors1 <span class="ot">&lt;-</span> model1 <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use the spread_draws() function of tidybayes for all relevant parameters</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread_draws</span>(b_RT) <span class="sc">|&gt;</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select only those columns that are relevant</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(b_RT) <span class="sc">|&gt;</span> </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># bring into long format</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(<span class="at">key =</span> <span class="st">"parameter"</span>, <span class="at">value =</span> <span class="st">"posterior"</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(posteriors1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  parameter posterior
+  &lt;chr&gt;         &lt;dbl&gt;
+1 b_RT         -13.6 
+2 b_RT         -18.2 
+3 b_RT         -12.9 
+4 b_RT         -12.0 
+5 b_RT          -8.74
+6 b_RT          -7.81</code></pre>
 </div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1f</strong></p>
-<p>Plot the results with the `geom_halfeyeh() function. Add a vertical line at zero.</p>
+<div class="callout-caption-container flex-fill">
+Exercise 5
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Plot the results with the <code>tidybayes::stat_halfeye()</code> function. Use a 95% credible interval for that. Add a vertical line at zero.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the regression coefficients</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(posteriors1, <span class="fu">aes</span>(<span class="at">x =</span> posterior, <span class="at">y =</span> parameter)) <span class="sc">+</span> </span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot density </span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add axes titles</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">b_RT posterior distribution"</span>) <span class="sc">+</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adjust the x-axis </span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>,<span class="dv">100</span>)) <span class="sc">+</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add line for the value zero</span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">yend =</span> <span class="sc">-</span><span class="cn">Inf</span>,</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lty =</span> <span class="st">"dashed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01b-simple-regression_cache/html/unnamed-chunk-10_8d535107dafe501febe5e98b2047dccb">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the regression coefficients</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(posteriors1, <span class="fu">aes</span>(<span class="at">x =</span> posterior, <span class="at">y =</span> parameter)) <span class="sc">+</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot density </span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add axes titles</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">b_RT posterior distribution"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adjust the x-axis </span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>,<span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add line for the value zero</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">yend =</span> <span class="sc">-</span><span class="cn">Inf</span>,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lty =</span> <span class="st">"dashed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<p><img src="01b-simple-regression_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 6
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Now: What is the picture telling us? Is there reason to believe in a relationship between AUC and RT? Think about it!</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>There is no compelling support for a belief in a relationship between AUC and RT. The value zero (no relationship) is contained in the 95% CrI and a non-trivial amount of posterior samples is larger than 0.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
