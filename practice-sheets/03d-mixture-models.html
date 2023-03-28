@@ -542,7 +542,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Models that allow multiple “peaks” in the response distribution, are mixture models. When dealing with a Gaussian likelihood function, as in the case at hand, we speak of Gaussian mixture models (GMM). In general, a mixture model incorporates the idea that the data was generated from more than one process (alternative lingo: that observations were samples from different populations).</p>
 <p>Let <span class="math inline">\(\langle f_1, \dots, f_k \rangle\)</span> be <span class="math inline">\(k\)</span> likelihood functions for data <span class="math inline">\(Y\)</span>. The <span class="math inline">\(k\)</span>-mixture model for <span class="math inline">\(Y\)</span> explains the data as a weighted combination, with mixture weights <span class="math inline">\(\alpha\)</span> (a probability vector). Procedurally, think of inferring for each data point <span class="math inline">\(y_{i}\)</span> which a mixture component <span class="math inline">\(k(i)\)</span> most likelihood belongs to (i.e., by which of <span class="math inline">\(k\)</span> different processes it may have been generated; or, from which of <span class="math inline">\(k\)</span> different populations it was sampled). The probability that any <span class="math inline">\(y_{i}\)</span> is in class <span class="math inline">\(j\)</span> is given by <span class="math inline">\(\alpha_{i}\)</span>, so that <span class="math inline">\(\alpha\)</span> represents the overall probabilities of different components (sub-populations). This results in a mixture likelihood function which can be written like so:</p>
 <p><span class="math display">\[f^{\mathrm{MM}}(y_i) = \alpha_{k(i)} f_{k(i)}\]</span></p>
-<p>For the current case, we assume that there are just two components (because we see two “humps”, or have <em>a priori</em> information that there are exactly two groups; the bonus exercise looks at a generalization to <span class="math inline">\(K&gt;2\)</span> groups). Concretely, for each data point <span class="math inline">\(y_i\)</span>, <span class="math inline">\(i \in \{1, \dots, N\}\)</span>, we are going to estimate how likely data point <span class="math inline">\(i\)</span> may have been a sample from normal distribution “Number 0”, with <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\sigma_0\)</span>, or from normal distribution “Number 1”, with <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\sigma_1\)</span>. Naturally, all <span class="math inline">\(\mu_{0,1}\)</span> and <span class="math inline">\(\sigma_{0,1}\)</span> are estimated from the data, as are the group-indicator variables <span class="math inline">\(z_i\)</span>. There is also a global parameter <span class="math inline">\(p\)</span> which indicates how likely any data point is to come from one of the two distributions (you’ll think about which one below!). Here’s the full model we will work with (modulo an additional ordering constraint, as discussed below):</p>
+<p>For the current case, we assume that there are just two components (because we see two “humps”, or have <em>a priori</em> information that there are exactly two groups. Concretely, for each data point <span class="math inline">\(y_i\)</span>, <span class="math inline">\(i \in \{1, \dots, N\}\)</span>, we are going to estimate how likely data point <span class="math inline">\(i\)</span> may have been a sample from normal distribution “Number 0”, with <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\sigma_0\)</span>, or from normal distribution “Number 1”, with <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\sigma_1\)</span>. Naturally, all <span class="math inline">\(\mu_{0,1}\)</span> and <span class="math inline">\(\sigma_{0,1}\)</span> are estimated from the data, as are the group-indicator variables <span class="math inline">\(z_i\)</span>. There is also a global parameter <span class="math inline">\(p\)</span> which indicates how likely any data point is to come from one of the two distributions (you’ll think about which one below!). Here’s the full model we will work with (modulo an additional ordering constraint, as discussed below):</p>
 <p><span class="math display">\[
 \begin{align*}
 p        &amp; \sim \text{Beta}(1,1) \\
@@ -601,7 +601,7 @@ Solution
 </div>
 <p>Below is the Stan code for this model. It is also given in file <code>Gaussian-mixture-01-basic.stan</code>. A few comments on this code:</p>
 <ol type="1">
-<li>There is no occurrence of variable <span class="math inline">\(z_i\)</span>, as this is marginalized out. We do this following the same recipe as before and increment the log-score manually, using <code>target += log_sum_exp(alpha)</code>.</li>
+<li>There is no occurrence of variable <span class="math inline">\(z_i\)</span>, as this is marginalized out. We do this by incrementing the log-score manually, using <code>target += log_sum_exp(alpha)</code>.</li>
 <li>We declare vector <code>mu</code> to be of a particular type which we have not seen before. We want the vector to be ordered. We will come back to this later. Don’t worry about it now.</li>
 </ol>
 <div class="sourceCode" id="cb7"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
@@ -624,15 +624,45 @@ Solution
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">target +=</span> log_sum_exp(alpha);</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-7_8efaaeb243ad815e6dd6462107872548">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-7_90769414a1fc06eead5413cbbc70f81f">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2b_GMM <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/Gaussian-mixture-01-basic.stan'</span>,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>stan_fit_2b_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-8_3992e8211503ba99838dacecf7a57139">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2b_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Stan model: Gaussian-mixture-01-basic.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+            mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff
+p           0.55    0.01 0.16    0.18    0.46    0.54    0.64    0.85   368
+mu[1]      10.32    0.17 1.79    8.84    9.83   10.38   11.02   12.46   115
+mu[2]      15.72    0.05 1.01   13.55   15.40   15.80   16.12   16.73   360
+sigma[1]    2.12    0.02 0.64    1.08    1.69    2.04    2.51    3.42   793
+sigma[2]    1.43    0.03 0.55    0.64    1.07    1.34    1.65    2.98   417
+lp__     -125.77    0.16 2.53 -133.42 -126.71 -125.08 -124.07 -122.94   237
+         Rhat
+p        1.01
+mu[1]    1.04
+mu[2]    1.01
+sigma[1] 1.00
+sigma[2] 1.01
+lp__     1.02
+
+Samples were drawn using NUTS(diag_e) at Tue Mar 28 22:06:02 2023.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).</code></pre>
+</div>
 </div>
 <div class="callout-caution callout callout-style-simple callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
@@ -660,15 +690,15 @@ Solution
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Yes, they do make sense. <span class="math inline">\(p\)</span> is the prevalence of data from the group with the higher mean, which is group <span class="math inline">\(B\)</span> in our case. The model infers that there are roughly equally many data points from each group, which is indeed the case. The model also recovers the descriptive means of each group!</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-8_b46d69b9c779afff41acb6588494ad4c">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-9_2f70596b4edc27cf3068cf5b320fd930">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ffm_data <span class="sc">|&gt;</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean     =</span> <span class="fu">mean</span>(height),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">std_dev  =</span> <span class="fu">sd</span>(height)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ffm_data <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean     =</span> <span class="fu">mean</span>(height),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">std_dev  =</span> <span class="fu">sd</span>(height)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
@@ -688,22 +718,22 @@ Solution
 <section id="an-unidentifiable-model" class="level2">
 <h2 class="anchored" data-anchor-id="an-unidentifiable-model">An unidentifiable model</h2>
 <p>Let’s run the model in file <code>Gaussian-mixture-02-unindentifiable.stan</code>, which is exactly the same as before but with vector <code>mu</code> being an unordered vector of reals.</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-9_2de29693e25c5a9312e80d7b5ac16e1c">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-10_118adba48c609610764ae5e0a0aaf815">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2c_GMM <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/Gaussian-mixture-02-unindentifiable.stan'</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set a seed for reproducible results</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1734</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2c_GMM <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/Gaussian-mixture-02-unindentifiable.stan'</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set a seed for reproducible results</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1734</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Here’s a summary of the outcome:</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-10_3bcfa4e43b5e3b4c9727a860a825c3a0">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-11_a051997a3a0af0cd1ea7dfe75df41d8f">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2c_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2c_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Stan model: Gaussian-mixture-02-unindentifiable.
@@ -725,7 +755,7 @@ sigma[1] 1.22
 sigma[2] 1.21
 lp__     1.01
 
-Samples were drawn using NUTS(diag_e) at Sun Mar 26 16:32:15 2023.
+Samples were drawn using NUTS(diag_e) at Tue Mar 28 22:06:12 2023.
 For each parameter, n_eff is a crude measure of effective sample size,
 and Rhat is the potential scale reduction factor on split chains (at 
 convergence, Rhat=1).</code></pre>
@@ -745,10 +775,10 @@ Exercise 1c: Interpret model output
 <div class="callout-body-container callout-body">
 <p>What is remarkable here? Explain what happened. Explain in what sense this model is “unidentifiable”.</p>
 <p><strong>Hint:</strong> Explore the parameters with high <span class="math inline">\(\hat{R}\)</span> values. When a model fit seems problematic, a nice tool to explore what might be amiss is the package <code>shinystan</code>. You could do this:</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-11_b8b32e0210543b2a5b4fc0d138d36912">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-12_37b0e08dc8ff646542cf6353be17d0d7">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(stan_fit_2c_GMM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(stan_fit_2c_GMM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Then head over to the tab “Explore” and have a look at some of the parameters.</p>
@@ -776,29 +806,29 @@ Solution
 <section id="posterior-predictive-check" class="level2">
 <h2 class="anchored" data-anchor-id="posterior-predictive-check">Posterior predictive check</h2>
 <p>We can extend the (identifiable) model from above to also output samples from the posterior predictive distribution. This is given in file <code>Gaussian-mixture-03-withPostPred.stan</code>. Let’s run this model, collect the posterior predictive samples in a variable called <code>yrep</code> and draw a density plot.</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-12_39b47a0e52a48e87b0a523b391650b38">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-13_9f954ece0a2f7dd0ea1922c992cc8613">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2d_GMM <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/Gaussian-mixture-03-withPostPred.stan'</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only return the posterior predictive samples</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">'yrep'</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>stan_fit_2d_GMM <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/Gaussian-mixture-03-withPostPred.stan'</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only return the posterior predictive samples</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">'yrep'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-13_82a2a3cad3994f2344e81db9045135a8">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-14_cee3663989a0cae05db31301b5f767ab">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">source  =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"data"</span>, <span class="fu">length</span>(flower_heights)), <span class="fu">rep</span>(<span class="st">"PostPred"</span>, <span class="fu">length</span>(<span class="fu">extract</span>(stan_fit_2d_GMM)<span class="sc">$</span>yrep))),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fu">c</span>(flower_heights, <span class="fu">extract</span>(stan_fit_2d_GMM)<span class="sc">$</span>yrep)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span>  </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">fill=</span>source, <span class="at">color =</span> source)) <span class="sc">+</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">source  =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"data"</span>, <span class="fu">length</span>(flower_heights)), <span class="fu">rep</span>(<span class="st">"PostPred"</span>, <span class="fu">length</span>(<span class="fu">extract</span>(stan_fit_2d_GMM)<span class="sc">$</span>yrep))),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fu">c</span>(flower_heights, <span class="fu">extract</span>(stan_fit_2d_GMM)<span class="sc">$</span>yrep)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span>  </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">fill=</span>source, <span class="at">color =</span> source)) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="03d-mixture-models_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<p><img src="03d-mixture-models_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="callout-caution callout callout-style-simple callout-captioned">
@@ -837,29 +867,29 @@ Solution
 </section>
 <section id="a-gaussian-mixture-model-in-brms" class="level1">
 <h1>A Gaussian mixture model in <code>brms</code></h1>
-<p>We can also run this finite mixture model in <code>brms</code>. We saw earlier already that fitting the parameters of a single Gaussian is like fitting an intercept-only simple linear regression model. We can add finite mixtures to <code>brms</code> by defining setting the <code>family</code> parameter to with the help of the <code>brms::mixture()</code> function. Here, we define a finite mixture of Gaussians, of course, but more flexibility is possible.</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-14_4065d09e81377df38737a293a3bd8662">
+<p>We can also run this finite mixture model in <code>brms</code>. Fitting the parameters of a single Gaussian is like fitting an intercept-only simple linear regression model. We can add finite mixtures to <code>brms</code> via the <code>family</code> parameter and the function <code>brms::mixture()</code>. Here, we define a finite mixture of Gaussians, of course, but more flexibility is possible.</p>
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-15_406ca4417ca82d13fc544da9ad79d199">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># intercept only model</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> y <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM, </span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># declare that the likelihood should be a mixture</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">mixture</span>(gaussian, gaussian),</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use weakly informative priors on mu  </span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">12</span>, <span class="dv">10</span>), Intercept, <span class="at">dpar =</span> mu1),</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">12</span>, <span class="dv">10</span>), Intercept, <span class="at">dpar =</span> mu2)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># intercept only model</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> y <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_GMM, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># declare that the likelihood should be a mixture</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">mixture</span>(gaussian, gaussian),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use weakly informative priors on mu  </span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">12</span>, <span class="dv">10</span>), Intercept, <span class="at">dpar =</span> mu1),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">12</span>, <span class="dv">10</span>), Intercept, <span class="at">dpar =</span> mu2)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Let’s look at the model fit:</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-15_04e935dc59ba62088c7314d7eb8cb098">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-16_30473250a9d719d075cf73ebfcf703f1">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: mixture(gaussian, gaussian) 
@@ -871,15 +901,15 @@ Formula: y ~ 1
 
 Population-Level Effects: 
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-mu1_Intercept    10.66      0.97     8.98    12.66 1.06       56      621
-mu2_Intercept    15.69      0.75    13.60    16.73 1.04     1073      903
+mu1_Intercept    10.49      0.97     8.88    12.66 1.00      570      492
+mu2_Intercept    15.58      0.85    13.25    16.74 1.01      732      307
 
 Family Specific Parameters: 
        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma1     2.38      0.73     1.23     3.59 1.11       26     1437
-sigma2     1.37      0.86     0.07     3.21 1.19       15        6
-theta1     0.59      0.18     0.23     0.89 1.13       20      756
-theta2     0.41      0.18     0.11     0.77 1.13       20        7
+sigma1     2.25      0.73     1.16     3.76 1.00      616      736
+sigma2     1.60      0.71     0.75     3.35 1.01      607      350
+theta1     0.54      0.16     0.16     0.86 1.01      765      503
+theta2     0.46      0.16     0.14     0.84 1.01      765      503
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -887,10 +917,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
 <p>Let’s also look at the Stan code that <code>brms</code> produced in the background for this model in order to find out how this model is related to that of Ex 2.b:</p>
-<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-16_e73dc9715cb78b2159db4b2be9a032a4">
+<div class="cell" data-hash="03d-mixture-models_cache/html/unnamed-chunk-17_74c1ca5a254b470bae812110ee97e5be">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM<span class="sc">$</span>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>brms_fit_2e_GMM<span class="sc">$</span>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>// generated with brms 2.19.0

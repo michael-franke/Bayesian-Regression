@@ -475,7 +475,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dolphin <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_MT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_MT <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_MT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>This tutorial covers common types of generalized linear regression models (GLMs):</p>
@@ -487,17 +487,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>The shared form of all of these GLMs is the following “feed-forward computation” (here illustrated for a single datum of the predicted variable <span class="math inline">\(y\)</span> for a vector <span class="math inline">\(x\)</span> of predictor variables and a vector of coefficients <span class="math inline">\(\beta\)</span>:</p>
 <ol type="1">
-<li>compute a <strong>linear predictor</strong>: <span class="math inline">\(\xi = x \cdot \beta\)</span>;</li>
-<li>compute a <strong>predictor of central tendency</strong> using an appropriate link function <span class="math inline">\(\text{LF}\)</span>: <span class="math inline">\(\eta = \text{LF}(\xi ; \theta_{\text{LF}})\)</span>;</li>
-<li>determine the <strong>likelihood function</strong> <span class="math inline">\(\text{LH}\)</span>: <span class="math inline">\(y \sim \text{LH}(\eta; \theta_{\text{LH}})\)</span>.</li>
+<li>compute a <strong>linear predictor</strong>: <span class="math inline">\(\eta = \mathbf{x} \cdot \beta\)</span>;</li>
+<li>compute a <strong>predictor of central tendency</strong> using an appropriate link function <span class="math inline">\(\text{LF}\)</span>: <span class="math inline">\(\xi = \text{LF}(\eta ; \theta_{\text{LF}})\)</span>;</li>
+<li>determine the <strong>likelihood function</strong> <span class="math inline">\(\text{LH}\)</span>: <span class="math inline">\(y \sim \text{LH}(\xi; \theta_{\text{LH}})\)</span>.</li>
 </ol>
 <p>Link function and likelihood function may have additional free parameters, <span class="math inline">\(\theta_{\text{LF}}\)</span> and <span class="math inline">\(\theta_{\text{LH}}\)</span>, to be fitted alongside the regression coefficients.</p>
-<p>Simple linear regression is the special case of this scheme where the link function is just the identity function and the likelihood is given by $y \sim \mathcal{N}(\eta; \sigma)$. Different types of regression are used to account for different kinds predicted variable <span class="math inline">\(y\)</span>:</p>
+<p>Simple linear regression is the special case of this scheme where the link function is just the identity function and the likelihood is given by <span class="math inline">\(y \sim \mathcal{N}(\xi; \sigma)\)</span>. Different types of regression are used to account for different kinds predicted variable <span class="math inline">\(y\)</span>:</p>
 <table class="table">
 <colgroup>
-<col style="width: 13%">
-<col style="width: 49%">
-<col style="width: 38%">
+<col style="width: 24%">
+<col style="width: 42%">
+<col style="width: 32%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -509,28 +509,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">metric</td>
-<td style="text-align: center;"><span class="math inline">\(\eta = \xi\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(y \sim \text{Normal}(\eta; \sigma)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \eta\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y \sim \text{Normal}(\xi; \sigma)\)</span></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">binary</td>
-<td style="text-align: center;"><span class="math inline">\(\eta = \text{logistic}(\xi)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(y \sim \text{Bernoulli}(\eta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \text{logistic}(\eta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y \sim \text{Bernoulli}(\xi)\)</span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">nominal</td>
-<td style="text-align: center;"><span class="math inline">\(\eta = \text{soft-max}(\xi)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(y \sim \text{Categorical}({\eta})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \text{soft-max}(\eta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y \sim \text{Categorical}({\xi})\)</span></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ordinal</td>
-<td style="text-align: center;"><span class="math inline">\(\eta = \text{cumulative-logit}(\xi; {\delta})\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(y \sim \text{Categorical}({\eta})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \text{cumulative-logit}(\eta; {\delta})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y \sim \text{Categorical}({\xi})\)</span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">count</td>
-<td style="text-align: center;"><span class="math inline">\(\eta = \exp(\xi)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(y \sim \text{Poisson}(\eta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \exp(\eta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y \sim \text{Poisson}(\xi)\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -539,9 +539,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1>Logistic regression</h1>
 <section id="explanation" class="level2">
 <h2 class="anchored" data-anchor-id="explanation">Explanation</h2>
-<p>In logistic regression, the response variable <span class="math inline">\(y\)</span> is binary, i.e., we want to predict the probability <span class="math inline">\(p\)</span> with which one of two possible outcomes (henceforth: the reference outcome) occurs. The likelihood function for this case is the <a href="https://michael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#app-91-distributions-bernoullihael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#poisson-distribution">Bernoulli distribution</a>. This requires a link function <span class="math inline">\(LF\)</span> that maps real-valued linear predictor values <span class="math inline">\(\xi\)</span> onto the unit interval. A common choice is the <strong>logistic function</strong>:</p>
+<p>In logistic regression, the response variable <span class="math inline">\(y\)</span> is binary, i.e., we want to predict the probability <span class="math inline">\(p\)</span> with which one of two possible outcomes (henceforth: the reference outcome) occurs. The likelihood function for this case is the <a href="https://michael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#app-91-distributions-bernoullihael-franke.github.io/intro-data-analysis/selected-discrete-distributions-of-random-variables.html#poisson-distribution">Bernoulli distribution</a>. This requires a link function <span class="math inline">\(LF\)</span> that maps real-valued linear predictor values <span class="math inline">\(\eta\)</span> onto the unit interval. A common choice is the <strong>logistic function</strong>:</p>
 <p><span class="math display">\[
-\text{logistic}(\xi) = \frac{1}{1+ \exp(-\xi)} = \eta
+\text{logistic}(\eta) = \frac{1}{1+ \exp(-\eta)} = \xi
 \]</span></p>
 <div class="cell">
 <div class="cell-output-display">
@@ -551,201 +551,203 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The logistic regression model is then defined as:</p>
 <p><span class="math display">\[
 \begin{align*}
-\xi  &amp;= x \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\eta &amp;= \text{logistic}(\xi) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y &amp; \sim \text{Bernoulli}(\eta) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta  &amp;= \mathbf{x} \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi &amp;= \text{logistic}(\eta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y &amp; \sim \text{Bernoulli}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
-<p>The linear predictor values <span class="math inline">\(\xi\)</span> can be interpreted directly, as the log odds-ratio of the predicted probability <span class="math inline">\(\eta\)</span>. This is because the inverse of the logistic function is the <strong>logit function</strong>, which has the following form:</p>
+<p>The linear predictor values <span class="math inline">\(\eta\)</span> can be interpreted directly, as the log odds-ratio of the predicted probability <span class="math inline">\(\xi\)</span>. This is because the inverse of the logistic function is the <strong>logit function</strong>, which has the following form:</p>
 <p><span class="math display">\[
-\text{logit}(\eta) = \log \frac{\eta}{1-\eta} = \xi
+\text{logit}(\xi) = \log \frac{\xi}{1-\xi} = \eta
 \]</span></p>
 <div class="cell">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">=</span> <span class="cf">function</span>(x) <span class="fu">return</span>( <span class="fu">log</span>(x<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>x)) )</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="fl">0.001</span>,<span class="dv">1</span><span class="fl">-0.001</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">stat_function</span>(<span class="at">fun =</span> logit, <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">label =</span> <span class="st">"logit function"</span>, <span class="at">x =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">eta$"</span>), <span class="at">y =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">xi$ = logistic($</span><span class="sc">\\</span><span class="st">eta$)"</span>)) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"logit function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>That also means that a difference in linear predictor parameters, e.g., in a logistic regression with a single binary categorical predictor variable (group A vs.&nbsp;group B), can be interpreted directly as something like the “evidence ratio” or “Bayes factor”. It is the log of the factor by which to transform log odds-ratios (e.g., changing beliefs from <span class="math inline">\(\eta_1\)</span> to <span class="math inline">\(\eta_2\)</span>:</p>
+<p>This means that differences between linear predictor parameters can be interpreted directly as something like the “evidence ratio” or “Bayes factor”. It is the log of the factor by which to transform log odds-ratios (e.g., changing beliefs from <span class="math inline">\(\xi_1\)</span> to <span class="math inline">\(\xi_2\)</span>:</p>
 <p><span class="math display">\[
 \begin{align*}
-&amp; \xi_1 - \xi_2 = \log \frac{\eta_1}{1-\eta_1} - \log \frac{\eta_2}{1-\eta_2} = \log \left ( \frac{\eta_1}{1-\eta_1} \frac{1-\eta_2}{\eta_2}\right ) \\
-\Leftrightarrow &amp; \frac{\eta_1}{1-\eta_1} = \exp (\xi_1 - \xi_2) \ \frac{\eta_2}{1-\eta_2}
+&amp; \eta_1 - \eta_2 = \log \frac{\xi_1}{1-\xi_1} - \log \frac{\xi_2}{1-\xi_2} = \log \left ( \frac{\xi_1}{1-\xi_1} \frac{1-\xi_2}{\xi_2}\right ) \\
+\Leftrightarrow &amp; \frac{\xi_1}{1-\xi_1} = \exp (\eta_1 - \eta_2) \ \frac{\xi_2}{1-\xi_2}
 \end{align*}
 \]</span></p>
 <p>For the purposes of understanding which priors are weakly or strongly informative, a unit difference in the linear predictor can be interpreted as a log Bayes factor (changing prior odds to posterior odds). So a unit difference in the predictor value corresponds to a Bayes factor of around 2.72.</p>
 </section>
 <section id="example" class="level2">
 <h2 class="anchored" data-anchor-id="example">Example</h2>
-<p>Our hypothesis is that typical examples are easier to classify, so they should have higher accuracy than atypical ones. We are also interested in additional effects of <code>group</code> on accuracy.</p>
+<p>Consider the mouse-tracking data again. Our hypothesis is that typical examples are easier to classify, so they should have higher accuracy than atypical ones. We are also interested in additional effects of <code>group</code> on accuracy.</p>
 <p>As usual, we begin by plotting the relevant data.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="ot">&lt;-</span> dolphin <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, condition) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  tidyboot<span class="sc">::</span><span class="fu">tidyboot_mean</span>(correct) <span class="sc">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">accuracy =</span> empirical_stat)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sum_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="ot">&lt;-</span> data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  tidyboot<span class="sc">::</span><span class="fu">tidyboot_mean</span>(correct) <span class="sc">|&gt;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">accuracy =</span> empirical_stat)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>sum_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 7
 # Groups:   group [2]
   group condition     n accuracy ci_lower  mean ci_upper
   &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1 click Atypical    318    0.874    0.837 0.874    0.912
-2 click Typical     689    0.964    0.949 0.964    0.977
-3 touch Atypical    330    0.909    0.877 0.910    0.939
-4 touch Typical     715    0.941    0.926 0.942    0.957</code></pre>
+1 click Atypical    318    0.874    0.840 0.875    0.907
+2 click Typical     689    0.964    0.949 0.964    0.978
+3 touch Atypical    330    0.909    0.879 0.910    0.939
+4 touch Typical     715    0.941    0.924 0.941    0.958</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> condition, <span class="at">y =</span> accuracy, <span class="at">group =</span> group, <span class="at">color =</span> group)) <span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>)) <span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>)) <span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ci_lower, <span class="at">ymax =</span> ci_upper), </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">0.35</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> condition, <span class="at">y =</span> accuracy, <span class="at">group =</span> group, <span class="at">color =</span> group)) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ci_lower, <span class="at">ymax =</span> ci_upper), </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">0.35</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Visually, there might be a hint that typical trials had higher accuracy, but we cannot judge with the naked eye whether this is substantial.</p>
-<p>A logistic regression, regressing <code>correct</code> against <code>group * condition</code>, may tell us more. To run the logistic regression, we must tell the <code>brms:brm()</code> that we want to treat 0 and 1 as categories. To be sure, and also to directly dictate which of the two categories is the reference level, we use a factor (of strings) with explicit ordering.</p>
+<p>A logistic regression, regressing <code>correct</code> against <code>group * condition</code>, may tell us more. To run the logistic regression, we must tell the <code>brms</code> that we want to treat 0 and 1 as categories. To be sure, and also to directly dictate which of the two categories is the reference level, we use a factor (of strings) with explicit ordering.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fit_logistic <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> correct <span class="sc">~</span> group <span class="sc">*</span> condition,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin <span class="sc">|&gt;</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(correct, <span class="st">"correct"</span>, <span class="st">"incorrect"</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"incorrect"</span>, <span class="st">"correct"</span>))),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">bernoulli</span>()</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit_logistic <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> correct <span class="sc">~</span> group <span class="sc">*</span> condition,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(correct, <span class="st">"correct"</span>, <span class="st">"incorrect"</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"incorrect"</span>, <span class="st">"correct"</span>))),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">bernoulli</span>(<span class="at">link=</span><span class="st">"logit"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_logistic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
-</div>
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_logistic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code> Family: bernoulli 
-  Links: mu = logit 
-Formula: correct ~ group * condition 
-   Data: mutate(dolphin, correct = factor(ifelse(correct, " (Number of observations: 2052) 
-  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup draws = 4000
-
-Population-Level Effects: 
-                            Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-Intercept                       1.94      0.17     1.61     2.29 1.00     2396
-grouptouch                      0.37      0.26    -0.14     0.87 1.00     1879
-conditionTypical                1.35      0.27     0.84     1.90 1.00     1824
-grouptouch:conditionTypical    -0.88      0.37    -1.60    -0.16 1.00     1672
-                            Tail_ESS
-Intercept                       2936
-grouptouch                      2259
-conditionTypical                2320
-grouptouch:conditionTypical     2213
-
-Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-</div>
 </div>
 <p>To test whether typical examples had credibly higher accuracy, the <code>faintr</code> package can be used like so:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_groups</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">higher =</span> condition <span class="sc">==</span> <span class="st">"Typical"</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower  =</span> condition <span class="sc">==</span> <span class="st">"Atypical"</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_groups</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">higher =</span> condition <span class="sc">==</span> <span class="st">"Typical"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower  =</span> condition <span class="sc">==</span> <span class="st">"Atypical"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Outcome of comparing groups: 
  * higher:  condition == "Typical" 
  * lower:   condition == "Atypical" 
-Mean 'higher - lower':  0.9097 
-95% HDI:  [ 0.5295 ; 1.259 ]
+Mean 'higher - lower':  0.9062 
+95% HDI:  [ 0.5517 ; 1.262 ]
 P('higher - lower' &gt; 0):  1 
 Posterior odds:  Inf </code></pre>
 </div>
 </div>
 <p>Based on these results, we may conclude that, given the model and the data, we should believe that typical examples had higher accuracy.</p>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1a</strong></p>
+<div class="callout-caption-container flex-fill">
+Exercise 1a
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Test whether there is reason to believe, given model and data, that the touch group was more accurate than the click group. (After all, the click group could change their minds until the very last moment.)</p>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_groups</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">higher =</span> group <span class="sc">==</span> <span class="st">"click"</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower  =</span> group <span class="sc">==</span> <span class="st">"touch"</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># there is no reason to believe (given model and data) that this conjecture is true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 1b</strong></p>
-<p>If you look back at the plot of accuracy, it looks as if the change from atypical to typical condition does not have the same effect, at least not at the same level of strength, for the click and the touch group, i.e., it seems that there is an interaction between these two variables (<code>group</code> and <code>condition</code>). Use the function <code>brms::hypothesis()</code> to examine the interaction term of the model fit. What do you conclude from this?</p>
+<div class="callout-caption-container flex-fill">
+Solution
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_logistic, <span class="st">"grouptouch:conditionTypical &lt; 0"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># given model and data, it is very plausible to believe that there is an interaction between these two variables.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_groups</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">higher =</span> group <span class="sc">==</span> <span class="st">"click"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower  =</span> group <span class="sc">==</span> <span class="st">"touch"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Outcome of comparing groups: 
+ * higher:  group == "click" 
+ * lower:   group == "touch" 
+Mean 'higher - lower':  0.07239 
+95% HDI:  [ -0.28 ; 0.4196 ]
+P('higher - lower' &gt; 0):  0.6505 
+Posterior odds:  1.861 </code></pre>
+</div>
+</div>
+<p>There is no reason to believe (given model and data) that this conjecture is true.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 1b
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>If you look back at the plot of accuracy, it looks as if the change from atypical to typical condition does not have the same effect, at least not at the same level of strength, for the click and the touch group, i.e., it seems that there is an interaction between these two variables (<code>group</code> and <code>condition</code>). Use the function <code>brms::hypothesis()</code> to examine the interaction term of the model fit. What do you conclude from this?</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_logistic, <span class="st">"grouptouch:conditionTypical &lt; 0"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hypothesis Tests for class b:
+                Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio
+1 (grouptouch:condi... &lt; 0    -0.88      0.36    -1.48     -0.3     116.65
+  Post.Prob Star
+1      0.99    *
+---
+'CI': 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
+'*': For one-sided hypotheses, the posterior probability exceeds 95%;
+for two-sided hypotheses, the value tested against lies outside the 95%-CI.
+Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
+</div>
+</div>
+<p>Given model and data, it is very plausible to believe that there is an interaction between these two variables.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -753,7 +755,7 @@ Posterior odds:  Inf </code></pre>
 <h1>Multinomial regression</h1>
 <section id="explanation-1" class="level2">
 <h2 class="anchored" data-anchor-id="explanation-1">Explanation</h2>
-<p>In multinomial regression the predicted variable is categorical with more than two levels: <span class="math inline">\(c_1, \dots, c_k\)</span>, <span class="math inline">\(k &gt; 2\)</span>. We want to predict probabilities for each category <span class="math inline">\(p_1, \dots, p_k\)</span> (with some linear predictors, more on this in a moment). To obtain the probabilities, we estimate a set of weights (so-called <em>logits</em>): <span class="math inline">\(s_1, \dots, s_k\)</span>. By default, we set <span class="math inline">\(s_1 = 0\)</span>. (We only need <span class="math inline">\(k-1\)</span> numbers to define a <span class="math inline">\(k\)</span>-place probability vector (given that it must sum to one).) For all <span class="math inline">\(1 \le i \le k\)</span>, we define the probability <span class="math inline">\(p_i\)</span> of category <span class="math inline">\(i\)</span> via the following (so-called <em>soft-max</em> operation):</p>
+<p>In multinomial regression the predicted variable is categorical with more than two levels: <span class="math inline">\(c_1, \dots, c_k\)</span>, <span class="math inline">\(k &gt; 2\)</span>. We want to predict probabilities for each category <span class="math inline">\(p_1, \dots, p_k\)</span> (with some linear predictors, more on this in a moment). To obtain the probabilities, we estimate a set of weights (so-called <em>logits</em>): <span class="math inline">\(s_1, \dots, s_k\)</span>. By default, we set <span class="math inline">\(s_1 = 0\)</span>, because we only need <span class="math inline">\(k-1\)</span> numbers to define a <span class="math inline">\(k\)</span>-place probability vector (given that it must sum to one). For all <span class="math inline">\(1 \le i \le k\)</span>, we define the probability <span class="math inline">\(p_i\)</span> of category <span class="math inline">\(i\)</span> via the following (so-called <em>soft-max</em> operation):</p>
 <p><span class="math display">\[
 p_i = \frac{\exp s_i}{ \sum_{j=1}^k \exp s_j}
 \]</span></p>
@@ -763,7 +765,7 @@ s_i = \log \frac{p_i}{p_1}
 \]</span></p>
 <p>Finally, we do not just estimate any-old vector of logits, but we assume that each logit <span class="math inline">\(s_i\)</span> (<span class="math inline">\(1 &lt; i \le k\)</span>) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the <span class="math inline">\(l\)</span> explanatory variables):</p>
 <p><span class="math display">\[
-s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
+s_i = \mathbf{x} \cdot \beta^i
 \]</span></p>
 <p>Two things are important for interpreting the outcome of a multinomial regression fit:</p>
 <ol type="1">
@@ -777,25 +779,25 @@ s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dolphin_prepped <span class="ot">&lt;-</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  dolphin <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prototype_label =</span> <span class="fu">case_when</span>(</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>     prototype_label <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'curved'</span>, <span class="st">'straight'</span>) <span class="sc">~</span> prototype_label,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>     <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">'CoM'</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prototype_label =</span> <span class="fu">factor</span>(prototype_label,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">'straight'</span>, <span class="st">'curved'</span>, <span class="st">'CoM'</span>)),</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">target_position =</span> <span class="fu">ifelse</span>(category_left <span class="sc">==</span> category_correct, <span class="st">"left"</span>, <span class="st">"right"</span>)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data_MT_prepped <span class="ot">&lt;-</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  data_MT <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prototype_label =</span> <span class="fu">case_when</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>     prototype_label <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'curved'</span>, <span class="st">'straight'</span>) <span class="sc">~</span> prototype_label,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>     <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">'CoM'</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prototype_label =</span> <span class="fu">factor</span>(prototype_label,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">'straight'</span>, <span class="st">'curved'</span>, <span class="st">'CoM'</span>)),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">target_position =</span> <span class="fu">ifelse</span>(category_left <span class="sc">==</span> category_correct, <span class="st">"left"</span>, <span class="st">"right"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The relevant data now looks as follows:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dolphin_prepped <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(prototype_label, target_position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data_MT_prepped <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(prototype_label, target_position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,052 × 2
@@ -818,12 +820,12 @@ s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="ot">&lt;-</span> dolphin_prepped <span class="sc">|&gt;</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(target_position, prototype_label) <span class="sc">|&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(target_position) <span class="sc">|&gt;</span> </span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">proportion =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>sum_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="ot">&lt;-</span> data_MT_prepped <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(target_position, prototype_label) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(target_position) <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">proportion =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>sum_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
@@ -842,10 +844,10 @@ s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prototype_label, <span class="at">y =</span> proportion, <span class="at">fill =</span> prototype_label)) <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> target_position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prototype_label, <span class="at">y =</span> proportion, <span class="at">fill =</span> prototype_label)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> target_position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
@@ -853,67 +855,44 @@ s_i = \beta^i_0 + \beta^i_1 x_1 + \beta^i_2 x_2 + \dots + \beta^i_l x_l
 </div>
 <p>It is hard to say from visual inspection alone, whether there are any noteworthy differences. We might consider the following:</p>
 <ul>
-<li><strong>Conjecture:</strong> the /difference/ in probability between straight vs curved is higher when the target is on the right than when it is on the left.</li>
+<li><strong>Conjecture:</strong> the <em>difference</em> in probability between straight vs curved is higher when the target is on the right than when it is on the left.</li>
 </ul>
 <p>This is not a real “research hypothesis” but a conjecture about the data. Let’s still run a multinomial regression model to test address this conjecture.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_multinom <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> prototype_label <span class="sc">~</span> target_position,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_prepped,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">categorical</span>()</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_multinom <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> prototype_label <span class="sc">~</span> target_position,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_MT_prepped,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">categorical</span>()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
-</div>
 </div>
 <p>The summary of this model fit is a bit unwieldy:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_multinom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_multinom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: categorical 
   Links: mucurved = logit; muCoM = logit 
 Formula: prototype_label ~ target_position 
-   Data: dolphin_prepped (Number of observations: 2052) 
+   Data: data_MT_prepped (Number of observations: 2052) 
   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
          total post-warmup draws = 4000
 
 Population-Level Effects: 
                               Estimate Est.Error l-95% CI u-95% CI Rhat
-mucurved_Intercept               -1.71      0.09    -1.90    -1.53 1.00
-muCoM_Intercept                  -1.71      0.09    -1.90    -1.54 1.00
+mucurved_Intercept               -1.71      0.09    -1.89    -1.53 1.00
+muCoM_Intercept                  -1.71      0.09    -1.90    -1.53 1.00
 mucurved_target_positionright    -0.44      0.14    -0.72    -0.16 1.00
-muCoM_target_positionright       -0.00      0.13    -0.26     0.26 1.00
+muCoM_target_positionright       -0.00      0.13    -0.26     0.25 1.00
                               Bulk_ESS Tail_ESS
-mucurved_Intercept                4701     3157
-muCoM_Intercept                   4263     3138
-mucurved_target_positionright     4157     3121
-muCoM_target_positionright        3917     2729
+mucurved_Intercept                4595     3205
+muCoM_Intercept                   3696     2886
+mucurved_target_positionright     3925     3178
+muCoM_target_positionright        3910     3066
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -924,117 +903,199 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># there MUST be a nicer way of doing this, but ...</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ordered_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_mucurved_Intercept"</span>, </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_muCoM_Intercept"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_mucurved_target_positionright"</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_muCoM_target_positionright"</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>fit_multinom <span class="sc">|&gt;</span> </span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"b_"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, value) <span class="sc">|&gt;</span> </span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">factor</span>(name, <span class="at">levels =</span> <span class="fu">rev</span>(ordered_names))) <span class="sc">|&gt;</span> </span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">alpha=</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># there MUST be a nicer way of doing this, but ...</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ordered_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_mucurved_Intercept"</span>, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_muCoM_Intercept"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_mucurved_target_positionright"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b_muCoM_target_positionright"</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>fit_multinom <span class="sc">|&gt;</span> </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"b_"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, value) <span class="sc">|&gt;</span> </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">factor</span>(name, <span class="at">levels =</span> <span class="fu">rev</span>(ordered_names))) <span class="sc">|&gt;</span> </span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">alpha=</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 2a</strong></p>
+<div class="callout-caption-container flex-fill">
+Exercise 2a
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Look at the names of the coefficients in the fit summary to find out:What is the reference level for the categorical predictor variable?</p>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># It's the 'left' position, because there is a coefficient for the 'right' position.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 2b</strong></p>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It’s the ‘left’ position, because there is a coefficient for the ‘right’ position.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 2b
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Look at the names of the coefficients in the fit summary to find out: What is the reference level of the categories to be predicted in the multinomial model?</p>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The reference category is 'straight' because we have regression coeffiecient for all but the 'straight' category.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 2c</strong></p>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reference category is ‘straight’ because we have regression coeffiecient for all but the ‘straight’ category.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 2c
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p>Can you extract information about our conjecture from this plot (or the summary of the model fit)?</p>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Yes! Our conjecture is about the difference in probability of the 'straight' vs he 'curved' category. This difference is directly encoded in regression coefficients. Concretely, the coefficient 'mucurved_Intercept' gives us the log odds of the 'straight' vs' the 'curved' category for the 'left'-position cases. The difference of log odds for the 'right'-position cases is simply the coefficient 'mucurved_target_positionright'. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout-caution callout callout-style-simple">
-<div class="callout-body d-flex">
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p><strong>Exercise 2d</strong></p>
-<p>Use the postrior means of the regression coefficients to compute the corresponding scores <span class="math inline">\(s_i\)</span> and class probabilities <span class="math inline">\(c_i\)</span>. Compare these to the observed frequencies.</p>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Yes! Our conjecture is about the difference in probability of the ‘straight’ vs he ‘curved’ category. This difference is directly encoded in regression coefficients. Concretely, the coefficient ‘mucurved_Intercept’ gives us the log odds of the ‘straight’ vs’ the ‘curved’ category for the ‘left’-position cases. The difference of log odds for the ‘right’-position cases is simply the coefficient ‘mucurved_target_positionright’. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.</p>
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 2d
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Use the posterior means of the regression coefficients to compute the corresponding scores <span class="math inline">\(s_i\)</span> and class probabilities <span class="math inline">\(c_i\)</span>. Compare these to the observed frequencies.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <div class="cell">
-<details>
-<summary>Show solution</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract mean posteriors</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>posterior_means <span class="ot">&lt;-</span> fit_multinom <span class="sc">|&gt;</span> tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean) <span class="sc">|&gt;</span> </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> mean)</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(posterior_means, <span class="at">names =</span> <span class="fu">colnames</span>(posterior_means))  </span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>scores_left <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>scores_right <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">+</span> posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_target_positionright"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">+</span> posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_target_positionright"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>probabilities_left <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">exp</span>(scores_left))</span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>probabilities_right <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">exp</span>(scores_right))</span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prediction =</span> <span class="fu">c</span>(probabilities_left, probabilities_right))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract mean posteriors</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>posterior_means <span class="ot">&lt;-</span> fit_multinom <span class="sc">|&gt;</span> tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean) <span class="sc">|&gt;</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> mean)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(posterior_means, <span class="at">names =</span> <span class="fu">colnames</span>(posterior_means))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1.708586e+00 -1.711022e+00 -4.363546e-01 -2.431751e-03 -4.487048e+00
+[6] -1.499843e+03</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>scores_left <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>scores_right <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">+</span> posterior_means[<span class="dv">1</span>,<span class="st">"b_mucurved_target_positionright"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_Intercept"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">+</span> posterior_means[<span class="dv">1</span>,<span class="st">"b_muCoM_target_positionright"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>probabilities_left <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">exp</span>(scores_left))</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>probabilities_right <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">exp</span>(scores_right))</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>sum_stats <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prediction =</span> <span class="fu">c</span>(probabilities_left, probabilities_right))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  target_position prototype_label     n proportion prediction
+  &lt;chr&gt;           &lt;fct&gt;           &lt;int&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 left            straight          751     0.734      0.734 
+2 left            curved            136     0.133      0.133 
+3 left            CoM               136     0.133      0.133 
+4 right           straight          793     0.771      0.771 
+5 right           curved             93     0.0904     0.0902
+6 right           CoM               143     0.139      0.139 </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -1042,30 +1103,31 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <h1>Ordinal regression</h1>
 <section id="explanation-2" class="level2">
 <h2 class="anchored" data-anchor-id="explanation-2">Explanation</h2>
-<p>When <span class="math inline">\(k&gt;2\)</span> categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the <strong>cumulative logit function</strong> which takes the linear predictor and a vector <span class="math inline">\(\delta\)</span> of <span class="math inline">\(k-1\)</span> thresholds as arguments to return a probability vector, here denoted as <span class="math inline">\(\eta\)</span>, whose components are defined like so:</p>
+<p>When <span class="math inline">\(k&gt;2\)</span> categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the <strong>cumulative logit function</strong> which takes the linear predictor and a vector <span class="math inline">\(\delta\)</span> of <span class="math inline">\(k-1\)</span> thresholds as arguments to return a probability vector, here denoted as <span class="math inline">\(\mathbf{p}\)</span>, whose components are defined like so:</p>
 <p><span class="math display">\[
-\eta_i = \text{cumulative-logit}(\xi; \delta) = \begin{cases}
-\text{logistic}(\delta_1 - \xi) &amp; \text{if } i=1 \\
-\text{logistic}(\delta_{i} - \xi) - \eta_i &amp; \text{if } i&gt;1 \\
+p_i = \text{cumulative-logit}(\eta; \delta) = \begin{cases}
+\text{logistic}(\delta_1 - \eta) &amp; \text{if } i=1 \\
+\text{logistic}(\delta_{i} - \eta) - p_i &amp; \text{if } i&gt;1 \\
 \end{cases}
-\]</span> To see what is going on, consider the a case with three categories. Fix the two threshold <span class="math inline">\(\delta_1=-0.75\)</span> and <span class="math inline">\(\delta_2=1.6\)</span> just for illustration. Now assume that we have a case there the linear predictor value <span class="math inline">\(\eta\)</span> is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:</p>
+\]</span></p>
+<p>To see what is going on, consider the a case with three categories. Fix the two threshold <span class="math inline">\(\delta_1=-0.75\)</span> and <span class="math inline">\(\delta_2=1.6\)</span> just for illustration. Now assume that we have a case there the linear predictor value <span class="math inline">\(p\)</span> is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>If the linear predictor <span class="math inline">\(\eta\)</span> is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount). For example, the plot below shows the case of <span class="math inline">\(\eta=1\)</span> where the probability of the first category decreases while that of the third increases.</p>
+<p>If the linear predictor <span class="math inline">\(\xi\)</span> is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount). For example, the plot below shows the case of <span class="math inline">\(\xi=1\)</span> where the probability of the first category decreases while that of the third increases.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>In sum, the cumulative-logit model for ordinal regression, is defined as follows:</p>
 <p><span class="math display">\[
 \begin{align*}
-\xi  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\eta &amp;= \text{cumulative-logit}(\xi; \delta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y &amp; \sim \text{Categorical}(\eta) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi &amp;= \text{cumulative-logit}(\eta; \delta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y &amp; \sim \text{Categorical}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 </section>
@@ -1075,73 +1137,50 @@ y &amp; \sim \text{Categorical}(\eta) &amp;&amp; \color{gray}{\text{[likelihood]
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare data by making 'prototype_label' an ordered factor</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>dolphin_prepped2 <span class="ot">&lt;-</span> dolphin_prepped <span class="sc">|&gt;</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prototype_label =</span> <span class="fu">factor</span>(prototype_label, <span class="at">ordered =</span> T))</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the ordered categories as a function of MAD</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>dolphin_prepped2 <span class="sc">|&gt;</span> </span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> MAD, <span class="at">y =</span> prototype_label, </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> prototype_label)) <span class="sc">+</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>,<span class="at">height =</span> <span class="fl">0.3</span>, <span class="at">width =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare data by making 'prototype_label' an ordered factor</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>data_MT_prepped2 <span class="ot">&lt;-</span> data_MT_prepped <span class="sc">|&gt;</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prototype_label =</span> <span class="fu">factor</span>(prototype_label, <span class="at">ordered =</span> T))</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the ordered categories as a function of MAD</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>data_MT_prepped2 <span class="sc">|&gt;</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> MAD, <span class="at">y =</span> prototype_label, </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> prototype_label)) <span class="sc">+</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>,<span class="at">height =</span> <span class="fl">0.3</span>, <span class="at">width =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>To run an ordinal regression model, we specify <code>family = cumulative()</code>. This runs the default cumulative-logit model introduced at the beginning of the session.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fit_ordinal <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> prototype_label <span class="sc">~</span> MAD,</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_prepped2,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">cumulative</span>()</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_ordinal <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> prototype_label <span class="sc">~</span> MAD,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_MT_prepped2,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">cumulative</span>()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
 </div>
-</div>
-<p>The summary output for this fitted model gives information about the slope of the predictor variable <code>MAD</code> as usual. But it also supplies information about two (!) intercepts: these are the cutoff points for the different categories in the cumulative normal link function.</p>
+<p>The summary output for this fitted model gives information about the slope of the predictor variable <code>MAD</code> as usual. But it also supplies information about two (!) intercepts: these are the cutoff points for the different categories in the cumulative link function.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ordinal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ordinal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: cumulative 
   Links: mu = logit; disc = identity 
 Formula: prototype_label ~ MAD 
-   Data: dolphin_prepped2 (Number of observations: 2052) 
+   Data: data_MT_prepped2 (Number of observations: 2052) 
   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
          total post-warmup draws = 4000
 
 Population-Level Effects: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept[1]     4.05      0.18     3.71     4.42 1.00     2357     2477
-Intercept[2]     9.49      0.53     8.51    10.56 1.00     1728     1627
-MAD              0.02      0.00     0.02     0.03 1.00     2000     2282
+Intercept[1]     4.05      0.18     3.71     4.40 1.00     2216     2247
+Intercept[2]     9.52      0.51     8.56    10.54 1.00     2003     1979
+MAD              0.02      0.00     0.02     0.03 1.00     2543     2514
 
 Family Specific Parameters: 
      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
@@ -1152,30 +1191,24 @@ and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<p>Concretely, this means that if <code>MAD</code> is $x$, we compute the linear predictor <span class="math inline">\(\xi = \beta_{\text{MAD}} x\)</span> (without intercept!), and then “imagine around it” a standard normal distribution, i.e., consider the normal distribution $\mathcal{\xi, 1}$. The probabilities of the three categories are given by the areas under the curve of this normal distribution, namely:</p>
-<ul>
-<li><p>probability category 1: area from <span class="math inline">\(-\infty\)</span> to first threshold,</p></li>
-<li><p>probability category 2: area between first and second threshold,</p></li>
-<li><p>probability category 3: area between second threshold and <span class="math inline">\(\infty\)</span>.</p></li>
-</ul>
-<p>We can operator with the linear regression coefficients as usual, e.g., asking whether there is any reason to believe, given model and data, that the higher <code>MAD</code>, the higher the probability of seeing a more ‘uncertain’ trajectory type.</p>
+<p>We can operate with the linear regression coefficients as usual, e.g., asking whether there is any reason to believe, given model and data, that the higher <code>MAD</code>, the higher the probability of seeing a more ‘uncertain’ trajectory type.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fit_ordinal <span class="sc">|&gt;</span> </span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(b_MAD) <span class="sc">|&gt;</span> </span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> .value, <span class="at">y =</span> .variable)) <span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> ggplot2<span class="sc">::</span><span class="fu">xlim</span>(<span class="dv">0</span>,<span class="fl">0.03</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fit_ordinal <span class="sc">|&gt;</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(b_MAD) <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> .value, <span class="at">y =</span> .variable)) <span class="sc">+</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>() <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> ggplot2<span class="sc">::</span><span class="fu">xlim</span>(<span class="dv">0</span>,<span class="fl">0.03</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_ordinal, <span class="st">"MAD &gt; 0"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_ordinal, <span class="st">"MAD &gt; 0"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
@@ -1201,9 +1234,9 @@ Posterior probabilities of point hypotheses assume equal prior probabilities.</c
 <p>The link function is the exponential function (so the inverse link function is the logarithmic function). The Poisson regression model is defined as:</p>
 <p><span class="math display">\[
 \begin{align*}
-\xi  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\eta_i &amp;= \exp(\xi_i) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y_i &amp; \sim \text{Poisson}(\eta_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi_i &amp;= \exp(\eta_i) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y_i &amp; \sim \text{Poisson}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 </section>

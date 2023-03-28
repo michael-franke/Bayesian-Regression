@@ -394,7 +394,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>The term “distributional model” is not sharply defined and not altogether common. Alternatively, one may read “models for location, scale and shape” or similar verbiage. The general idea, however, is simple: when our model has a likelihood function with additional parameters, e.g., the standard deviation <span class="math inline">\(\sigma\)</span> in the Gaussian likelihood function of a standard linear regression, we can not only infer these parameters, but also make them dependent, e.g., on other predictors.</p>
+<p>The term “distributional model” is not sharply defined and not altogether common. Alternatively, one may read “models for location, scale and shape” or similar verbiage. The general idea, however, is simple: when our model has a likelihood function with additional parameters, e.g., the standard deviation <span class="math inline">\(\sigma\)</span> in the Gaussian likelihood function of a vanilla linear regression, we can not only infer these parameters, but also make them dependent, e.g., on other predictors.</p>
 <p>For example, when a standard linear regression model would look like this:</p>
 <p><span class="math display">\[
 \begin{align*}
@@ -408,7 +408,7 @@ y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 \begin{align*}
 y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 \mu &amp; = X \ \beta^{\mu} \\
-\sigma &amp; = \exp \left ( X \ \beta^{\mu} \right) \\
+\sigma &amp; = \exp \left ( X \ \beta^{\sigma} \right) \\
 \beta^{\mu}, \beta^{\sigma} &amp; \sim \dots \text{some priors} \dots
 \end{align*}
 \]</span></p>
@@ -522,7 +522,7 @@ y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&gt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.999</code></pre>
+<pre><code>[1] 1</code></pre>
 </div>
 </div>
 <p>If we care about faithful prediction in this early period, including accuracy about the noisiness of the data, the vanilla linear model is clearly bad.</p>
@@ -534,7 +534,7 @@ y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 \begin{align*}
 y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 \mu &amp; = X \ \beta^{\mu} \\
-\sigma &amp; = \exp \left ( X \ \beta^{\mu} \right) \\
+\sigma &amp; = \exp \left ( X \ \beta^{\sigma} \right) \\
 \beta^{\mu}, \beta^{\sigma} &amp; \sim \dots \text{some priors} \dots
 \end{align*}
 \]</span></p>
@@ -545,7 +545,7 @@ y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>formula_temp_distributional <span class="ot">=</span> brms<span class="sc">::</span><span class="fu">bf</span>(avg_temp <span class="sc">~</span> year, sigma <span class="sc">~</span> year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>This formula first declares that <code>avg_temp</code> is to be regressed on <code>year</code>, as usual, and also declares that <code>sigma</code> is supposed to be regressed (in quite the same way) on <code>year</code> as well. The variable <code>sigma</code> does not occur in the data, but is is recognized as an internal variable, namely the standard deviation of the Gaussian likelihood function.</p>
+<p>This formula first declares that <code>avg_temp</code> is to be regressed on <code>year</code>, as usual, and also declares that <code>sigma</code> is supposed to be regressed (in quite the same way) on <code>year</code> as well. The variable <code>sigma</code> does not occur in the data, but is recognized as an internal variable, namely the standard deviation of the Gaussian likelihood function.</p>
 <p>Sampling with Stan can get troublesome if parameters are on quite different scales, so we should make sure that the two estimands are roughly on the same scale.</p>
 <div class="cell" data-hash="03c-distributional-models_cache/html/unnamed-chunk-6_d5260fcc3a2f353e43562a4f467a0666">
 <details open="">
@@ -583,37 +583,34 @@ Formula: avg_temp ~ year
 
 Population-Level Effects: 
                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept          -5.06      0.67    -6.38    -3.80 1.00     2521     2481
-sigma_Intercept     4.08      0.98     2.19     6.03 1.00     2718     2587
-year                7.09      0.35     6.44     7.78 1.00     2551     2498
-sigma_year         -2.67      0.52    -3.71    -1.68 1.00     2721     2578
+Intercept          -5.07      0.67    -6.36    -3.78 1.00     3099     3305
+sigma_Intercept     4.08      1.00     2.14     6.03 1.00     3104     3189
+year                7.09      0.35     6.42     7.77 1.00     3136     3194
+sigma_year         -2.67      0.53    -3.71    -1.64 1.00     3099     3244
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<p><span style="color:darkgreen"> UP TO HERE </span></p>
-<div class="cell" data-hash="03c-distributional-models_cache/html/unnamed-chunk-9_5f8d63037d554917291b29fe0ad9637a">
+<p>Here is a plot that shows the posterior (means and credible interval) of <span class="math inline">\(\sigma\)</span> as a function of <code>year</code>.</p>
+<div class="cell" data-hash="03c-distributional-models_cache/html/unnamed-chunk-9_db0471dff7adac22287c920a69d97961">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I want a plot that shows the estimated samples of standard deviations</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for each year</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_temp_distributional) <span class="sc">|&gt;</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(.draw, b_sigma_Intercept, b_sigma_year) <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cross_join</span>(<span class="fu">tibble</span>(<span class="at">year =</span> (<span class="dv">1750</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">/</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sigma_predicted =</span> <span class="fu">exp</span>(b_sigma_Intercept <span class="sc">+</span> b_sigma_year <span class="sc">*</span> year)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower  =</span> tidybayes<span class="sc">::</span><span class="fu">hdi</span>(sigma_predicted)[<span class="dv">1</span>],</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean   =</span> <span class="fu">mean</span>(sigma_predicted),</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">higher =</span> tidybayes<span class="sc">::</span><span class="fu">hdi</span>(sigma_predicted)[<span class="dv">2</span>]) <span class="sc">|&gt;</span> </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year <span class="sc">*</span> <span class="dv">1000</span>, <span class="at">y =</span> mean)) <span class="sc">+</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lower, <span class="at">ymax=</span>higher), <span class="at">fill =</span> project_colors[<span class="dv">2</span>], <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"year"</span>) <span class="sc">+</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"estimated sigma"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_temp_distributional) <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(.draw, b_sigma_Intercept, b_sigma_year) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cross_join</span>(<span class="fu">tibble</span>(<span class="at">year =</span> (<span class="dv">1750</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">/</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sigma_predicted =</span> <span class="fu">exp</span>(b_sigma_Intercept <span class="sc">+</span> b_sigma_year <span class="sc">*</span> year)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower  =</span> tidybayes<span class="sc">::</span><span class="fu">hdi</span>(sigma_predicted)[<span class="dv">1</span>],</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean   =</span> <span class="fu">mean</span>(sigma_predicted),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">higher =</span> tidybayes<span class="sc">::</span><span class="fu">hdi</span>(sigma_predicted)[<span class="dv">2</span>]) <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year <span class="sc">*</span> <span class="dv">1000</span>, <span class="at">y =</span> mean)) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lower, <span class="at">ymax=</span>higher), <span class="at">fill =</span> project_colors[<span class="dv">2</span>], <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"year"</span>) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"estimated sigma"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="03c-distributional-models_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
@@ -625,7 +622,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Exercise
+Exercise 1a
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -641,19 +638,19 @@ Exercise
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                  prior     class coef group resp  dpar nlpar lb ub
+ student_t(3, 8.3, 2.5) Intercept                                  
                  (flat)         b                                  
                  (flat)         b year                             
- student_t(3, 8.3, 2.5) Intercept                                  
+   student_t(3, 0, 2.5) Intercept                 sigma            
                  (flat)         b                 sigma            
                  (flat)         b year            sigma            
-   student_t(3, 0, 2.5) Intercept                 sigma            
        source
       default
+      default
  (vectorized)
       default
       default
- (vectorized)
-      default</code></pre>
+ (vectorized)</code></pre>
 </div>
 </div>
 <p>Using this information set a prior on the slope coefficient for both components of the model. Use a Student-t distribution with one degree of freedom, mean 0 and standard deviation 10.</p>
