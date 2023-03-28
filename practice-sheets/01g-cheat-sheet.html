@@ -381,7 +381,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#tidy-samples-with-tidybayes" id="toc-tidy-samples-with-tidybayes" class="nav-link" data-scroll-target="#tidy-samples-with-tidybayes">Tidy samples with <code>tidybayes</code></a></li>
   <li><a href="#getting-summaries-for-samples" id="toc-getting-summaries-for-samples" class="nav-link" data-scroll-target="#getting-summaries-for-samples">Getting summaries for samples</a></li>
   </ul></li>
-  <li><a href="#plotting-posteriors" id="toc-plotting-posteriors" class="nav-link" data-scroll-target="#plotting-posteriors">Plotting posteriors</a></li>
+  <li><a href="#plotting-posteriors" id="toc-plotting-posteriors" class="nav-link" data-scroll-target="#plotting-posteriors">Plotting posteriors</a>
+  <ul class="collapse">
+  <li><a href="#population-level-parameters" id="toc-population-level-parameters" class="nav-link" data-scroll-target="#population-level-parameters">Population-level parameters</a></li>
+  <li><a href="#group-level-parameters" id="toc-group-level-parameters" class="nav-link" data-scroll-target="#group-level-parameters">Group-level parameters</a></li>
+  </ul></li>
   <li><a href="#posterior-predictives" id="toc-posterior-predictives" class="nav-link" data-scroll-target="#posterior-predictives">Posterior predictives</a>
   <ul class="collapse">
   <li><a href="#visual-ppcs" id="toc-visual-ppcs" class="nav-link" data-scroll-target="#visual-ppcs">Visual PPCs</a></li>
@@ -846,60 +850,110 @@ sd_submission_id__conditiondiscrimination
 </section>
 <section id="plotting-posteriors" class="level1">
 <h1>Plotting posteriors</h1>
-<p><span style="color:darkgreen">fill me</span></p>
-<ul>
-<li>population and group level effects</li>
-</ul>
+<section id="population-level-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="population-level-parameters">Population-level parameters</h2>
+<p>To plot the posteriors over model paramters, you can use various plots from the <code>bayesplot</code> package (here information <a href="http://mc-stan.org/bayesplot/">here</a>):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-17_275b94f4cc6a27a722b51de12b365341">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>posterior_draws <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">as_draws_matrix</span>(fit_MC)[,<span class="fu">c</span>(<span class="st">"b_conditionreaction"</span>, <span class="st">"b_conditiondiscrimination"</span>)]</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">mcmc_areas</span>(posterior_draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Or, use the <code>tidybayes</code> package:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-18_ec8180f7cb76b7e52e641be653b879f5">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_MC <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_draws</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"b_con"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">reaction =</span> b_conditionreaction,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">discrimination =</span> b_conditiondiscrimination) <span class="sc">|&gt;</span> </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>(<span class="at">fill =</span> project_colors[<span class="dv">1</span>]) <span class="sc">+</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="group-level-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="group-level-parameters">Group-level parameters</h2>
+<p>Here is an example of plotting the posterior for random effects (here: the by-subject random intercepts):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-19_5c0906e0768fed9cda369223b3e8906f">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranef</span>(fit_MC)<span class="sc">$</span>submission_id[,,<span class="st">"Intercept"</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"submission_id"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> submission_id, <span class="at">x =</span> Estimate)) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="st">`</span><span class="at">Q2.5</span><span class="st">`</span>, <span class="at">xmax =</span> <span class="st">`</span><span class="at">Q97.5</span><span class="st">`</span>), </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> project_colors[<span class="dv">6</span>], <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">1</span>], </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 </section>
 <section id="posterior-predictives" class="level1">
 <h1>Posterior predictives</h1>
 <section id="visual-ppcs" class="level2">
 <h2 class="anchored" data-anchor-id="visual-ppcs">Visual PPCs</h2>
 <p>Use tools from the <code>bayesplot</code> package. The basic <code>bayesplot::pp_check()</code> plots the distribution of <code>ndraws</code> samples from the posterior (data) predictive against the distribution of the data the model was trained on:</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-17_ab94a9b1a78349c0c7fa298c990f3eeb">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-20_cced2457b584c8ce30fc033757241d20">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>There are many tweaks to <code>pp_check</code>:</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-18_845a87a15ba32dd59edf1573e911e3a0">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-21_5201068c5b4c53390f0d0d47ab54da76">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>, <span class="at">type =</span> <span class="st">"hist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>, <span class="at">type =</span> <span class="st">"hist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>You can also directly use underlying functions like <code>ppc_stat</code>. See <code>help("PPC-overview")</code> and <code>help("PPD-overview")</code> for what is available.</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-19_4f0b5e6e279452ccf936c3f5d91fe19f">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-22_fdf4cdfc312345aaaebd7d479b038821">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>predictive_samples <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">posterior_predict</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">1000</span>)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>predictive_samples[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>predictive_samples <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">posterior_predict</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">1000</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>predictive_samples[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>          [,1]      [,2]     [,3]      [,4]      [,5]
-[1,] 438.99469 158.91240 227.5470 227.67020 329.66279
-[2,] 276.29148 192.05519 175.7608 346.77484 543.87668
-[3,] 534.32737 153.85520 240.8782  90.45491  90.04196
-[4,] 403.77070 294.66596 399.4861 503.31980 367.35626
-[5,]  77.88635  49.23777 382.6064 411.25912 428.83607</code></pre>
+<pre><code>         [,1]     [,2]     [,3]     [,4]     [,5]
+[1,] 532.2485 532.2328 132.7101 258.2333 285.9759
+[2,] 185.3769 235.1609 449.1151 349.6656 402.6897
+[3,] 246.7097 295.5252 302.1503 264.4449 293.6660
+[4,] 309.0551 401.6308 320.9148 348.8615 272.9958
+[5,] 255.1437 330.5753 542.3492 398.5456 282.3342</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> data_MC<span class="sc">$</span>RT, </span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># specify the test statistic of interest</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> <span class="cf">function</span>(x){<span class="fu">quantile</span>(x, <span class="fl">0.8</span>)})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> data_MC<span class="sc">$</span>RT, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># specify the test statistic of interest</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> <span class="cf">function</span>(x){<span class="fu">quantile</span>(x, <span class="fl">0.8</span>)})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -913,53 +967,53 @@ sd_submission_id__conditiondiscrimination
 </ol>
 <p>All of these measures can be obtained from a fitted model with different functions, e.g., from the <code>tidyverse</code> package. Here, it does not matter whether the model was fitted to data or it is a “prior model”, so to speak, fit with the flag <code>sample_prior = "only"</code>.</p>
 <p>Here is an example for a logistic regression model (where all the three measures clearly show their conceptual difference).</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-20_e939bd4b9594c9e9997436f52acf66af">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-23_f2092dae984de83ec9885604135cbc01">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fit_MT_logistic <span class="ot">&lt;-</span> </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> correct <span class="sc">~</span> group <span class="sc">*</span> condition,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> aida<span class="sc">::</span>data_MT,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>()</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fit_MT_logistic <span class="ot">&lt;-</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> correct <span class="sc">~</span> group <span class="sc">*</span> condition,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> aida<span class="sc">::</span>data_MT,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>()</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-21_6679b95585d3e047b5ff661cdffd0868">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-24_5909bc77da4b12d031881332c2efa470">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predicted central tendency</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_epred_draws</span>(</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predicted central tendency</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_epred_draws</span>(</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 7
 # Groups:   group, condition, .row [4]
   group condition  .row .chain .iteration .draw .epred
   &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;
-1 touch Atypical      1     NA         NA     1  0.908
-2 touch Atypical      1     NA         NA     2  0.891
-3 touch Typical       2     NA         NA     1  0.948
-4 touch Typical       2     NA         NA     2  0.938
-5 click Atypical      3     NA         NA     1  0.894
-6 click Atypical      3     NA         NA     2  0.840
-7 click Typical       4     NA         NA     1  0.954
+1 touch Atypical      1     NA         NA     1  0.912
+2 touch Atypical      1     NA         NA     2  0.889
+3 touch Typical       2     NA         NA     1  0.956
+4 touch Typical       2     NA         NA     2  0.943
+5 click Atypical      3     NA         NA     1  0.851
+6 click Atypical      3     NA         NA     2  0.889
+7 click Typical       4     NA         NA     1  0.964
 8 click Typical       4     NA         NA     2  0.965</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predictive distribution (data samples)</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_predicted_draws</span>(</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predictive distribution (data samples)</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_predicted_draws</span>(</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 7
@@ -977,28 +1031,28 @@ sd_submission_id__conditiondiscrimination
 </div>
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples for the linear predictor</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples for the linear predictor</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 7
 # Groups:   group, condition, .row [4]
   group condition  .row .chain .iteration .draw .linpred
   &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;
-1 touch Atypical      1     NA         NA     1     2.83
-2 touch Atypical      1     NA         NA     2     2.60
-3 touch Typical       2     NA         NA     1     2.97
-4 touch Typical       2     NA         NA     2     2.78
-5 click Atypical      3     NA         NA     1     2.07
-6 click Atypical      3     NA         NA     2     2.22
-7 click Typical       4     NA         NA     1     3.25
-8 click Typical       4     NA         NA     2     3.26</code></pre>
+1 touch Atypical      1     NA         NA     1     2.07
+2 touch Atypical      1     NA         NA     2     2.44
+3 touch Typical       2     NA         NA     1     2.92
+4 touch Typical       2     NA         NA     2     3.04
+5 click Atypical      3     NA         NA     1     1.65
+6 click Atypical      3     NA         NA     2     2.07
+7 click Typical       4     NA         NA     1     3.39
+8 click Typical       4     NA         NA     2     3.17</code></pre>
 </div>
 </div>
 </section>
@@ -1007,18 +1061,18 @@ sd_submission_id__conditiondiscrimination
 <h1>Priors</h1>
 <section id="inspecting-default-priors-without-running-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="inspecting-default-priors-without-running-the-model">Inspecting default priors without running the model</h2>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-22_449a75527e3d17e89625377f8a57a4e8">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-25_600ae612b698885d5019585954b61c51">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the model as a "brmsformula" object</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>myFormula <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">bf</span>(RT <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">|</span> submission_id))</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get prior information</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">get_prior</span>(</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myFormula,</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the model as a "brmsformula" object</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>myFormula <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">bf</span>(RT <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">|</span> submission_id))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get prior information</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">get_prior</span>(</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myFormula,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    prior     class                    coef         group resp
@@ -1054,36 +1108,36 @@ sd_submission_id__conditiondiscrimination
 </section>
 <section id="setting-priors" class="level2">
 <h2 class="anchored" data-anchor-id="setting-priors">Setting priors</h2>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-23_e74460f4b965b7d0def5c10ace1146c4">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-26_183d76ef020ec965b923b316b04aa697">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>myPrior <span class="ot">&lt;-</span> </span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(30,100)"</span>,  <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditiondiscrimination"</span>) <span class="sc">+</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(-30,100)"</span>, <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditionreaction"</span>)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>fit_with_specified_prior <span class="ot">&lt;-</span> </span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> myformula,</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> data_MC,</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior   =</span> myPrior,</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>myPrior <span class="ot">&lt;-</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(30,100)"</span>,  <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditiondiscrimination"</span>) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(-30,100)"</span>, <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditionreaction"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>fit_with_specified_prior <span class="ot">&lt;-</span> </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> myformula,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> data_MC,</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior   =</span> myPrior,</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="sampling-from-the-prior" class="level2">
 <h2 class="anchored" data-anchor-id="sampling-from-the-prior">Sampling from the prior</h2>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-24_374eb9b776fcff61e6a99c7bf416c1b8">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-27_7906ec5f5b0ffd0b21e22fcfd1f9e9b9">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>fit_samples_from_prior_only <span class="ot">&lt;-</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myformula,</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior   =</span> myPrior,</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>(),</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_samples_from_prior_only <span class="ot">&lt;-</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myformula,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior   =</span> myPrior,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>(),</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -1092,10 +1146,10 @@ sd_submission_id__conditiondiscrimination
 <h1>Under the hood: Stan code, design matrices etc.</h1>
 <section id="extract-the-stan-code" class="level2">
 <h2 class="anchored" data-anchor-id="extract-the-stan-code">Extract the Stan code</h2>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-25_a15db5754bbbd615d2b5e2131bba2f4e">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-28_66c177654da5ac8db7f62efa7438ae37">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">stancode</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">stancode</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>// generated with brms 2.19.0
@@ -1203,10 +1257,10 @@ generated quantities {
 <section id="extract-stan-data" class="level2">
 <h2 class="anchored" data-anchor-id="extract-stan-data">Extract Stan data</h2>
 <p>This is the data passed to Stan. Useful for inspecting dimensions etc.</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-26_9fd7a4725fb3b5d702d1ffa9ff5a2e11">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-29_9bffc27644e45c547084ab962278009b">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC) <span class="sc">|&gt;</span> <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC) <span class="sc">|&gt;</span> <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "N"          "Y"          "K"          "X"          "Z_1_1"     
@@ -1219,11 +1273,11 @@ generated quantities {
 <h2 class="anchored" data-anchor-id="inspect-design-matrices">Inspect design matrices</h2>
 <section id="population-level-effects" class="level3">
 <h3 class="anchored" data-anchor-id="population-level-effects">Population-level effects</h3>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-27_ef32fc13574177c62e27b706b154a404">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-30_8e11a2f8b7c0c7681081d613d430e5e2">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)<span class="sc">$</span>X</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>X <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)<span class="sc">$</span>X</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>X <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Intercept conditionreaction conditiondiscrimination
@@ -1239,12 +1293,12 @@ generated quantities {
 <section id="group-level-effects" class="level3">
 <h3 class="anchored" data-anchor-id="group-level-effects">Group-level effects</h3>
 <p>The group-level design matrix is spread out over different variables (all names <code>Z_</code> followed by some indices), but retrievable like so:</p>
-<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-28_95fccc22e580f0c2ee55e758a77dc974">
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-31_16f0dc7599c1c73c3d3b431aea7ed58e">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>data4Stan <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> data4Stan[<span class="fu">str_detect</span>(data4Stan <span class="sc">|&gt;</span> <span class="fu">names</span>(), <span class="st">"Z_"</span>)] <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>Z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>data4Stan <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> data4Stan[<span class="fu">str_detect</span>(data4Stan <span class="sc">|&gt;</span> <span class="fu">names</span>(), <span class="st">"Z_"</span>)] <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>Z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,519 × 4
