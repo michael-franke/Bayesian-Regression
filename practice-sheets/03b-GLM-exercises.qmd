@@ -3,12 +3,14 @@ title: "03b: Generalized linear models (exercises)"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 # Preamble
@@ -29,16 +31,15 @@ dolphin_agg <- dolphin %>%
 
 ```
 
-::: callout-caution
-**Exercise 1a**
+::: {.callout-caution collapse="false"}
+## Exercise 1a
 
 Plot straight (`straight == 1`) vs. non-straight (`straight == 0`) trajectories (y-axis) against `log_RT_s` and color-code by `group`.
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 dolphin_agg$straight_numeric <- as.numeric(as.character(dolphin_agg$straight))
 
@@ -49,16 +50,20 @@ ggplot(data = dolphin_agg) +
 
 ```
 
-::: callout-caution
-**Exercise 1b**
 
-Run the appropriate generalized linear model in `brms` that predicts straight vs. non-straight trajectories based on `group`, `log_RT_s`, and their two-way interaction.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1b
+
+Run the appropriate generalized linear model in `brms` that predicts straight vs. non-straight trajectories based on `group`, `log_RT_s`, and their two-way interaction.
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 GlmMdl <- brm(straight ~ log_RT_s * group, 
                  dolphin_agg, cores = 4,
@@ -68,33 +73,41 @@ GlmMdl
 
 ```
 
-::: callout-caution
-**Exercise 1c**
+:::
+:::
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1c
 
 Describe the model predictions based on the posterior means of the population coefficients.
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+
+The model predicts that the log odds for the mean log_RT_s in the click group (Intercept = reference level) is 0.86. With every unit of log_RT_s these log odds become smaller by 0.23. The model predicts that the log odds for the mean log_RT_s in the touch group is 1.56 (0.86 + 0.70), i.e. much higher than in the click group. With every unit of log_RT_s these log odds become smaller by 0.22.
+
+The baseline difference between click and touch group is compelling with more straight trajectories in the touch group. The effect of log_RT_s is also compelling with less straight trajectories for slower responses. This relationship is not compellingly modulated between the touch and the click group (virtually identical).
+
+:::
 :::
 
-```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
+::: {.callout-caution collapse="false"}
 
-# Answer: The model predicts that the log odds for the mean log_RT_s in the click group (Intercept = reference level) is 0.86. With every unit of log_RT_s these log odds become smaller by 0.23. The model predicts that the log odds for the mean log_RT_s in the touch group is 1.56 (0.86 + 0.70), i.e. much higher than in the click group. With every unit of log_RT_s these log odds become smaller by 0.22.
+## Exercise 1d
 
-# The baseline difference between click and touch group is compelling with more straight trajectories in the touch group. The effect of log_RT_s is also compelling with less straight trajectories for slower responses. This relationship is not compellingly modulated between the touch and the click group (virtually identical).
+Extract the posteriors means and 95% CrIs for the relationships between `straight`, `log_RT_s` and `group` for representative range of `log_RT_s` values.
+Plot the logistic regression lines for both groups into one graph.
+Color code the regression lines according to `group`.
 
-```
+::: {.callout-tip collapse="true"}
 
-::: callout-caution
-**Exercise 1d**
+### Solution
 
-Extract the posteriors means and 95% CrIs for the relationships between `straight`, `log_RT_s` and `group` for representative range of `log_RT_s` values. Plot the logistic regression lines for both groups into one graph. Color code the regression lines according to `group`.
-:::
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # extract posterior means for model coefficients
 predicted_values <- GlmMdl %>%
@@ -131,17 +144,22 @@ ggplot(data = predicted_values) +
   xlim(-3,7)
 
 ```
-
-::: callout-caution
-**Exercise 1e**
-
-Assume we want to predict `correct` responses based on `condition`. We look at the touch group only. Set up a data frame and plot the data as a point plot. (Remember how to jitter the data points)
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1e
+
+Assume we want to predict `correct` responses based on `condition`.
+We look at the touch group only.
+Set up a data frame and plot the data as a point plot.
+(Remember how to jitter the data points)
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # set up data frame
 dolphin_agg2 <- dolphin %>% 
@@ -156,16 +174,21 @@ ggplot(data = dolphin_agg2) +
 
 ```
 
-::: callout-caution
-**Exercise 1f**
-
-Run the appropriate generalized linear model in `brms` that predicts `correct` responses based on `condition`. Extract the posterior means and 95% CrIs for the effect of `condition` on `correct` and plot them as points and whiskers into one plot superimposed on the data.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 1f
+
+Run the appropriate generalized linear model in `brms` that predicts `correct` responses based on `condition`.
+Extract the posterior means and 95% CrIs for the effect of `condition` on `correct` and plot them as points and whiskers into one plot superimposed on the data.
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 GlmMdl2 <- brm(correct ~ condition, 
                  dolphin_agg2, cores = 4,
@@ -200,20 +223,23 @@ ggplot(data = predicted_values) +
 
 ```
 
+:::
+:::
+
+
 # Exercise 2: Poisson regression
 
 We will continue to use `dolphin_agg` in this exercise.
 
-::: callout-caution
-**Exercise 2b**
+::: {.callout-caution collapse="false"}
+## Exercise 2a
 
 Plot the relationship between `xpos_flips` and `log_RT_s` in a scatterplot and visually differentiate between `condition`s as you see fit.
-:::
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 ggplot(data = dolphin_agg) +
   geom_point(aes(x = log_RT_s, y = xpos_flips, color = condition), 
@@ -224,16 +250,18 @@ ggplot(data = dolphin_agg) +
 
 ```
 
-::: callout-caution
-**Exercise 2b**
-
-Run an appropriate generalized regression model for xflips with `brms` to predict `xpos_flips` based on `log_RT_s`, `condition`, and their two-way interaction.
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2b
+
+Run an appropriate generalized regression model for xflips with `brms` to predict `xpos_flips` based on `log_RT_s`, `condition`, and their two-way interaction.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 GlmMdl3 <- brm(xpos_flips ~ log_RT_s * condition, 
                  dolphin_agg, cores = 4,
@@ -242,16 +270,18 @@ GlmMdl3
 
 ```
 
-::: callout-caution
-**Exercise 2c**
-
-Extract the posterior means and 95% CrIs across a range of representative values of log_RT_s (see walkthrough) for both conditions and plot them against the data (as done before in walkthrough and exercise 1).
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 2c
+
+Extract the posterior means and 95% CrIs across a range of representative values of log_RT_s (see walkthrough) for both conditions and plot them against the data (as done before in walkthrough and exercise 1).
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 predicted_Poisson_values <- GlmMdl3 %>%
   spread_draws(b_Intercept, b_log_RT_s, b_conditionTypical, `b_log_RT_s:conditionTypical`) %>%
@@ -283,14 +313,19 @@ ggplot(data = predicted_Poisson_values, aes(x = log_RT)) +
 
 ```
 
+:::
+:::
+
+
+
 # Exercise 3: Logistic regression with binomial likelihood
 
-Binary logistic regression assumes that the outcome variable comes from a Bernoulli distribution which is a special case of a binomial distribution where the number of trial $n = 1$ and thus the outcome variable can only be 1 or 0. In contrast, binomial logistic regression assumes that the number of the target events follows a binomial distribution with $n$ trials and probability $q$. Read up on Binomial data with `brms` here: https://www.rensvandeschoot.com/tutorials/generalised-linear-models-with-brms/
+Binary logistic regression assumes that the outcome variable comes from a Bernoulli distribution which is a special case of a binomial distribution where the number of trials is $n = 1$ and thus the outcome variable can only be 1 or 0.
+In contrast, binomial logistic regression assumes that the number of the target events follows a binomial distribution with $n$ trials and probability $q$.
 
 Take the following subset of the `dolphin` data frame that only contains `correct` responses (= `1`).
 
 ```{r}
-#| eval: true
 
 # set up data frame
 dolphin_sub <- dolphin %>% 
@@ -300,16 +335,16 @@ dolphin_sub <- dolphin %>%
 
 ```
 
-::: callout-caution
-**Exercise 3a**
+::: {.callout-caution collapse="false"}
+## Exercise 3a
 
-For each `subject_id` in each `group`, aggregate the mean log_RT_s, the number of trials that are classified as `straight` trajectories, and the total number of trials. Plot the proportion of trials that are classified as `straight` (vs. all trials) trajectories for each subject.
-:::
+For each `subject_id` in each `group`, aggregate the mean log_RT_s, the number of trials that are classified as `straight` trajectories, and the total number of trials.
+Plot the proportion of trials that are classified as `straight` (vs. all trials) trajectories for each subject.
+
+::: {.callout-tip collapse="true"}
+### Solution
 
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # set up data frame
 dolphin_agg3 <- dolphin_sub %>% 
@@ -327,18 +362,23 @@ ggplot(data = dolphin_agg3) +
 
 ```
 
-::: callout-caution
-**Exercise 3b**
-
-Formulate a binomial logistic regression model to predict the proportion of straight trajectories based on `log_RT_s`, `group`, and their two-way interaction. Note that these proportional data are not assumed to be generated by a Bernoulli distribution, but a binomial distribution. Take that into account by setting `family = binomial(link = "logit")`.
-
-Extract posterior means and 95% CrIs for the effect of `log_RT_s` for both `group`s and plot them across a representative range of log_RT_s (as done before in this week).
+:::
 :::
 
+::: {.callout-caution collapse="false"}
+## Exercise 3c
+
+Formulate a binomial logistic regression model to predict the proportion of straight trajectories based on `log_RT_s`, `group`, and their two-way interaction.
+Note that these proportional data are not assumed to be generated by a Bernoulli distribution, but a binomial distribution.
+Take that into account by setting `family = binomial(link = "logit")`.
+You also need to tell `brms` about the number of observations by using formula syntax like this: `k | trials(N) ~ ...` where `k` is the variable containing the number of "successes" and `N` the variable containing the number of trials.
+
+Extract posterior means and 95% CrIs for the effect of `log_RT_s` for both `group`s and plot them across a representative range of log_RT_s.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
 ```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
 # We specify both the number of target events (straights) and the total number of trials (total) wrapped in trials(), which are separated by |. In addition, the family should be “binomial” instead of “bernoulli”.
 GlmMdl4 <- brm(
@@ -383,19 +423,29 @@ ggplot(data = predicted_values) +
  
 ```
 
-::: callout-caution
-**Exercise 3c**
 
-Now compare the results from this analysis to the results from the model 1b above which you plotted in 1d. How do the model results differ and why could that be? (Feel free to explore the data to understand what is going on)
+:::
 :::
 
-```{r}
-#| eval: false
-#| code-fold: true
-#| code-summary: "Show solution"
 
-# Answer: The model in 1b suggested a negative coefficient of reaction time, i.e. slower responses lead to less straight trajectories. The model here suggests a positive coefficient for reaction time, i.e. slower responses lead to more straight trajectories. Given the data, the model, and the priors, this effect is compelling for at least the click group. 
+::: {.callout-caution collapse="false"}
+## Exercise 3c
 
-# A major difference in the two analyses is that the former analysis looked at all data and disregarded that responses came from clusters of sources. For example, responses that come from one and the same participant are dependent on each other because participants might differ in characteristics relevant to the task, like how fast they move and how many times they move to the target in a straight trajectory. The latter analysis aggregated participants behavior by looking at the proportion of straight trajectories within each subject, thus one data point corresponds to one participant, resulting in data points being independent (at least regarding the participant identity). If all participants showed a negative effect of reaction time on the likelihood of straight trajectories, but participants systematically differ in terms of their baseline correlation between reaction time and likelihood of producing straight trajectories in the opposite direction (positive relationship), we might get discrepancies between these different models. What we ultimately need is to take multiple levels of the data into account simultaneously, which is the topic of next week.
+Now compare the results from this analysis to the results from the model 1b above which you plotted in 1d.
+How do the model results differ and why could that be?
+(Feel free to explore the data to understand what is going on.)
 
-```
+::: {.callout-tip collapse="true"}
+### Solution
+
+The model in 1b suggested a negative coefficient of reaction time, i.e. slower responses lead to less straight trajectories. The model here suggests a positive coefficient for reaction time, i.e. slower responses lead to more straight trajectories. Given the data, the model, and the priors, this effect is compelling for at least the click group. 
+
+A major difference in the two analyses is that the former analysis looked at all data and disregarded that responses came from clusters of sources. For example, responses that come from one and the same participant are dependent on each other because participants might differ in characteristics relevant to the task, like how fast they move and how many times they move to the target in a straight trajectory. The latter analysis aggregated participants behavior by looking at the proportion of straight trajectories within each subject, thus one data point corresponds to one participant, resulting in data points being independent (at least regarding the participant identity). If all participants showed a negative effect of reaction time on the likelihood of straight trajectories, but participants systematically differ in terms of their baseline correlation between reaction time and likelihood of producing straight trajectories in the opposite direction (positive relationship), we might get discrepancies between these different models. What we ultimately need is to take multiple levels of the data into account simultaneously, which is the topic of next week.
+
+:::
+:::
+
+
+
+
+

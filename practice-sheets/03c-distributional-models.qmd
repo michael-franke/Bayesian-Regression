@@ -16,7 +16,7 @@ editor:
 
 The term "distributional model" is not sharply defined and not altogether common.
 Alternatively, one may read "models for location, scale and shape" or similar verbiage.
-The general idea, however, is simple: when our model has a likelihood function with additional parameters, e.g., the standard deviation $\sigma$ in the Gaussian likelihood function of a standard linear regression, we can not only infer these parameters, but also make them dependent, e.g., on other predictors.
+The general idea, however, is simple: when our model has a likelihood function with additional parameters, e.g., the standard deviation $\sigma$ in the Gaussian likelihood function of a vanilla linear regression, we can not only infer these parameters, but also make them dependent, e.g., on other predictors.
 
 For example, when a standard linear regression model would look like this:
 
@@ -34,7 +34,7 @@ $$
 \begin{align*}
 y & \sim \mathcal{N}(\mu, \sigma) \\
 \mu & = X \ \beta^{\mu} \\
-\sigma & = \exp \left ( X \ \beta^{\mu} \right) \\
+\sigma & = \exp \left ( X \ \beta^{\sigma} \right) \\
 \beta^{\mu}, \beta^{\sigma} & \sim \dots \text{some priors} \dots
 \end{align*}
 $$
@@ -100,7 +100,7 @@ $$
 \begin{align*}
 y & \sim \mathcal{N}(\mu, \sigma) \\
 \mu & = X \ \beta^{\mu} \\
-\sigma & = \exp \left ( X \ \beta^{\mu} \right) \\
+\sigma & = \exp \left ( X \ \beta^{\sigma} \right) \\
 \beta^{\mu}, \beta^{\sigma} & \sim \dots \text{some priors} \dots
 \end{align*}
 $$
@@ -112,7 +112,7 @@ formula_temp_distributional = brms::bf(avg_temp ~ year, sigma ~ year)
 ```
 
 This formula first declares that `avg_temp` is to be regressed on `year`, as usual, and also declares that `sigma` is supposed to be regressed (in quite the same way) on `year` as well.
-The variable `sigma` does not occur in the data, but is is recognized as an internal variable, namely the standard deviation of the Gaussian likelihood function.
+The variable `sigma` does not occur in the data, but is recognized as an internal variable, namely the standard deviation of the Gaussian likelihood function.
 
 Sampling with Stan can get troublesome if parameters are on quite different scales, so we should make sure that the two estimands are roughly on the same scale.
 
@@ -139,14 +139,10 @@ summary(fit_temp_distributional)
 ```
 
 
-
-<span style = "color:darkgreen"> UP TO HERE </span>  
+Here is a plot that shows the posterior (means and credible interval) of $\sigma$ as a function of `year`.
 
 
 ```{r}
-
-# I want a plot that shows the estimated samples of standard deviations
-# for each year
 
 tidybayes::tidy_draws(fit_temp_distributional) |> 
   dplyr::select(.draw, b_sigma_Intercept, b_sigma_year) |> 
@@ -166,7 +162,7 @@ tidybayes::tidy_draws(fit_temp_distributional) |>
 ```
 
 ::: {.callout-caution collapse="false"}
-## Exercise 
+## Exercise 1a
 
 Let's inspect how `brms` sets up the priors for this model:
 
