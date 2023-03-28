@@ -676,7 +676,7 @@
     "href": "02-hierarchical-models.html",
     "title": "Bayesian Regression: Theory & Practice",
     "section": "",
-    "text": "This unit introduces hierarchical regression models (also known as mixed models, or random-effect models).\nHere are slides for this session."
+    "text": "This unit introduces hierarchical regression models (also known as mixed models, or random-effect models).\nHere are slides for this session.\nThere are also tutorials covering multi-membership group-level effects and an alternative motivation for using multi-level modeling which is not “breaking the wrong independence assumptions”."
   },
   {
     "objectID": "05-model-comparison.html",
