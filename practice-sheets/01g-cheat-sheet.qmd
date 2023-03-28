@@ -62,6 +62,20 @@ fit_first_five <-
 
 ```
 
+## Formula syntax
+
+The basic form of a `brms` formula is: `response ~ pterms + (gterms | group)`
+
+### Multi-level modeling
+
+- `(gterms || group)` :  suppress correlation between gterms
+- `(gterms | g1 + g2)` :  syntactic sugar for `(gterms | g1) + (gterms | g2)`
+- `(gterms | g1 : g2)` :  all combinations of `g1` and `g2` (Cartesian product)
+- `(gterms | g1 / g2)` :  nesting `g2` within `g1`; equals `(gterms | g1) + (gterms | g1 : g2)`
+- `(gterms | IDx | group)` : correlation for all group-level categories with `IDx`
+  - useful for multi-formula models (e.g., non-linear models)
+
+
 # General information about the model fit
 
 ## Summaries
@@ -172,6 +186,33 @@ tidybayes::tidy_draws(fit_MC) |>
 # Posterior predictives
 
 ## Visual PPCs
+
+Use tools from the `bayesplot` package.
+The basic `bayesplot::pp_check()` plots the distribution of `ndraws` samples from the posterior (data) predictive against the distribution of the data the model was trained on:
+
+```{r}
+bayesplot::pp_check(fit_MC, ndraws = 30)
+```
+
+There are many tweaks to `pp_check`:
+
+```{r}
+bayesplot::pp_check(fit_MC, ndraws = 30, type = "hist")
+```
+
+You can also directly use underlying functions like `ppc_stat`.
+See `help("PPC-overview")` and `help("PPD-overview")` for what is available.
+
+```{r}
+predictive_samples <- brms::posterior_predict(fit_MC, ndraws = 1000)
+predictive_samples[1:5, 1:5] 
+
+bayesplot::ppc_stat(
+  y    = data_MC$RT, 
+  yrep = predictive_samples,
+  # specify the test statistic of interest
+  stat = function(x){quantile(x, 0.8)})
+```
 
 ## Extracting samples from the posterior predictive distribution
 
