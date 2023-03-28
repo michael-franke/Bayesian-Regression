@@ -179,9 +179,48 @@ tidybayes::tidy_draws(fit_MC) |>
 
 # Plotting posteriors
 
-[fill me]{style="color:darkgreen"}
+## Population-level parameters
 
--   population and group level effects
+To plot the posteriors over model paramters, you can use various plots from the `bayesplot` package (here information [here](http://mc-stan.org/bayesplot/)):
+
+```{r}
+posterior_draws <- brms::as_draws_matrix(fit_MC)[,c("b_conditionreaction", "b_conditiondiscrimination")]
+bayesplot::mcmc_areas(posterior_draws)
+```
+
+Or, use the `tidybayes` package:
+
+```{r}
+fit_MC |> 
+  tidy_draws() |> 
+  select(starts_with("b_con")) |> 
+  rename(reaction = b_conditionreaction,
+         discrimination = b_conditiondiscrimination) |> 
+  pivot_longer(cols = everything()) |> 
+  ggplot(aes(x = value, y = name)) +
+  tidybayes::stat_halfeye(fill = project_colors[1]) +
+  ylab("") +
+  geom_vline(aes(xintercept = 0), color = project_colors[2], size = 2)
+```
+
+## Group-level parameters
+
+Here is an example of plotting the posterior for random effects (here: the by-subject random intercepts):
+
+```{r}
+
+ranef(fit_MC)$submission_id[,,"Intercept"] |> 
+  as.data.frame() |> 
+  rownames_to_column("submission_id") |> 
+  ggplot(aes(y = submission_id, x = Estimate)) +
+  geom_errorbar(aes(xmin = `Q2.5`, xmax = `Q97.5`), 
+                color = project_colors[6], alpha = 0.7)+
+  geom_vline(aes(xintercept = 0), color = project_colors[1], 
+             size = 2, alpha = 0.8) +
+  geom_point(color = project_colors[2], size = 2)
+
+```
+
 
 # Posterior predictives
 
