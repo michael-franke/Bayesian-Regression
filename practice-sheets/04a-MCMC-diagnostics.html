@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - 04a: MCMC diagnostics (demonstrations)</title>
+<title>Bayesian Regression: Theory &amp; Practice - MCMC diagnostics (demonstrations)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -134,7 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">04a: MCMC diagnostics (demonstrations)</h1>
+      <h1 class="quarto-secondary-nav-title">MCMC diagnostics (demonstrations)</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -372,7 +372,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">04a: MCMC diagnostics (demonstrations)</h1>
+<h1 class="title d-none d-lg-block">MCMC diagnostics (demonstrations)</h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -475,28 +475,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
+</div>
+<p>Here is a quick visualization of the model’s posterior prediction:</p>
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(fit_good)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>The good model is rather well behaved. Here is a generic plot of its posterior fits and traceplots:</p>
@@ -506,10 +493,10 @@ make: *** [foo.o] Error 1</code></pre>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_good)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Traceplots look like madly-in-love caterpillars doing their thing.</p>
+<p>Traceplots look like hairy caterpillar madly-in-love with each other. The world is good.</p>
 <p>We can check <span class="math inline">\(\hat{R}\)</span> and effective sample sizes also in the summary of the model:</p>
 <div class="cell">
 <details open="">
@@ -542,14 +529,14 @@ and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<p>Interestingly, there is one warning message about one divergent transition. We are recommended to check the <code>pairs()</code> plot, so here goes:</p>
+<p>Importantly, the summary of the model contains a warning message about one divergent transition. We are recommended to check the <code>pairs()</code> plot, so here goes:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_good)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This is actually not too bad. (Wait until you see a terrible case below!)</p>
@@ -604,7 +591,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <section id="a-terrible-model" class="level1">
 <h1>A terrible model</h1>
 <p>The main (maybe only) reason for serious problems with the NUTS sampling is this: <strong>sampling issues arise for bad models</strong>. So, let’s come up with a really stupid model.</p>
-<p>Here’s a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original <code>year</code> information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we exepct nightmares during sampling:</p>
+<p>Here’s a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original <code>year</code> information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we expect nightmares during sampling:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -612,34 +599,9 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
-</div>
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -651,21 +613,21 @@ Formula: avg_temp ~ s(year) + year_perturbed
 
 Smooth Terms: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sds(syear_1)     3.62      1.08     1.99     6.17 1.00     1184     2034
+sds(syear_1)     3.62      1.07     1.96     6.16 1.00     1170     1867
 
 Population-Level Effects: 
-                       Estimate         Est.Error          l-95% CI
-Intercept      6933068335433.35 12859225713259.60 -4033040282442.15
-year_perturbed   -3961752177.13     7348126832.30   -23451383948.68
-syear_1                   14.53              2.33             10.08
-                        u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept      41039933899755.71 3.57        4       17
-year_perturbed     2304593773.84 3.57        4       17
-syear_1                    19.18 1.00     2748     2418
+                       Estimate        Est.Error          l-95% CI
+Intercept      1476393029597.15 3000542713128.98 -3683707775876.64
+year_perturbed    -843653024.72    1714595561.61    -5233190957.96
+syear_1                   14.66             2.29             10.14
+                       u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept      9158085642430.13 1.76        9       11
+year_perturbed    2104975534.98 1.76        9       11
+syear_1                   19.09 1.00     2470     2653
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.33      0.01     0.30     0.36 1.00     3744     2634
+sigma     0.33      0.01     0.30     0.36 1.00     3461     2826
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -684,71 +646,115 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>We also see that that the intercept of and the slope for <code>year_perturbed</code> are the main troublemakers (in terms of traceplots).</p>
-<p>Interestingly, a simple posterior check doesn’t look half-bad:</p>
-<div class="cell">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>But now, have a look at the <code>pairs()</code> plot:</p>
+<p>We also see that that the intercept of and the slope for <code>year_perturbed</code> are the main troublemakers (in terms of traceplots).</p>
+<p>Interestingly, a simple posterior check doesn’t look too bad:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Aha, there we see a clear problem! The joint posterior for the intercept and the slope for <code>year_perturbed</code> looks like a line. This means that these parameters could in princple do the same “job”.</p>
-<p>This suggests a possible solution stragey. The model is too unconstrained. It can allow these two parameters meander to wherever they want (or so it seems). We could therefore try honing them in by specifying priors, like so:</p>
+<p>This shows that the warning messages (from Stan) shoult be taken seriously. The samples cannot be trusted, even if a posterior predictive check looks agreeable.</p>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Extract information about R-hat and the ration of efficient samples with functions <code>brms::rhat</code> and <code>brms::neff_ratio</code>.</p>
+<p>Interpret what you see: why are these numbers not good.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For R-hat, we do:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_bad_wPrior <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">rhat</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
+<pre><code>     b_Intercept b_year_perturbed       bs_syear_1      sds_syear_1 
+        1.755874         1.755874         1.000835         1.000987 
+           sigma     s_syear_1[1]     s_syear_1[2]     s_syear_1[3] 
+        1.001747         1.000227         1.004463         1.001290 
+    s_syear_1[4]     s_syear_1[5]     s_syear_1[6]     s_syear_1[7] 
+        1.002759         1.002405         1.000091         1.001066 
+    s_syear_1[8]           lprior             lp__ 
+        1.001016         1.000983         1.006328 </code></pre>
 </div>
+</div>
+<p>These numbers are bad, since they ought to be close to 1, which is the ideal case when chains are indistinguishable (roughly put).</p>
+<p>For the efficient-sample ratio:</p>
+<div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_wPrior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">neff_ratio</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     b_Intercept b_year_perturbed       bs_syear_1      sds_syear_1 
+     0.002340009      0.002340009      0.617417495      0.292392195 
+           sigma     s_syear_1[1]     s_syear_1[2]     s_syear_1[3] 
+     0.706426872      0.720693307      0.543980720      0.700223460 
+    s_syear_1[4]     s_syear_1[5]     s_syear_1[6]     s_syear_1[7] 
+     0.660452915      0.633022665      0.772182212      0.720654987 
+    s_syear_1[8]           lprior             lp__ 
+     0.778131321      0.292579914      0.237839356 </code></pre>
+</div>
+</div>
+<p>These numbers are also poor, because we would like them, ideally, to be 1. However, low efficiency of samples is not necessary a sign that the fit cannot be trusted, just that the sampler has a hard time beating autocorrelation.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Have a look at the <code>pairs()</code> plot:</p>
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Aha, there we see a clear problem! The joint posterior for the intercept and the slope for <code>year_perturbed</code> looks like a line. This means that these parameters could in principle do the same “job”.</p>
+<p>This suggests a possible solution strategy. The model is too unconstrained. It can allow these two parameters meander to wherever they want (or so it seems). We could therefore try honing them in by specifying priors, like so:</p>
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_bad_wPrior <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_wPrior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -760,17 +766,17 @@ Formula: avg_temp ~ s(year) + year_perturbed
 
 Smooth Terms: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sds(syear_1)     3.59      1.06     2.01     6.06 1.00      923     1674
+sds(syear_1)     3.66      1.12     2.03     6.39 1.00      904     1566
 
 Population-Level Effects: 
-               Estimate Est.Error  l-95% CI  u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept       4813.53  87086.81 -86412.31 131985.99 1.01      969      245
-year_perturbed    -2.75     49.76    -75.42     49.38 1.01      969      245
-syear_1           14.60      2.32     10.04     19.15 1.00     2331     2330
+               Estimate Est.Error   l-95% CI  u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept       1358.78 178823.28 -125718.14 149640.99 1.01     2606      462
+year_perturbed    -0.77    102.18     -85.50     71.84 1.01     2606      462
+syear_1           14.63      2.29      10.21     19.25 1.00     2111     2637
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.33      0.01     0.30     0.36 1.00     3681     2833
+sigma     0.33      0.01     0.30     0.36 1.00     3715     2655
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -784,7 +790,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Here’s what’s wrong: <code>year_perturbed</code> is a constant! The model is a crappy model of the data, because the data is not what we thought it would be. Check it out:</p>
@@ -810,7 +816,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 # ℹ 259 more rows</code></pre>
 </div>
 </div>
-<p>So, we basically ran a model with two intercepts!?!</p>
+<p>So, we basically ran a model with two intercepts!?! 😳</p>
 <p>Let’s try again:</p>
 <div class="cell">
 <details open="">
@@ -823,16 +829,16 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 269 × 5
     year anomaly uncertainty avg_temp year_perturbed
    &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;
- 1  1750  -1.41        NA        7.20          1781.
- 2  1751  -1.52        NA        7.09          1837.
- 3  1753  -1.07         1.3      7.54          1732.
- 4  1754  -0.614        1.09     8.00          1783.
- 5  1755  -0.823        1.24     7.79          1685.
- 6  1756  -0.547        1.28     8.06          1801.
- 7  1757  -0.438        1.31     8.17          1732.
- 8  1758  -2.42         1.76     6.19          1785.
- 9  1759  -1.53         2.25     7.08          1785.
-10  1760  -2.46         2.75     6.14          1847.
+ 1  1750  -1.41        NA        7.20          1754.
+ 2  1751  -1.52        NA        7.09          1783.
+ 3  1753  -1.07         1.3      7.54          1706.
+ 4  1754  -0.614        1.09     8.00          1796.
+ 5  1755  -0.823        1.24     7.79          1712.
+ 6  1756  -0.547        1.28     8.06          1744.
+ 7  1757  -0.438        1.31     8.17          1767.
+ 8  1758  -2.42         1.76     6.19          1729.
+ 9  1759  -1.53         2.25     7.08          1775.
+10  1760  -2.46         2.75     6.14          1844.
 # ℹ 259 more rows</code></pre>
 </div>
 </div>
@@ -845,34 +851,9 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_WorldTemp_perturbed,</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-namespace Eigen {
-^
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-namespace Eigen {
-               ^
-               ;
-In file included from &lt;built-in&gt;:1:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-In file included from /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-#include &lt;complex&gt;
-         ^~~~~~~~~
-3 errors generated.
-make: *** [foo.o] Error 1</code></pre>
-</div>
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -884,13 +865,13 @@ Formula: avg_temp ~ year + year_perturbed
 
 Population-Level Effects: 
                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         -3.46      0.59    -4.65    -2.35 1.00     4100     2852
-year               0.01      0.00     0.01     0.01 1.00     3609     2545
-year_perturbed    -0.00      0.00    -0.00     0.00 1.00     3658     2593
+Intercept         -3.51      0.59    -4.67    -2.36 1.00     4191     3101
+year               0.01      0.00     0.00     0.01 1.00     3866     2770
+year_perturbed     0.00      0.00    -0.00     0.00 1.00     3988     2975
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.40      0.02     0.37     0.44 1.00     1556     1470
+sigma     0.41      0.02     0.37     0.44 1.00     1637     1547
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -902,10 +883,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We should just not have <code>year_perturbed</code>; it’s nonsense, and it shows in the diagnostics.</p>
@@ -913,7 +894,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
