@@ -8,4 +8,5 @@ This unit introduces hierarchical regression models (also known as mixed models,
 
 Here are [slides for this session](slides/03-MLM.pdf).
 
+There are also tutorials covering [multi-membership group-level effects](https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02c-multi-membership.html) and an [alternative motivation for using multi-level modeling](https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02d-MLM-pooling.html) which is not "breaking the wrong independence assumptions".
 
