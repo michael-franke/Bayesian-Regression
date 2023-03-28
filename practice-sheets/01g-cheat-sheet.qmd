@@ -3,13 +3,15 @@ title: "Cheat sheet: common things to do with BRMS"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
   cache: true
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 This document provides a cursory run-down of common operations and manipulations for working with the `brms` package.
@@ -97,6 +99,26 @@ tidybayes::get_variables(fit_MC)[1:10]
 
 # MCMC diagnostics
 
+Retrieve R-hat numerically (so you can calculate it or include it in a reproducible document):
+
+```{r}
+brms::rhat(fit_MC) |> head()
+```
+
+Retrieve ration of efficient samples numerically (so you can calculate it or include it in a reproducible document):
+
+```{r}
+brms::neff_ratio(fit_MC) |> head()
+```
+
+Retrieve all per-sample diagnostics from a fitted object:
+
+```{r}
+fit_MC |> 
+  tidybayes::tidy_draws() |> 
+  dplyr::select(ends_with("__"))
+```
+
 [fill me]{style="color:darkgreen"}
 
 # Extracting samples
@@ -159,7 +181,8 @@ There are three kinds of commonly relevant variables a generalized linear model 
 2.  the shape of the (hypothetical) data $y'$ for $x$, and
 3.  a linear predictor value given values of $x$.
 
-All of these measures can be obtained from a fitted model with different functions, e.g., from the `tidyverse` package. Here, it does not matter whether the model was fitted to data or it is a "prior model", so to speak, fit with the flag `sample_prior = "only"`.
+All of these measures can be obtained from a fitted model with different functions, e.g., from the `tidyverse` package.
+Here, it does not matter whether the model was fitted to data or it is a "prior model", so to speak, fit with the flag `sample_prior = "only"`.
 
 Here is an example for a logistic regression model (where all the three measures clearly show their conceptual difference).
 
@@ -261,7 +284,8 @@ brms::stancode(fit_MC)
 
 ## Extract Stan data
 
-This is the data passed to Stan. Useful for inspecting dimensions etc.
+This is the data passed to Stan.
+Useful for inspecting dimensions etc.
 
 ```{r}
 brms::standata(fit_MC) |> names()

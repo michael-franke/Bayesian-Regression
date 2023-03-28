@@ -103,6 +103,7 @@ tidybayes::tidy_draws(fit_dolphin) |>
     aida::summarize_sample_vector(value)[-1]
     )
 
+
 tidybayes::tidy_draws(fit_dolphin) |> 
   select(b_Intercept, b_MAD, sigma) 
 

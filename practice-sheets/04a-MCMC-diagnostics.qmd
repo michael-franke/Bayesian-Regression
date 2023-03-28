@@ -1,30 +1,34 @@
 ---
-title: "04a: MCMC diagnostics (demonstrations)"
+title: "MCMC diagnostics (demonstrations)"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
- 
+
 # Preamble
- 
+
 {{< include 00-preamble.qmd >}}
-  
+
 ```{r}
 dolphin <- aida::data_MT
 my_scale <- function(x) c(scale(x))
 ```
-  
+
 This tutorial provides demonstrations of how to check the quality of MCMC samples obtained from `brms` model fits.
-  
+
 # A good model
- 
-To have something to go on, here are two model fits, one of this is good, the other is ... total crap. The first model fits a smooth line to the average world temperature. (We need to set the seed here to have reproducible results.)
+
+To have something to go on, here are two model fits, one of this is good, the other is ... total crap.
+The first model fits a smooth line to the average world temperature.
+(We need to set the seed here to have reproducible results.)
 
 ```{r}
 fit_good <- brm(
@@ -34,13 +38,21 @@ fit_good <- brm(
 ) 
 ```
 
-The good model is rather well behaved. Here is a generic plot of its posterior fits and traceplots:
+Here is a quick visualization of the model's posterior prediction:
+
+```{r}
+conditional_effects(fit_good)
+```
+
+The good model is rather well behaved.
+Here is a generic plot of its posterior fits and traceplots:
 
 ```{r}
 plot(fit_good)
 ```
 
-Traceplots look like madly-in-love caterpillars doing their thing.
+Traceplots look like hairy caterpillar madly-in-love with each other.
+The world is good.
 
 We can check $\hat{R}$ and effective sample sizes also in the summary of the model:
 
@@ -48,13 +60,15 @@ We can check $\hat{R}$ and effective sample sizes also in the summary of the mod
 summary(fit_good)
 ```
 
-Interestingly, there is one warning message about one divergent transition. We are recommended to check the `pairs()` plot, so here goes:
+Importantly, the summary of the model contains a warning message about one divergent transition.
+We are recommended to check the `pairs()` plot, so here goes:
 
 ```{r}
 pairs(fit_good)
 ```
 
-This is actually not too bad. (Wait until you see a terrible case below!)
+This is actually not too bad.
+(Wait until you see a terrible case below!)
 
 We can try to fix this problem with a single divergent transition by doing as recommended by the warning message, namely increasing the `adapt_delta` parameter in the `control` structure:
 
@@ -69,7 +83,11 @@ fit_good_adapt <- brm(
 summary(fit_good_adapt)
 ```
 
-That looks better, but what did we just do? --- When the sampler "warms up", it tries to find good parameter values for the case at hand. The `adapt_delta` parameter is the minimum amount of accepted proposals (where to jump next) before "warm up" counts as done and successfull. So with a small problem like this, just making the adaptation more ambitious may have have solved the problem. It has also, however, made the sampling slower, less efficient.
+That looks better, but what did we just do?
+--- When the sampler "warms up", it tries to find good parameter values for the case at hand.
+The `adapt_delta` parameter is the minimum amount of accepted proposals (where to jump next) before "warm up" counts as done and successfull.
+So with a small problem like this, just making the adaptation more ambitious may have have solved the problem.
+It has also, however, made the sampling slower, less efficient.
 
 A powerful interactive tool for exploring a fitted model (diagnostics and more) is `shinystan`:
 
@@ -78,11 +96,14 @@ A powerful interactive tool for exploring a fitted model (diagnostics and more) 
 shinystan::launch_shinystan(fit_good_adapt)
 ```
 
-# A terrible model 
+# A terrible model
 
-The main (maybe only) reason for serious problems with the NUTS sampling is this: **sampling issues arise for bad models**. So, let's come up with a really stupid model.
+The main (maybe only) reason for serious problems with the NUTS sampling is this: **sampling issues arise for bad models**.
+So, let's come up with a really stupid model.
 
-Here's a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original `year` information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we exepct nightmares during sampling:
+Here's a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original `year` information.
+You may already intuit that this cannot possibly be a good idea; the model is notionally deficient.
+So, we expect nightmares during sampling:
 
 ```{r}
 fit_bad <- brm(
@@ -94,13 +115,14 @@ fit_bad <- brm(
 summary(fit_bad)
 ```
 
-Indeed, that looks pretty bad. We managed to score badly on all major accounts:
+Indeed, that looks pretty bad.
+We managed to score badly on all major accounts:
 
-- large $\hat{R}$
-- extremely poor efficient sample size
-- ridiculously far ranging posterior estimates for the main model components
-- tons of divergent transitions
-- maximum treedepth reached more often than hipster touches their phone in a week
+-   large $\hat{R}$
+-   extremely poor efficient sample size
+-   ridiculously far ranging posterior estimates for the main model components
+-   tons of divergent transitions
+-   maximum treedepth reached more often than hipster touches their phone in a week
 
 Some of these caterpillars look like they are in a vicious rose war:
 
@@ -110,21 +132,59 @@ plot(fit_bad)
 
 We also see that that the intercept of and the slope for `year_perturbed` are the main troublemakers (in terms of traceplots).
 
-Interestingly, a simple posterior check doesn't look half-bad:
+Interestingly, a simple posterior check doesn't look too bad:
 
 ```{r}
 pp_check(fit_bad)
 ```
 
-But now, have a look at the `pairs()` plot:
+This shows that the warning messages (from Stan) shoult be taken seriously.
+The samples cannot be trusted, even if a posterior predictive check looks agreeable.
+
+::: {.callout-caution collapse="false"}
+## Exercise 1
+
+Extract information about R-hat and the ration of efficient samples with functions `brms::rhat` and `brms::neff_ratio`.
+
+Interpret what you see: why are these numbers not good.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+For R-hat, we do: 
+
+```{r}
+brms::rhat(fit_bad)
+```
+
+These numbers are bad, since they ought to be close to 1, which is the ideal case when chains are indistinguishable (roughly put).
+
+For the efficient-sample ratio:
+
+```{r}
+brms::neff_ratio(fit_bad)
+```
+
+These numbers are also poor, because we would like them, ideally, to be 1.
+However, low efficiency of samples is not necessary a sign that the fit cannot be trusted, just that the sampler has a hard time beating autocorrelation.
+
+:::
+:::
+
+Have a look at the `pairs()` plot:
 
 ```{r}
 pairs(fit_bad)
 ```
 
-Aha, there we see a clear problem! The joint posterior for the intercept and the slope for `year_perturbed` looks like a line. This means that these parameters could in princple do the same "job". 
+Aha, there we see a clear problem!
+The joint posterior for the intercept and the slope for `year_perturbed` looks like a line.
+This means that these parameters could in principle do the same "job".
 
-This suggests a possible solution stragey. The model is too unconstrained. It can allow these two parameters meander to wherever they want (or so it seems). We could therefore try honing them in by specifying priors, like so:
+This suggests a possible solution strategy.
+The model is too unconstrained.
+It can allow these two parameters meander to wherever they want (or so it seems).
+We could therefore try honing them in by specifying priors, like so:
 
 ```{r}
 fit_bad_wPrior <- brm(
@@ -137,19 +197,24 @@ fit_bad_wPrior <- brm(
 summary(fit_bad_wPrior)
 ```
 
-Well, alright! That isn't too bad anymore. But it is still clear from the posterior `pairs` plot that this model has two parameters that steal each other's show. The model remains a bad model ... for our data.
+Well, alright!
+That isn't too bad anymore.
+But it is still clear from the posterior `pairs` plot that this model has two parameters that steal each other's show.
+The model remains a bad model ... for our data.
 
 ```{r}
 pairs(fit_bad)
 ```
 
-Here's what's wrong: `year_perturbed` is a constant! The model is a crappy model of the data, because the data is not what we thought it would be. Check it out:
+Here's what's wrong: `year_perturbed` is a constant!
+The model is a crappy model of the data, because the data is not what we thought it would be.
+Check it out:
 
 ```{r}
 aida::data_WorldTemp |> mutate(year_perturbed = rnorm(1,year,0.001))
 ```
 
-So, we basically ran a model with two intercepts!?!
+So, we basically ran a model with two intercepts!?! 😳
 
 Let's try again:
 
@@ -159,7 +224,8 @@ data_WorldTemp_perturbed <- aida::data_WorldTemp |>
 data_WorldTemp_perturbed
 ```
 
-That's more like what we thought it was: `year_perturbed` is supposed to be noisy version of the actual year. So, let's try again, leaving out the smoothing, just for some more chaos-loving fun:
+That's more like what we thought it was: `year_perturbed` is supposed to be noisy version of the actual year.
+So, let's try again, leaving out the smoothing, just for some more chaos-loving fun:
 
 ```{r}
 fit_bad_2 <- brm(
@@ -172,7 +238,8 @@ fit_bad_2 <- brm(
 summary(fit_bad_2)
 ```
 
-There are no warnings, so this model *must* be good, right? -- No!
+There are no warnings, so this model *must* be good, right?
+-- No!
 
 If we check the pairs plot, we see that we now have introduced a fair correlation between the two predictor variables.
 

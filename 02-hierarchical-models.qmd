@@ -6,6 +6,6 @@ author: "Michael Franke"
 
 This unit introduces hierarchical regression models (also known as mixed models, or random-effect models).
 
-Here are [slides for session 5](slides/05-slides.html).
+Here are [slides for this session](slides/03-MLM.pdf).
 
 

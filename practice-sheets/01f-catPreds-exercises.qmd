@@ -3,12 +3,14 @@ title: "02c: Categorical predictors (exercises)"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke & Timo Roettger"
 format: html
-editor: visual
 execute:
   error: false
   warning: false
   message: false
 callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 # Preamble
@@ -32,7 +34,8 @@ The research hypotheses we would like to investigate are:
 3.  'straight' trials are faster than 'curved' trials.
 4.  Click trials are slower than touch trials.
 
-But for this to work (without at least mildly informative priors), we would need to have a sufficient amount of observations in each cell. So, let's check:
+But for this to work (without at least mildly informative priors), we would need to have a sufficient amount of observations in each cell.
+So, let's check:
 
 ```{r}
 dolphin |>
@@ -43,7 +46,8 @@ dolphin |>
   arrange(n)
 ```
 
-So, there are cells for which we have no observations at all. For simplicity, we therefore just lump all "change of mind"-type trajectories into one category:
+So, there are cells for which we have no observations at all.
+For simplicity, we therefore just lump all "change of mind"-type trajectories into one category:
 
 ```{r}
 dolphin_prepped <-
@@ -116,14 +120,17 @@ tidybayes::gather_draws(fit, `b_.*`, regex = TRUE) |>
 
 ```
 
-The default cell is for click-atypical-straight. The coeffiencents with 95% CIs that do not include zero are: grouptouch, conditionTypical, prototype_labelCoM. None of these give us direct information about our research hypotheses.
+The default cell is for click-atypical-straight.
+The coeffiencents with 95% CIs that do not include zero are: grouptouch, conditionTypical, prototype_labelCoM.
+None of these give us direct information about our research hypotheses.
 :::
 :::
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1c
 
-Use the `faintr` package to get information relevant for the current research hypotheses. Interpret each result with respect to what we may conclude from it.
+Use the `faintr` package to get information relevant for the current research hypotheses.
+Interpret each result with respect to what we may conclude from it.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -184,7 +191,8 @@ faintr::compare_groups(
 ::: {.callout-caution collapse="false"}
 ## Exercise 2a
 
-Create a new data frame that contains only the mean values of the RT, and MAD for each animal (`exemplar`) and for correct and incorrect responses. Print out the `head` of the new data frame.
+Create a new data frame that contains only the mean values of the RT, and MAD for each animal (`exemplar`) and for correct and incorrect responses.
+Print out the `head` of the new data frame.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -206,9 +214,12 @@ head(dolphin_agg)
 ::: {.callout-caution collapse="false"}
 ## Exercise 2b
 
-Run a linear regression using brms. `MAD` is the dependent variable (i.e. the measure) and both `RT` and `correct` are independent variables (`MAD ~ RT + correct`). (Hint: the coefficients might be really small, so make sure the output is printed with enough numbers after the comma.)
+Run a linear regression using brms.
+`MAD` is the dependent variable (i.e. the measure) and both `RT` and `correct` are independent variables (`MAD ~ RT + correct`).
+(Hint: the coefficients might be really small, so make sure the output is printed with enough numbers after the comma.)
 
-Try to understand the coefficient table. There is one coefficient for `RT` and one coefficient for `correct` which gives you the change in MAD from incorrect to correct responses.
+Try to understand the coefficient table.
+There is one coefficient for `RT` and one coefficient for `correct` which gives you the change in MAD from incorrect to correct responses.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -232,7 +243,10 @@ print(summary(model2), digits = 5)
 ::: {.callout-caution collapse="false"}
 ## Exercise 2c
 
-Plot a scatter plot of MAD \~ RT and color code it for correct responses. (Hint: Make sure that `correct` is treated as a factor and not a numeric vector). Draw two predicted lines into the scatterplot. One for correct responses ("lightblue") and one for incorrect responses ("orange").
+Plot a scatter plot of MAD \~ RT and color code it for correct responses.
+(Hint: Make sure that `correct` is treated as a factor and not a numeric vector).
+Draw two predicted lines into the scatterplot.
+One for correct responses ("lightblue") and one for incorrect responses ("orange").
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -261,7 +275,8 @@ ggplot(data = dolphin_agg,
 ::: {.callout-caution collapse="false"}
 ## Exercise 2d
 
-Extract the posteriors for the coefficients of both `RT` and `correct` from the model output (use the `spread_draws()` function), calculate their means and a 67% Credible Interval. Print out the `head` of the aggregated dataframe.
+Extract the posteriors for the coefficients of both `RT` and `correct` from the model output (use the `spread_draws()` function), calculate their means and a 67% Credible Interval.
+Print out the `head` of the aggregated dataframe.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -329,7 +344,8 @@ ggplot(data = dolphin_agg,
 ::: {.callout-caution collapse="false"}
 ## Exercise 2f
 
-Given our model and our data, calculate the evidence ratio of correct responses exhibiting larger MADs than incorrect responses. How would you interpret the result?
+Given our model and our data, calculate the evidence ratio of correct responses exhibiting larger MADs than incorrect responses.
+How would you interpret the result?
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -360,7 +376,9 @@ dolphin_agg <- dolphin %>%
 ::: {.callout-caution collapse="false"}
 ## Exercise 3a
 
-Standardize ("z-transform") `log_RT` such that the mean is at zero and 1 unit corresponds to the standard deviation. Name it `log_RT_s`. (Hint: use function `scale()`.)
+Standardize ("z-transform") `log_RT` such that the mean is at zero and 1 unit corresponds to the standard deviation.
+Name it `log_RT_s`.
+(Hint: use function `scale()`.)
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -394,7 +412,8 @@ model1 = brm(
 ::: {.callout-caution collapse="false"}
 ## Exercise 3c
 
-Plot `MAD` (y) against `log_RT_s` (x) in a scatter plot and color-code for `group`. Plot the regression lines for the click and the touch group into the plot and don't forget to take possible interactions into account.
+Plot `MAD` (y) against `log_RT_s` (x) in a scatter plot and color-code for `group`.
+Plot the regression lines for the click and the touch group into the plot and don't forget to take possible interactions into account.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -426,7 +445,9 @@ ggplot(data = dolphin_agg,
 ::: {.callout-caution collapse="false"}
 ## Exercise 3d
 
-Specify very skeptic priors for all three coefficients. Use a normal distribution with mean = 0, and sd = 10. Rerun the model with those priors.
+Specify very skeptic priors for all three coefficients.
+Use a normal distribution with mean = 0, and sd = 10.
+Rerun the model with those priors.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -454,7 +475,8 @@ model2 = brm(
 ::: {.callout-caution collapse="false"}
 ## Exercise 3e
 
-Compare the model output of model1 to model2. What are the differences and what are the reasons for these differences?
+Compare the model output of model1 to model2.
+What are the differences and what are the reasons for these differences?
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -485,7 +507,11 @@ ggplot(data = dolphin_agg,
 
 ```
 
-The magnitude of the coefficients is much smaller in model2, with the interaction term being close to zero. As a result, the lines in the plot are closer together and run in parallel. The reason for this change lies in the priors. We defined the priors of model2 rather narrowly, down-weighing data points larger or smaller than zero. This is a case of the prior dominating the posterior.
+The magnitude of the coefficients is much smaller in model2, with the interaction term being close to zero.
+As a result, the lines in the plot are closer together and run in parallel.
+The reason for this change lies in the priors.
+We defined the priors of model2 rather narrowly, down-weighing data points larger or smaller than zero.
+This is a case of the prior dominating the posterior.
 :::
 :::
 
@@ -498,76 +524,123 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- ```{r exercise2} -->
 
 <!-- # aggregate -->
+
 <!-- dolphin_agg2 <- dolphin %>%  -->
+
 <!--   filter(correct == 1) %>%  -->
+
 <!--   group_by(exemplar, group, condition) %>%  -->
+
 <!--   dplyr::summarize(MAD = median(MAD, na.rm = TRUE), -->
+
 <!--                    RT = median(RT, na.rm = TRUE)) %>%  -->
+
 <!--   mutate(log_RT = log(RT)) -->
 
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2a** -->
 
 <!-- Run a model predicting MAD based on *standardized* `log_RT`, `group`, `condition`, and *their three-way interaction*. Set a seed = 999. -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- # standardize -->
+
 <!-- dolphin_agg2$log_RT_s <- scale(dolphin_agg2$log_RT, scale = TRUE) -->
 
 <!-- # model -->
+
 <!-- model3 = brm( -->
+
 <!--   MAD ~ log_RT_s * group * condition,  -->
+
 <!--   data = dolphin_agg2, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   seed = 999 -->
+
 <!--   ) -->
 
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2b** -->
 
 <!-- Look at the output. Extract posterior means and 95% CrIs for the following predictor level combinations. One row corresponds to one concrete combination of levels. (Tip: check your results by plotting them against the data) -->
 
 <!-- -   Combination1: log_RT_s == 0; group == click; condition == Atypical -->
+
 <!-- -   Combination2: log_RT_s == 0; group == touch; condition == Atypical -->
+
 <!-- -   Combination3: log_RT_s == 1; group == touch; condition == Typical -->
+
 <!-- -   Combination4: log_RT_s == 2; group == touch; condition == Atypical -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- posteriors3a <- model3 %>% -->
+
 <!--   spread_draws(b_Intercept, b_log_RT_s, -->
+
 <!--                b_grouptouch, b_conditionTypical, -->
+
 <!--                `b_log_RT_s:grouptouch`, `b_log_RT_s:conditionTypical`, -->
+
 <!--                `b_grouptouch:conditionTypical`, -->
+
 <!--                `b_log_RT_s:grouptouch:conditionTypical` -->
+
 <!--                ) %>%  -->
+
 <!--   mutate(Combination1 = b_Intercept + (0 * b_log_RT_s), -->
+
 <!--          Combination2 = b_Intercept + (0 * b_log_RT_s) + b_grouptouch, -->
+
 <!--          Combination3 = b_Intercept + (1 * b_log_RT_s) + b_grouptouch +  -->
+
 <!--            b_conditionTypical + `b_grouptouch:conditionTypical` + (1 * `b_log_RT_s:grouptouch`) +  -->
+
 <!--            (1 * `b_log_RT_s:conditionTypical`) + (1 * `b_log_RT_s:grouptouch:conditionTypical`), -->
+
 <!--          Combination4 = b_Intercept + (2 * b_log_RT_s) + b_grouptouch +  -->
+
 <!--            (2 * `b_log_RT_s:grouptouch`)) %>%  -->
+
 <!--   dplyr::select(Combination1, Combination2, -->
+
 <!--                 Combination3, Combination4) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior") %>%  -->
+
 <!--   group_by(parameter) %>%  -->
+
 <!--   summarise(mean_posterior = mean(posterior), -->
+
 <!--             `95lowerCrI` = HDInterval::hdi(posterior, credMass = 0.95)[1], -->
+
 <!--             `95higherCrI` = HDInterval::hdi(posterior, credMass = 0.95)[2]) -->
 
 <!-- posteriors3a -->
@@ -575,104 +648,177 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2c** -->
 
 <!-- Define the following priors and run the model3 again: -->
 
 <!-- -   log_RT_s: student-t (df = 3, mean = 0, sd = 30) -->
+
 <!-- -   grouptouch: student-t (df = 3, mean = 100, sd = 200) -->
+
 <!-- -   conditionTypical: student-t (df = 3, mean = 0, sd = 200) -->
+
 <!-- -   log_RT_s:grouptouch: normal (mean = 0, sd = 30) -->
+
 <!-- -   log_RT_s:conditionTypical: normal (mean = 0, sd = 30) -->
+
 <!-- -   grouptouch:conditionTypical: student-t (df = 3, mean = 0, sd = 200) -->
+
 <!-- -   log_RT_s:grouptouch:conditionTypical: student-t (df = 3, mean = 0, sd = 30) -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- priors_model3 <- c( -->
+
 <!--    set_prior("student_t(3,0,30)", class = "b", coef = "log_RT_s"), -->
+
 <!--    set_prior("student_t(3,100,200)", class = "b", coef = "grouptouch"), -->
+
 <!--    set_prior("student_t(3,0,200)", class = "b", coef = "conditionTypical"), -->
+
 <!--    set_prior("normal(0,30)", class = "b", coef = "log_RT_s:grouptouch"), -->
+
 <!--    set_prior("normal(0,30)", class = "b", coef = "log_RT_s:conditionTypical"), -->
+
 <!--    set_prior("student_t(3,0,200)", class = "b", coef = "grouptouch:conditionTypical"), -->
+
 <!--    set_prior("student_t(3,0,30)", class = "b", coef = "log_RT_s:grouptouch:conditionTypical") -->
+
 <!-- ) -->
 
 <!-- # model -->
+
 <!-- model3b = brm( -->
+
 <!--   MAD ~ log_RT_s * group * condition,  -->
+
 <!--   data = dolphin_agg2, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   prior = priors_model3 -->
+
 <!--   ) -->
 
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2d** -->
 
 <!-- Compare the two posterior estimates from model3 and model3b. What has changed? -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- # extract posteriors for model2 -->
+
 <!-- posteriors3a <- model3 %>% -->
+
 <!--   spread_draws(b_Intercept, b_log_RT_s, -->
+
 <!--                b_grouptouch, b_conditionTypical, -->
+
 <!--                `b_log_RT_s:grouptouch`, `b_log_RT_s:conditionTypical`, -->
+
 <!--                `b_grouptouch:conditionTypical`, `b_log_RT_s:grouptouch:conditionTypical`) %>%  -->
+
 <!--   select(b_Intercept, b_log_RT_s, -->
+
 <!--                b_grouptouch, b_conditionTypical, -->
+
 <!--                `b_log_RT_s:grouptouch`, `b_log_RT_s:conditionTypical`, -->
+
 <!--                `b_grouptouch:conditionTypical`, `b_log_RT_s:grouptouch:conditionTypical`) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior") %>%  -->
+
 <!--   group_by(parameter) -->
 
 <!-- # extract posteriors for model2b -->
+
 <!-- posteriors3b <- model3b %>% -->
+
 <!--   spread_draws(b_Intercept, b_log_RT_s, -->
+
 <!--                b_grouptouch, b_conditionTypical, -->
+
 <!--                `b_log_RT_s:grouptouch`, `b_log_RT_s:conditionTypical`, -->
+
 <!--                `b_grouptouch:conditionTypical`, `b_log_RT_s:grouptouch:conditionTypical`) %>%  -->
+
 <!--   select(b_Intercept, b_log_RT_s, -->
+
 <!--                b_grouptouch, b_conditionTypical, -->
+
 <!--                `b_log_RT_s:grouptouch`, `b_log_RT_s:conditionTypical`, -->
+
 <!--                `b_grouptouch:conditionTypical`, `b_log_RT_s:grouptouch:conditionTypical`) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior") %>%  -->
+
 <!--   group_by(parameter) -->
 
 <!-- # plot posteriors for model2 -->
+
 <!-- ggplot(posteriors3a, aes(x = posterior, y = parameter)) +  -->
+
 <!--     # plot density  -->
+
 <!--     geom_halfeyeh(.width = 0.95) + -->
+
 <!--     # add axes titles -->
+
 <!--     xlab("\nMAD") + -->
+
 <!--     ylab("") + -->
+
 <!--     # add line for the value zero -->
+
 <!--     geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf, -->
+
 <!--                  lty = "dashed") + -->
+
 <!--     scale_x_continuous(limits = c(-250, 250)) -->
 
 <!-- # plot posteriors for model2b -->
+
 <!-- ggplot(posteriors3b, aes(x = posterior, y = parameter)) +  -->
+
 <!--     # plot density  -->
+
 <!--     geom_halfeyeh(.width = 0.95) + -->
+
 <!--     # add axes titles -->
+
 <!--     xlab("\nMAD") + -->
+
 <!--     ylab("") + -->
+
 <!--     # add line for the value zero -->
+
 <!--     geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf, -->
+
 <!--                  lty = "dashed") + -->
+
 <!--     scale_x_continuous(limits = c(-250, 250)) -->
 
 <!-- # ANSWER:The model output does not change much. Overall, the posteriors are a little tighter and closer to zero for model3b -->
@@ -680,6 +826,7 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2a** -->
 
 <!-- Suppose you have the following aggregated data set and want to run the following linear model: `AUC ~ condition` -->
@@ -687,9 +834,13 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- ```{r} -->
 
 <!-- # aggregate -->
+
 <!-- dolphin_agg3 <- dolphin %>%  -->
+
 <!--   filter(correct == 1) %>%  -->
+
 <!--   group_by(subject_id, condition) %>% -->
+
 <!--   dplyr::summarize(AUC = median(AUC, na.rm = TRUE))  -->
 
 <!-- dolphin_agg3$AUC_s <- scale(dolphin_agg3$AUC, scale = TRUE) -->
@@ -699,42 +850,63 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- Deviation code the effect of condition, such that the Intercept gives you the grand average of `AUC_s` and the coefficient for condition gives you the difference between Atypical + Typical exemplars. Check last week's reading of Bodo Winter's book again (or google). -->
 
 <!-- Specify an agnostic prior for the effect of condition and run the model from above (set `seed = 333`). -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- # contrast code condition -->
+
 <!-- c <- contr.treatment(2) -->
 
 <!-- # divide by 2 for it to represent the difference -->
+
 <!-- my.coding <- matrix(rep(1/2, 2), ncol = 1) -->
+
 <!-- my.simple <- c - my.coding -->
 
 <!-- # make factor -->
+
 <!-- dolphin_agg3$condition <- as.factor(dolphin_agg3$condition) -->
+
 <!-- # associate with contrast -->
+
 <!-- contrasts(dolphin_agg3$condition) = my.simple -->
 
 <!-- priors_agnostic <- c( -->
+
 <!--    # Atypical < Typical -->
+
 <!--    set_prior("normal(0, 3)", class = "b", coef = "condition2") -->
+
 <!-- ) -->
 
 <!-- model4 = brm( -->
+
 <!--   AUC_s ~ condition,  -->
+
 <!--   data = dolphin_agg3, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   seed = 333, -->
+
 <!--   prior = priors_agnostic -->
+
 <!--   ) -->
 
 <!-- ``` -->
 
 <!-- ::: callout-caution -->
+
 <!-- **Exercise 2f** -->
 
 <!-- Now suppose you have three people who want to encode their subjective beliefs about whether and how group and condition affect `AUC_s`. To keep your solutions comparable, we assume prior beliefs are normally distributed and there are three types of beliefs: -->
@@ -752,99 +924,161 @@ The magnitude of the coefficients is much smaller in model2, with the interactio
 <!-- As opposed to Michael, *Jones* holds strong prior beliefs that Typical exemplars exhibit MORE curvature than Atypical exemplars. -->
 
 <!-- Specify priors for Michael, Nina, and Jones, and run models (set seed = 323) for all of these scenarios. Look at the results (maybe plot the posteriors if that helps you) and briefly describe how the priors affected the posteriors. -->
+
 <!-- ::: -->
 
 <!-- ```{r} -->
+
 <!-- #| eval: false -->
+
 <!-- #| code-fold: true -->
+
 <!-- #| code-summary: "Show solution" -->
 
 <!-- priors_Michael <- c( -->
+
 <!--    # Atypical > Typical -->
+
 <!--    set_prior("normal(-3, 0.5)", class = "b", coef = "condition2") -->
+
 <!-- ) -->
 
 <!-- priors_Nina <- c( -->
+
 <!--    # Atypical < Typical -->
+
 <!--    set_prior("normal(0, 3)", class = "b", coef = "condition2") -->
+
 <!-- ) -->
 
 <!-- priors_Jones <- c( -->
+
 <!--       set_prior("normal(3, 0.5)", class = "b", coef = "condition2") -->
+
 <!-- ) -->
 
-
 <!-- # model -->
+
 <!-- model5_Michael = brm( -->
+
 <!--   AUC_s ~ condition,  -->
+
 <!--   data = dolphin_agg3, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   seed = 333, -->
+
 <!--   prior = priors_Michael -->
+
 <!--   ) -->
 
 <!-- model5_Nina = brm( -->
+
 <!--   AUC_s ~ condition,  -->
+
 <!--   data = dolphin_agg3, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   seed = 333, -->
+
 <!--   prior = priors_Nina -->
+
 <!--   ) -->
 
 <!-- model5_Jones = brm( -->
+
 <!--   AUC_s ~ condition,  -->
+
 <!--   data = dolphin_agg3, -->
+
 <!--   iter = 2000, -->
+
 <!--   chains = 4, -->
+
 <!--   seed = 333, -->
+
 <!--   prior = priors_Jones -->
+
 <!--   ) -->
 
 <!-- # extract posteriors -->
 
 <!-- ## Michael -->
+
 <!-- posteriors_Michael <- model5_Michael %>% -->
+
 <!--   spread_draws(b_condition2) %>%  -->
+
 <!--   select(b_condition2) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior") %>%  -->
+
 <!--   mutate(model = "Michael") -->
 
-
 <!-- ## Nina -->
+
 <!-- posteriors_Nina <- model5_Nina %>% -->
+
 <!--   spread_draws(b_condition2) %>%  -->
+
 <!--   select(b_condition2) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior")  %>%  -->
+
 <!--   mutate(model = "Nina") -->
 
 <!-- ## Jones -->
+
 <!-- posteriors_Jones <- model5_Jones %>% -->
+
 <!--   spread_draws(b_condition2) %>%  -->
+
 <!--   select(b_condition2) %>%  -->
+
 <!--   gather(key = "parameter", value = "posterior") %>%  -->
+
 <!--   mutate(model = "Jones") -->
 
 <!-- # add to one df -->
+
 <!-- posteriors_all <- rbind(posteriors_Michael, posteriors_Nina, posteriors_Jones) -->
 
 <!-- # plot posteriors for all models -->
+
 <!-- ggplot(posteriors_all, aes(x = posterior, y = parameter, fill = model, color = model)) +  -->
+
 <!--     # plot density  -->
+
 <!--     geom_halfeyeh(.width = 0.95, alpha = 0.4) + -->
+
 <!--     facet_grid(model~ .) + -->
+
 <!--     # add axes titles -->
+
 <!--     xlab("\nAUC") + -->
+
 <!--     ylab("") + -->
+
 <!--     # add line for the value zero -->
+
 <!--     geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf, color = "black", -->
+
 <!--                  lty = "dashed") + -->
+
 <!--     scale_x_continuous(limits = c(-1.5, 0.5)) -->
 
 <!-- #ANSWER: The agnostic Nina serves as a baseline. With a weakly informative prior, the likelihood dominates the posterior. -->
+
 <!-- # Michael has a strong preconception that Atypical exemplars elicit larger AUC values and in comparison to Jones, the posterior distribution is slightly shifted more toward negative values. -->
+
 <!-- # Jones has a strong preconception that Typical exemplars elicit larger AUC values and in comparison to Jones and Michael, the posterior distribution is slightly shifted AWAY from negative values. -->
+
 <!-- # Here, the priors, although encoding strong prior beliefs, have only little impact on the posteriors but do shift posteriors toward the priors. -->
 
 <!-- ``` -->

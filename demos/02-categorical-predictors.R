@@ -103,17 +103,43 @@ ggplot(data = data_polite.agg,
 ## fitting a model
 ##################################################
 
-
-
-
-
+fit_polite <- 
+  brms::brm(
+    formula = pitch ~ context * gender,
+    data    = data_polite
+  )
 
 ##################################################
 ## inspect the fit
 ##################################################
 
+conditional_effects(fit_polite)
 
 
+tidybayes::tidy_draws(fit_polite) |> 
+  select(starts_with("b_")) |> 
+  mutate(
+    female_informal = b_Intercept,
+    female_polite   = b_Intercept + b_contextpol,
+    male_informal   = b_Intercept + b_genderM,
+    male_polite     = b_Intercept + b_contextpol + 
+      b_genderM + `b_contextpol:genderM`
+  ) |> 
+  select(5:8) |> 
+  pivot_longer(cols = everything()) |> 
+  ggplot(aes(x = value, y = name)) +
+  tidybayes::stat_halfeye()
+
+faintr::extract_cell_draws(
+  fit = fit_polite,
+  group = gender == "M" & context == "pol"
+)
+
+faintr::compare_groups(
+  fit = fit_polite,
+  higher = gender == "F" & context == "inf",
+  lower  = gender == "F" & context == "pol"
+)
 
 
 
