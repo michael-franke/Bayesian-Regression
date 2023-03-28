@@ -71,11 +71,15 @@ fit_polite <-
 ## what data does Stan get?
 ##################################################
 
+names(fit_polite)
+fit_polite$model
+stancode(fit_polite)
 
+standata(fit_polite)$Y
 
+data_polite$pitch
 
-
-
+standata(fit_polite)$X
 
 
 

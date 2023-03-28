@@ -71,12 +71,60 @@ fit_MT <-
 ## sample from the posterior predictive
 ##################################################
 
+tidybayes::predicted_draws(
+  object  = fit_MT,
+  newdata = tibble(correct = c(1, 0, 1, 0)),
+  ndraws  = 1
+  )  
+  
+tidybayes::linpred_draws(
+  object  = fit_MT,
+  newdata = tibble(correct = c(1, 0)),
+  ndraws  = 2
+)
+
+tidybayes::epred_draws(
+  object  = fit_MT,
+  newdata = tibble(correct = c(1, 0)),
+  ndraws  = 2
+)
+
+
+##################################################
+## sample from the prior predictive
+##################################################
+
+fit_MT_prior <- 
+  brms::brm(
+    formula = RT ~ correct,
+    data    = data_MT,
+    prior   = prior(student_t(1, 0, 500)),
+    sample_prior = "only"
+  )
+
+tidybayes::predicted_draws(
+  object  = fit_MT_prior,
+  newdata = tibble(correct = c(1, 0, 1, 0)),
+  ndraws  = 1
+)  
+
+tidybayes::linpred_draws(
+  object  = fit_MT_prior,
+  newdata = tibble(correct = c(1, 0)),
+  ndraws  = 2
+)
+
+tidybayes::epred_draws(
+  object  = fit_MT_prior,
+  newdata = tibble(correct = c(1, 0)),
+  ndraws  = 2
+)
 
 ##################################################
 ## visual posterior predictive checks
 ##################################################
 
-pp_check(fit_MT)
+bayesplot::pp_check(fit_MT, ndraws = 50)
 
 ##################################################
 ## visual PPC with summary statistic
@@ -90,7 +138,7 @@ predictive_samples <-
 bayesplot::ppc_stat(
   y    = data_MT$RT, 
   yrep = predictive_samples,
-  stat = mean)
+  stat = median)
 
 
 

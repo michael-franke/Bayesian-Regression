@@ -65,14 +65,12 @@ myFormula <- brms::bf(RT ~ 1 + condition + (1 + condition | submission_id))
 # get prior information
 brms::get_prior(
   formula = myFormula,
-  data    = data_MC,
-  family  = exgaussian()
+  data    = data_MC
 )
 
 ##################################################
 ## inspecting prior w/o running a model
 ##################################################
-
 
 myPrior <- 
   brms::prior("normal(30,100)",  class = "b", coef = "conditiondiscrimination") +
@@ -82,58 +80,5 @@ fit_with_specified_prior <-
   brms::brm(
     formula = myformula,
     data    = data_MC,
-    prior   = myPrior,
-    family  = exgaussian()
+    prior   = myPrior
   )
-
-##################################################
-## inspecting prior w/o running a model
-##################################################
-
-fit_samples_from_prior_only <- 
-  brms::brm(
-    formula = myformula,
-    data    = data_MC,
-    prior   = myPrior,
-    family  = exgaussian(),
-    sample_prior = "only"
-  )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
