@@ -1,6 +1,6 @@
 ---
 title: "Bayesian Regression: Theory & Practice"
-subtitle: "Session 3: Generalized linear models (and beyond)"
+subtitle: "Generalized linear models (and beyond)"
 author: "Michael Franke"
 ---
 
