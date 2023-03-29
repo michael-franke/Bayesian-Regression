@@ -237,12 +237,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi memberships</a>
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi-membership</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLM-pooling</a>
+  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLMs &amp; pooling</a>
   </div>
 </li>
       </ul>
@@ -267,12 +267,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">distributional models</a>
+  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">Distributional models</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">mixture models</a>
+  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">Mixture models</a>
   </div>
 </li>
       </ul>
@@ -551,9 +551,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The logistic regression model is then defined as:</p>
 <p><span class="math display">\[
 \begin{align*}
-\eta  &amp;= \mathbf{x} \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\xi &amp;= \text{logistic}(\eta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y &amp; \sim \text{Bernoulli}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta_i  &amp;= \mathbf{x}_i \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi_i &amp;= \text{logistic}(\eta_i) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y_i &amp; \sim \text{Bernoulli}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 <p>The linear predictor values <span class="math inline">\(\eta\)</span> can be interpreted directly, as the log odds-ratio of the predicted probability <span class="math inline">\(\xi\)</span>. This is because the inverse of the logistic function is the <strong>logit function</strong>, which has the following form:</p>
@@ -593,10 +593,10 @@ y &amp; \sim \text{Bernoulli}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
 # Groups:   group [2]
   group condition     n accuracy ci_lower  mean ci_upper
   &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1 click Atypical    318    0.874    0.840 0.875    0.907
-2 click Typical     689    0.964    0.949 0.964    0.978
-3 touch Atypical    330    0.909    0.879 0.910    0.939
-4 touch Typical     715    0.941    0.924 0.941    0.958</code></pre>
+1 click Atypical    318    0.874    0.837 0.873    0.908
+2 click Typical     689    0.964    0.950 0.964    0.977
+3 touch Atypical    330    0.909    0.878 0.909    0.939
+4 touch Typical     715    0.941    0.923 0.941    0.957</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -641,8 +641,8 @@ y &amp; \sim \text{Bernoulli}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
 <pre><code>Outcome of comparing groups: 
  * higher:  condition == "Typical" 
  * lower:   condition == "Atypical" 
-Mean 'higher - lower':  0.9062 
-95% HDI:  [ 0.5517 ; 1.262 ]
+Mean 'higher - lower':  0.9107 
+95% HDI:  [ 0.5508 ; 1.262 ]
 P('higher - lower' &gt; 0):  1 
 Posterior odds:  Inf </code></pre>
 </div>
@@ -686,10 +686,10 @@ Solution
 <pre><code>Outcome of comparing groups: 
  * higher:  group == "click" 
  * lower:   group == "touch" 
-Mean 'higher - lower':  0.07239 
-95% HDI:  [ -0.28 ; 0.4196 ]
-P('higher - lower' &gt; 0):  0.6505 
-Posterior odds:  1.861 </code></pre>
+Mean 'higher - lower':  0.06632 
+95% HDI:  [ -0.2605 ; 0.4302 ]
+P('higher - lower' &gt; 0):  0.6488 
+Posterior odds:  1.847 </code></pre>
 </div>
 </div>
 <p>There is no reason to believe (given model and data) that this conjecture is true.</p>
@@ -732,7 +732,7 @@ Solution
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
                 Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio
-1 (grouptouch:condi... &lt; 0    -0.88      0.36    -1.48     -0.3     116.65
+1 (grouptouch:condi... &lt; 0    -0.88      0.37     -1.5    -0.28     120.21
   Post.Prob Star
 1      0.99    *
 ---
@@ -755,22 +755,22 @@ Posterior probabilities of point hypotheses assume equal prior probabilities.</c
 <h1>Multinomial regression</h1>
 <section id="explanation-1" class="level2">
 <h2 class="anchored" data-anchor-id="explanation-1">Explanation</h2>
-<p>In multinomial regression the predicted variable is categorical with more than two levels: <span class="math inline">\(c_1, \dots, c_k\)</span>, <span class="math inline">\(k &gt; 2\)</span>. We want to predict probabilities for each category <span class="math inline">\(p_1, \dots, p_k\)</span> (with some linear predictors, more on this in a moment). To obtain the probabilities, we estimate a set of weights (so-called <em>logits</em>): <span class="math inline">\(s_1, \dots, s_k\)</span>. By default, we set <span class="math inline">\(s_1 = 0\)</span>, because we only need <span class="math inline">\(k-1\)</span> numbers to define a <span class="math inline">\(k\)</span>-place probability vector (given that it must sum to one). For all <span class="math inline">\(1 \le i \le k\)</span>, we define the probability <span class="math inline">\(p_i\)</span> of category <span class="math inline">\(i\)</span> via the following (so-called <em>soft-max</em> operation):</p>
+<p>In multinomial regression the predicted variable is categorical with more than two levels: <span class="math inline">\(c_1, \dots, c_k\)</span>, <span class="math inline">\(k &gt; 2\)</span>. We want to predict probabilities for each category <span class="math inline">\(p_1, \dots, p_k\)</span> (with some linear predictors, more on this in a moment). To obtain the probabilities, we estimate a set of weights (so-called <em>logits</em>): <span class="math inline">\(s_1, \dots, s_k\)</span>. By default, we set <span class="math inline">\(s_1 = 0\)</span>, because we only need <span class="math inline">\(k-1\)</span> numbers to define a <span class="math inline">\(k\)</span>-place probability vector (given that it must sum to one). For all <span class="math inline">\(1 \le j \le k\)</span>, we define the probability <span class="math inline">\(p_i\)</span> of category <span class="math inline">\(i\)</span> via the following (so-called <em>soft-max</em> operation):</p>
 <p><span class="math display">\[
-p_i = \frac{\exp s_i}{ \sum_{j=1}^k \exp s_j}
+p_j = \frac{\exp s_j}{ \sum_{j'=1}^k \exp s_j'}
 \]</span></p>
-<p>This entails that for every <span class="math inline">\(1 &lt; i \le k\)</span>, the score <span class="math inline">\(s_i\)</span> can be interpreted as the log-odds of category <span class="math inline">\(c_i\)</span> over the reference category <span class="math inline">\(c_1\)</span>:</p>
+<p>This entails that for every <span class="math inline">\(1 &lt; j \le k\)</span>, the score <span class="math inline">\(s_j\)</span> can be interpreted as the log-odds of category <span class="math inline">\(c_j\)</span> over the reference category <span class="math inline">\(c_1\)</span>:</p>
 <p><span class="math display">\[
-s_i = \log \frac{p_i}{p_1}
+s_j = \log \frac{p_j}{p_1}
 \]</span></p>
-<p>Finally, we do not just estimate any-old vector of logits, but we assume that each logit <span class="math inline">\(s_i\)</span> (<span class="math inline">\(1 &lt; i \le k\)</span>) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the <span class="math inline">\(l\)</span> explanatory variables):</p>
+<p>Finally, we do not just estimate any-old vector of logits, but we assume that each logit <span class="math inline">\(s_j\)</span> (<span class="math inline">\(1 &lt; j \le k\)</span>) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the <span class="math inline">\(l\)</span> explanatory variables):</p>
 <p><span class="math display">\[
-s_i = \mathbf{x} \cdot \beta^i
+s_j = \mathbf{x} \cdot \beta^j
 \]</span></p>
 <p>Two things are important for interpreting the outcome of a multinomial regression fit:</p>
 <ol type="1">
 <li>each category (beyond the reference category) receives its own (independent) set of regression coefficients;</li>
-<li>the linear predictor predictor <span class="math inline">\(s_i\)</span> for category <span class="math inline">\(c_i\)</span> can be interpreted as the log-odds of the <span class="math inline">\(i\)</span>-th category over the first, reference category.</li>
+<li>the linear predictor predictor <span class="math inline">\(s_j\)</span> for category <span class="math inline">\(c_j\)</span> can be interpreted as the log-odds of the <span class="math inline">\(j\)</span>-th category over the first, reference category.</li>
 </ol>
 </section>
 <section id="example-1" class="level2">
@@ -884,15 +884,15 @@ Formula: prototype_label ~ target_position
 
 Population-Level Effects: 
                               Estimate Est.Error l-95% CI u-95% CI Rhat
-mucurved_Intercept               -1.71      0.09    -1.89    -1.53 1.00
-muCoM_Intercept                  -1.71      0.09    -1.90    -1.53 1.00
+mucurved_Intercept               -1.71      0.09    -1.90    -1.53 1.00
+muCoM_Intercept                  -1.71      0.09    -1.90    -1.54 1.00
 mucurved_target_positionright    -0.44      0.14    -0.72    -0.16 1.00
 muCoM_target_positionright       -0.00      0.13    -0.26     0.25 1.00
                               Bulk_ESS Tail_ESS
-mucurved_Intercept                4595     3205
-muCoM_Intercept                   3696     2886
-mucurved_target_positionright     3925     3178
-muCoM_target_positionright        3910     3066
+mucurved_Intercept                4922     3008
+muCoM_Intercept                   4336     2999
+mucurved_target_positionright     4091     3222
+muCoM_target_positionright        4280     2947
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1056,8 +1056,8 @@ Solution
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(posterior_means, <span class="at">names =</span> <span class="fu">colnames</span>(posterior_means))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -1.708586e+00 -1.711022e+00 -4.363546e-01 -2.431751e-03 -4.487048e+00
-[6] -1.499843e+03</code></pre>
+<pre><code>[1] -1.709029e+00 -1.710412e+00 -4.353493e-01 -4.736369e-03 -4.487200e+00
+[6] -1.499819e+03</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -1087,7 +1087,7 @@ Solution
 2 left            curved            136     0.133      0.133 
 3 left            CoM               136     0.133      0.133 
 4 right           straight          793     0.771      0.771 
-5 right           curved             93     0.0904     0.0902
+5 right           curved             93     0.0904     0.0903
 6 right           CoM               143     0.139      0.139 </code></pre>
 </div>
 </div>
@@ -1105,9 +1105,10 @@ Solution
 <h2 class="anchored" data-anchor-id="explanation-2">Explanation</h2>
 <p>When <span class="math inline">\(k&gt;2\)</span> categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the <strong>cumulative logit function</strong> which takes the linear predictor and a vector <span class="math inline">\(\delta\)</span> of <span class="math inline">\(k-1\)</span> thresholds as arguments to return a probability vector, here denoted as <span class="math inline">\(\mathbf{p}\)</span>, whose components are defined like so:</p>
 <p><span class="math display">\[
-p_i = \text{cumulative-logit}(\eta; \delta) = \begin{cases}
-\text{logistic}(\delta_1 - \eta) &amp; \text{if } i=1 \\
-\text{logistic}(\delta_{i} - \eta) - p_i &amp; \text{if } i&gt;1 \\
+p_j = \text{cumulative-logit}(\eta_1; \delta) =
+\begin{cases}
+\text{logistic}(\delta_1 - \eta_1) &amp; \text{if } j=1 \\
+\text{logistic}(\delta_{i} - \eta_1) - p_{j-1} &amp; \text{if } j&gt;1 \\
 \end{cases}
 \]</span></p>
 <p>To see what is going on, consider the a case with three categories. Fix the two threshold <span class="math inline">\(\delta_1=-0.75\)</span> and <span class="math inline">\(\delta_2=1.6\)</span> just for illustration. Now assume that we have a case there the linear predictor value <span class="math inline">\(p\)</span> is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:</p>
@@ -1125,9 +1126,9 @@ p_i = \text{cumulative-logit}(\eta; \delta) = \begin{cases}
 <p>In sum, the cumulative-logit model for ordinal regression, is defined as follows:</p>
 <p><span class="math display">\[
 \begin{align*}
-\eta  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\xi &amp;= \text{cumulative-logit}(\eta; \delta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y &amp; \sim \text{Categorical}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta_i  &amp;= \mathbf{x}_i \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi_i &amp;= \text{cumulative-logit}(\eta_i; \delta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y_i &amp; \sim \text{Categorical}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 </section>
@@ -1178,9 +1179,9 @@ Formula: prototype_label ~ MAD
 
 Population-Level Effects: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept[1]     4.05      0.18     3.71     4.40 1.00     2216     2247
-Intercept[2]     9.52      0.51     8.56    10.54 1.00     2003     1979
-MAD              0.02      0.00     0.02     0.03 1.00     2543     2514
+Intercept[1]     4.04      0.18     3.70     4.40 1.00     2231     2447
+Intercept[2]     9.50      0.53     8.50    10.62 1.00     1584     1841
+MAD              0.02      0.00     0.02     0.03 1.00     1910     2200
 
 Family Specific Parameters: 
      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
@@ -1234,7 +1235,7 @@ Posterior probabilities of point hypotheses assume equal prior probabilities.</c
 <p>The link function is the exponential function (so the inverse link function is the logarithmic function). The Poisson regression model is defined as:</p>
 <p><span class="math display">\[
 \begin{align*}
-\eta  &amp;= X \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\eta_i  &amp;= \mathbf{x}_i \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
 \xi_i &amp;= \exp(\eta_i) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
 y_i &amp; \sim \text{Poisson}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}

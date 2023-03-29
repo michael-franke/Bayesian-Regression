@@ -237,12 +237,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi memberships</a>
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi-membership</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLM-pooling</a>
+  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLMs &amp; pooling</a>
   </div>
 </li>
       </ul>
@@ -267,12 +267,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">distributional models</a>
+  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">Distributional models</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">mixture models</a>
+  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">Mixture models</a>
   </div>
 </li>
       </ul>
@@ -591,17 +591,54 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <section id="a-terrible-model" class="level1">
 <h1>A terrible model</h1>
 <p>The main (maybe only) reason for serious problems with the NUTS sampling is this: <strong>sampling issues arise for bad models</strong>. So, let’s come up with a really stupid model.</p>
-<p>Here’s a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original <code>year</code> information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we expect nightmares during sampling:</p>
+<p>Here’s a model that is like the previous but adds a second predictor., This second predictor is intended to be a normal (non-smoothed) regression coefficient that is almost identical to the original <code>year</code> information. You may already intuit that this cannot possibly be a good idea; the model is notionally deficient. So, we expect nightmares during sampling:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_bad <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_bad <span class="ot">&lt;-</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout-caution callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>This model is deliberately set up to be stupid (and to mislead you). If you don’t like being held in the dark, try to find <em>the mistake</em> already.</p>
+<div class="callout-tip callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>See below.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -613,21 +650,21 @@ Formula: avg_temp ~ s(year) + year_perturbed
 
 Smooth Terms: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sds(syear_1)     3.62      1.07     1.96     6.16 1.00     1170     1867
+sds(syear_1)     3.61      1.12     1.93     6.31 1.00     1149     1664
 
 Population-Level Effects: 
-                       Estimate        Est.Error          l-95% CI
-Intercept      1476393029597.15 3000542713128.98 -3683707775876.64
-year_perturbed    -843653024.72    1714595561.61    -5233190957.96
-syear_1                   14.66             2.29             10.14
-                       u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept      9158085642430.13 1.76        9       11
-year_perturbed    2104975534.98 1.76        9       11
-syear_1                   19.09 1.00     2470     2653
+                        Estimate         Est.Error          l-95% CI
+Intercept      12968495823138.16 17682568304044.28 -9475056761973.39
+year_perturbed    -7410563481.59    10104317163.83   -29387300537.70
+syear_1                    14.55              2.33             10.00
+                        u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept      51427814527605.04 1.97        6       18
+year_perturbed     5414314087.31 1.97        6       18
+syear_1                    19.21 1.00     3004     2309
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.33      0.01     0.30     0.36 1.00     3461     2826
+sigma     0.33      0.02     0.30     0.36 1.00     4152     2135
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -646,10 +683,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We also see that that the intercept of and the slope for <code>year_perturbed</code> are the main troublemakers (in terms of traceplots).</p>
@@ -657,15 +694,15 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This shows that the warning messages (from Stan) shoult be taken seriously. The samples cannot be trusted, even if a posterior predictive check looks agreeable.</p>
 <div class="callout-caution callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -674,12 +711,12 @@ Exercise 1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Extract information about R-hat and the ration of efficient samples with functions <code>brms::rhat</code> and <code>brms::neff_ratio</code>.</p>
+<p>Extract information about <span class="math inline">\(\hat{R}\)</span> and the ratio of efficient samples with functions <code>brms::rhat</code> and <code>brms::neff_ratio</code>.</p>
 <p>Interpret what you see: why are these numbers not good.</p>
 <div class="callout-tip callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -688,23 +725,23 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For R-hat, we do:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">rhat</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">rhat</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     b_Intercept b_year_perturbed       bs_syear_1      sds_syear_1 
-        1.755874         1.755874         1.000835         1.000987 
+       1.9735385        1.9735385        1.0011736        1.0028354 
            sigma     s_syear_1[1]     s_syear_1[2]     s_syear_1[3] 
-        1.001747         1.000227         1.004463         1.001290 
+       1.0022229        1.0015566        1.0002479        1.0008396 
     s_syear_1[4]     s_syear_1[5]     s_syear_1[6]     s_syear_1[7] 
-        1.002759         1.002405         1.000091         1.001066 
+       1.0005625        1.0001094        1.0005158        1.0000122 
     s_syear_1[8]           lprior             lp__ 
-        1.001016         1.000983         1.006328 </code></pre>
+       0.9998473        1.0028307        1.0020318 </code></pre>
 </div>
 </div>
 <p>These numbers are bad, since they ought to be close to 1, which is the ideal case when chains are indistinguishable (roughly put).</p>
@@ -712,17 +749,17 @@ Solution
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">neff_ratio</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">neff_ratio</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     b_Intercept b_year_perturbed       bs_syear_1      sds_syear_1 
-     0.002340009      0.002340009      0.617417495      0.292392195 
+     0.001379397      0.001379397      0.577284933      0.287347238 
            sigma     s_syear_1[1]     s_syear_1[2]     s_syear_1[3] 
-     0.706426872      0.720693307      0.543980720      0.700223460 
+     0.533684315      0.750952286      0.647515129      0.719913789 
     s_syear_1[4]     s_syear_1[5]     s_syear_1[6]     s_syear_1[7] 
-     0.660452915      0.633022665      0.772182212      0.720654987 
+     0.826111497      0.769837302      0.831758911      0.824367629 
     s_syear_1[8]           lprior             lp__ 
-     0.778131321      0.292579914      0.237839356 </code></pre>
+     0.769685186      0.287386677      0.259298988 </code></pre>
 </div>
 </div>
 <p>These numbers are also poor, because we would like them, ideally, to be 1. However, low efficiency of samples is not necessary a sign that the fit cannot be trusted, just that the sampler has a hard time beating autocorrelation.</p>
@@ -736,10 +773,10 @@ Solution
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Aha, there we see a clear problem! The joint posterior for the intercept and the slope for <code>year_perturbed</code> looks like a line. This means that these parameters could in principle do the same “job”.</p>
@@ -747,14 +784,14 @@ Solution
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_bad_wPrior <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_wPrior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit_bad_wPrior <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> year_perturbed, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>)),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_wPrior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -766,17 +803,17 @@ Formula: avg_temp ~ s(year) + year_perturbed
 
 Smooth Terms: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sds(syear_1)     3.66      1.12     2.03     6.39 1.00      904     1566
+sds(syear_1)     3.56      1.08     1.99     6.24 1.00     1041     1569
 
 Population-Level Effects: 
-               Estimate Est.Error   l-95% CI  u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept       1358.78 178823.28 -125718.14 149640.99 1.01     2606      462
-year_perturbed    -0.77    102.18     -85.50     71.84 1.01     2606      462
-syear_1           14.63      2.29      10.21     19.25 1.00     2111     2637
+               Estimate Est.Error   l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept       -489.40  68742.97 -104969.75 99623.82 1.01     1649      453
+year_perturbed     0.28     39.28     -56.92    59.99 1.01     1649      453
+syear_1           14.60      2.40      10.04    19.45 1.00     1937     2511
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.33      0.01     0.30     0.36 1.00     3715     2655
+sigma     0.33      0.01     0.30     0.36 1.00     4167     3295
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -787,17 +824,17 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Here’s what’s wrong: <code>year_perturbed</code> is a constant! The model is a crappy model of the data, because the data is not what we thought it would be. Check it out:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,year,<span class="fl">0.001</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 269 × 5
@@ -821,24 +858,24 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>data_WorldTemp_perturbed <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(aida<span class="sc">::</span>data_WorldTemp),year, <span class="dv">50</span>))</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>data_WorldTemp_perturbed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>data_WorldTemp_perturbed <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">year_perturbed =</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(aida<span class="sc">::</span>data_WorldTemp),year, <span class="dv">50</span>))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>data_WorldTemp_perturbed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 269 × 5
     year anomaly uncertainty avg_temp year_perturbed
    &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;
- 1  1750  -1.41        NA        7.20          1754.
- 2  1751  -1.52        NA        7.09          1783.
- 3  1753  -1.07         1.3      7.54          1706.
- 4  1754  -0.614        1.09     8.00          1796.
- 5  1755  -0.823        1.24     7.79          1712.
- 6  1756  -0.547        1.28     8.06          1744.
+ 1  1750  -1.41        NA        7.20          1826.
+ 2  1751  -1.52        NA        7.09          1802.
+ 3  1753  -1.07         1.3      7.54          1745.
+ 4  1754  -0.614        1.09     8.00          1783.
+ 5  1755  -0.823        1.24     7.79          1836.
+ 6  1756  -0.547        1.28     8.06          1771.
  7  1757  -0.438        1.31     8.17          1767.
- 8  1758  -2.42         1.76     6.19          1729.
- 9  1759  -1.53         2.25     7.08          1775.
-10  1760  -2.46         2.75     6.14          1844.
+ 8  1758  -2.42         1.76     6.19          1860.
+ 9  1759  -1.53         2.25     7.08          1788.
+10  1760  -2.46         2.75     6.14          1772.
 # ℹ 259 more rows</code></pre>
 </div>
 </div>
@@ -846,14 +883,14 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_bad_2 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> year <span class="sc">+</span> year_perturbed, </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_WorldTemp_perturbed,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_bad_2 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> avg_temp <span class="sc">~</span> year <span class="sc">+</span> year_perturbed, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_WorldTemp_perturbed,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">prior</span>(<span class="st">"student_t(1,0,5)"</span>, <span class="at">coef =</span> <span class="st">"year_perturbed"</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -865,13 +902,13 @@ Formula: avg_temp ~ year + year_perturbed
 
 Population-Level Effects: 
                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         -3.51      0.59    -4.67    -2.36 1.00     4191     3101
-year               0.01      0.00     0.00     0.01 1.00     3866     2770
-year_perturbed     0.00      0.00    -0.00     0.00 1.00     3988     2975
+Intercept         -3.48      0.59    -4.67    -2.33 1.00     3939     2827
+year               0.01      0.00     0.01     0.01 1.00     3326     2083
+year_perturbed     0.00      0.00    -0.00     0.00 1.00     3397     2269
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.41      0.02     0.37     0.44 1.00     1637     1547
+sigma     0.41      0.02     0.37     0.44 1.00     1426     1436
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -883,10 +920,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(fit_bad_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+<p><img src="04a-MCMC-diagnostics_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We should just not have <code>year_perturbed</code>; it’s nonsense, and it shows in the diagnostics.</p>
@@ -894,7 +931,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(fit_bad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
