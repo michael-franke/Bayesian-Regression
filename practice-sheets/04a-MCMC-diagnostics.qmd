@@ -101,17 +101,36 @@ shinystan::launch_shinystan(fit_good_adapt)
 The main (maybe only) reason for serious problems with the NUTS sampling is this: **sampling issues arise for bad models**.
 So, let's come up with a really stupid model.
 
-Here's a model that is like the previous but adds a second predictor, which is a normal (non-smoothed) regression coefficient that is almost identical to the original `year` information.
+Here's a model that is like the previous but adds a second predictor.,
+This second predictor is intended to be a normal (non-smoothed) regression coefficient that is almost identical to the original `year` information.
 You may already intuit that this cannot possibly be a good idea; the model is notionally deficient.
 So, we expect nightmares during sampling:
 
 ```{r}
-fit_bad <- brm(
+#| results: hide
+fit_bad <-
+  brms::brm(
   formula = avg_temp ~ s(year) + year_perturbed, 
   data = aida::data_WorldTemp |> mutate(year_perturbed = rnorm(1,year,0.001)),
   seed = 1969
 ) 
+```
 
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+This model is deliberately set up to be stupid (and to mislead you). 
+If you don't like being held in the dark, try to find *the mistake* already.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+See below.
+
+:::
+:::
+
+```{r}
 summary(fit_bad)
 ```
 
@@ -144,7 +163,7 @@ The samples cannot be trusted, even if a posterior predictive check looks agreea
 ::: {.callout-caution collapse="false"}
 ## Exercise 1
 
-Extract information about R-hat and the ration of efficient samples with functions `brms::rhat` and `brms::neff_ratio`.
+Extract information about $\hat{R}$ and the ratio of efficient samples with functions `brms::rhat` and `brms::neff_ratio`.
 
 Interpret what you see: why are these numbers not good.
 

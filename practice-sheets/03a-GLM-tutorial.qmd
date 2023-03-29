@@ -75,9 +75,9 @@ The logistic regression model is then defined as:
 
 $$
 \begin{align*}
-\eta  &= \mathbf{x} \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
-\xi &= \text{logistic}(\eta) && \color{gray}{\text{[predictor of central tendency]}} \\
-y & \sim \text{Bernoulli}(\xi) && \color{gray}{\text{[likelihood]}}
+\eta_i  &= \mathbf{x}_i \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
+\xi_i &= \text{logistic}(\eta_i) && \color{gray}{\text{[predictor of central tendency]}} \\
+y_i & \sim \text{Bernoulli}(\xi_i) && \color{gray}{\text{[likelihood]}}
 \end{align*}
 $$
 
@@ -225,28 +225,28 @@ In multinomial regression the predicted variable is categorical with more than t
 We want to predict probabilities for each category $p_1, \dots, p_k$ (with some linear predictors, more on this in a moment).
 To obtain the probabilities, we estimate a set of weights (so-called *logits*): $s_1, \dots, s_k$.
 By default, we set $s_1 = 0$, because we only need $k-1$ numbers to define a $k$-place probability vector (given that it must sum to one). 
-For all $1 \le i \le k$, we define the probability $p_i$ of category $i$ via the following (so-called *soft-max* operation):
+For all $1 \le j \le k$, we define the probability $p_i$ of category $i$ via the following (so-called *soft-max* operation):
 
 $$
-p_i = \frac{\exp s_i}{ \sum_{j=1}^k \exp s_j}
+p_j = \frac{\exp s_j}{ \sum_{j'=1}^k \exp s_j'}
 $$
 
-This entails that for every $1 < i \le k$, the score $s_i$ can be interpreted as the log-odds of category $c_i$ over the reference category $c_1$:
+This entails that for every $1 < j \le k$, the score $s_j$ can be interpreted as the log-odds of category $c_j$ over the reference category $c_1$:
 
 $$
-s_i = \log \frac{p_i}{p_1}
+s_j = \log \frac{p_j}{p_1}
 $$
 
-Finally, we do not just estimate any-old vector of logits, but we assume that each logit $s_i$ ($1 < i \le k$) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the $l$ explanatory variables):
+Finally, we do not just estimate any-old vector of logits, but we assume that each logit $s_j$ ($1 < j \le k$) is estimated as a linear predictor (based on the usual linear regression predictor coefficients, appropriate to the type of the $l$ explanatory variables):
 
 $$
-s_i = \mathbf{x} \cdot \beta^i
+s_j = \mathbf{x} \cdot \beta^j
 $$
 
 Two things are important for interpreting the outcome of a multinomial regression fit:
 
 1.  each category (beyond the reference category) receives its own (independent) set of regression coefficients;
-2.  the linear predictor predictor $s_i$ for category $c_i$ can be interpreted as the log-odds of the $i$-th category over the first, reference category.
+2.  the linear predictor predictor $s_j$ for category $c_j$ can be interpreted as the log-odds of the $j$-th category over the first, reference category.
 
 ## Example
 
@@ -432,9 +432,10 @@ When $k>2$ categories have a natural ordering, the problem of predicting probabi
 A common choice of link function for this case is the **cumulative logit function** which takes the linear predictor and a vector $\delta$ of $k-1$ thresholds as arguments to return a probability vector, here denoted as $\mathbf{p}$, whose components are defined like so:
 
 $$
-p_i = \text{cumulative-logit}(\eta; \delta) = \begin{cases}
-\text{logistic}(\delta_1 - \eta) & \text{if } i=1 \\
-\text{logistic}(\delta_{i} - \eta) - p_i & \text{if } i>1 \\
+p_j = \text{cumulative-logit}(\eta_1; \delta) = 
+\begin{cases}
+\text{logistic}(\delta_1 - \eta_1) & \text{if } j=1 \\
+\text{logistic}(\delta_{i} - \eta_1) - p_{j-1} & \text{if } j>1 \\
 \end{cases}
 $$ 
 
@@ -536,9 +537,9 @@ In sum, the cumulative-logit model for ordinal regression, is defined as follows
 
 $$
 \begin{align*}
-\eta  &= X \beta       && \color{gray}{\text{[linear predictor]}} \\
-\xi &= \text{cumulative-logit}(\eta; \delta) && \color{gray}{\text{[predictor of central tendency]}} \\
-y & \sim \text{Categorical}(\xi) && \color{gray}{\text{[likelihood]}}
+\eta_i  &= \mathbf{x}_i \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
+\xi_i &= \text{cumulative-logit}(\eta_i; \delta) && \color{gray}{\text{[predictor of central tendency]}} \\
+y_i & \sim \text{Categorical}(\xi_i) && \color{gray}{\text{[likelihood]}}
 \end{align*}
 $$
 
@@ -610,7 +611,7 @@ The Poisson regression model is defined as:
 
 $$
 \begin{align*}
-\eta  &= X \beta       && \color{gray}{\text{[linear predictor]}} \\
+\eta_i  &= \mathbf{x}_i \beta       && \color{gray}{\text{[linear predictor]}} \\
 \xi_i &= \exp(\eta_i) && \color{gray}{\text{[predictor of central tendency]}} \\
 y_i & \sim \text{Poisson}(\xi_i) && \color{gray}{\text{[likelihood]}}
 \end{align*}

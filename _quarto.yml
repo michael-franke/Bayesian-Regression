@@ -47,9 +47,9 @@ website:
           - href: practice-sheets/02b-hierarchical-models-exercises.qmd
             text: Hierarchical models (exercises)
           - href: practice-sheets/02c-multi-membership.qmd
-            text: Multi memberships
+            text: Multi-membership
           - href: practice-sheets/02d-MLM-pooling.qmd
-            text: MLM-pooling
+            text: MLMs & pooling
       - section: "03: GLMs & beyond"
         contents:
           - href: practice-sheets/03a-GLM-tutorial.qmd
@@ -57,9 +57,9 @@ website:
           - href: practice-sheets/03b-GLM-exercises.qmd
             text: GLM (exercises)
           - href: practice-sheets/03c-distributional-models.qmd
-            text: distributional models
+            text: Distributional models
           - href: practice-sheets/03d-mixture-models.qmd
-            text: mixture models
+            text: Mixture models
       - section: "04: MCMC sampling"
         contents:
           - href: 04-MCMC.qmd
