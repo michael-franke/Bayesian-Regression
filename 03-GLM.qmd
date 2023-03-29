@@ -1,0 +1,10 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Session 3: Generalized linear models (and beyond)"
+author: "Michael Franke"
+---
+
+This unit introduces generalized linear models, mixture models and distributional models.
+
+Here are [slides for this session](slides/03-MLM.pdf).
+

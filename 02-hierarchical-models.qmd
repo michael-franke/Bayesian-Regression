@@ -1,6 +1,6 @@
 ---
 title: "Bayesian Regression: Theory & Practice"
-subtitle: "Session 5: Hierarchical models"
+subtitle: "Session 2: Hierarchical models"
 author: "Michael Franke"
 ---
 
