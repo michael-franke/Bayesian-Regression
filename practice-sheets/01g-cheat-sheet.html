@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michael Franke">
+
+<title>Bayesian Regression: Theory &amp; Practice - Cheat sheet: common things to do with BRMS</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Cheat sheet: common things to do with BRMS</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Regression: Theory &amp; Practice</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">01: Basics</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01-basics.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01a-wrangling-plotting.html" class="sidebar-item-text sidebar-link">Wrangling &amp; plotting</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01b-simple-regression.html" class="sidebar-item-text sidebar-link">Simple linear regression</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01e-contrast-coding-tutorial.html" class="sidebar-item-text sidebar-link">Categorical predictors</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link">Priors</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01d-predictives.html" class="sidebar-item-text sidebar-link">Predictions</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01f-catPreds-exercises.html" class="sidebar-item-text sidebar-link">Exercises: Bayesian LMs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01g-cheat-sheet.html" class="sidebar-item-text sidebar-link active">Cheat sheet</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">02: Multi-level models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02-hierarchical-models.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02a-hierarchical-models-tutorial.html" class="sidebar-item-text sidebar-link">Hierarchical models (tutorial)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02b-hierarchical-models-exercises.html" class="sidebar-item-text sidebar-link">Hierarchical models (exercises)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02c-multi-membership.html" class="sidebar-item-text sidebar-link">Multi-membership</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02d-MLM-pooling.html" class="sidebar-item-text sidebar-link">MLMs &amp; pooling</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">03: GLMs &amp; beyond</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03a-GLM-tutorial.html" class="sidebar-item-text sidebar-link">GLM (tutorial)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03b-GLM-exercises.html" class="sidebar-item-text sidebar-link">GLM (exercises)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03c-distributional-models.html" class="sidebar-item-text sidebar-link">Distributional models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03d-mixture-models.html" class="sidebar-item-text sidebar-link">Mixture models</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">04: MCMC sampling</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04-MCMC.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04a-MCMC-diagnostics.html" class="sidebar-item-text sidebar-link">MCMC diagnostics (tutorial)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">05: Model comparison</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05-model-comparison.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/05a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison (practice)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">06: Causal inference</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/06-causal-inference.html" class="sidebar-item-text sidebar-link">Causal inference (practice)</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">07: Non-linear models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/07a-nonLinear.html" class="sidebar-item-text sidebar-link">Custom non-linearity</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/07b-GAMs.html" class="sidebar-item-text sidebar-link">GAMs</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
+  <li><a href="#running-a-regression-model" id="toc-running-a-regression-model" class="nav-link" data-scroll-target="#running-a-regression-model">Running a regression model</a>
+  <ul class="collapse">
+  <li><a href="#updating-a-model" id="toc-updating-a-model" class="nav-link" data-scroll-target="#updating-a-model">Updating a model</a></li>
+  <li><a href="#formula-syntax" id="toc-formula-syntax" class="nav-link" data-scroll-target="#formula-syntax">Formula syntax</a>
+  <ul class="collapse">
+  <li><a href="#multi-level-modeling" id="toc-multi-level-modeling" class="nav-link" data-scroll-target="#multi-level-modeling">Multi-level modeling</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#general-information-about-the-model-fit" id="toc-general-information-about-the-model-fit" class="nav-link" data-scroll-target="#general-information-about-the-model-fit">General information about the model fit</a>
+  <ul class="collapse">
+  <li><a href="#summaries" id="toc-summaries" class="nav-link" data-scroll-target="#summaries">Summaries</a></li>
+  <li><a href="#retrieve-names-of-model-variables" id="toc-retrieve-names-of-model-variables" class="nav-link" data-scroll-target="#retrieve-names-of-model-variables">Retrieve names of model variables</a></li>
+  </ul></li>
+  <li><a href="#mcmc-diagnostics" id="toc-mcmc-diagnostics" class="nav-link" data-scroll-target="#mcmc-diagnostics">MCMC diagnostics</a></li>
+  <li><a href="#extracting-samples" id="toc-extracting-samples" class="nav-link" data-scroll-target="#extracting-samples">Extracting samples</a>
+  <ul class="collapse">
+  <li><a href="#tidy-samples-with-tidybayes" id="toc-tidy-samples-with-tidybayes" class="nav-link" data-scroll-target="#tidy-samples-with-tidybayes">Tidy samples with <code>tidybayes</code></a></li>
+  <li><a href="#getting-summaries-for-samples" id="toc-getting-summaries-for-samples" class="nav-link" data-scroll-target="#getting-summaries-for-samples">Getting summaries for samples</a></li>
+  </ul></li>
+  <li><a href="#plotting-posteriors" id="toc-plotting-posteriors" class="nav-link" data-scroll-target="#plotting-posteriors">Plotting posteriors</a>
+  <ul class="collapse">
+  <li><a href="#population-level-parameters" id="toc-population-level-parameters" class="nav-link" data-scroll-target="#population-level-parameters">Population-level parameters</a></li>
+  <li><a href="#group-level-parameters" id="toc-group-level-parameters" class="nav-link" data-scroll-target="#group-level-parameters">Group-level parameters</a></li>
+  </ul></li>
+  <li><a href="#posterior-predictives" id="toc-posterior-predictives" class="nav-link" data-scroll-target="#posterior-predictives">Posterior predictives</a>
+  <ul class="collapse">
+  <li><a href="#visual-ppcs" id="toc-visual-ppcs" class="nav-link" data-scroll-target="#visual-ppcs">Visual PPCs</a></li>
+  <li><a href="#extracting-samples-from-the-posterior-predictive-distribution" id="toc-extracting-samples-from-the-posterior-predictive-distribution" class="nav-link" data-scroll-target="#extracting-samples-from-the-posterior-predictive-distribution">Extracting samples from the posterior predictive distribution</a></li>
+  </ul></li>
+  <li><a href="#priors" id="toc-priors" class="nav-link" data-scroll-target="#priors">Priors</a>
+  <ul class="collapse">
+  <li><a href="#inspecting-default-priors-without-running-the-model" id="toc-inspecting-default-priors-without-running-the-model" class="nav-link" data-scroll-target="#inspecting-default-priors-without-running-the-model">Inspecting default priors without running the model</a></li>
+  <li><a href="#setting-priors" id="toc-setting-priors" class="nav-link" data-scroll-target="#setting-priors">Setting priors</a></li>
+  <li><a href="#sampling-from-the-prior" id="toc-sampling-from-the-prior" class="nav-link" data-scroll-target="#sampling-from-the-prior">Sampling from the prior</a></li>
+  </ul></li>
+  <li><a href="#under-the-hood-stan-code-design-matrices-etc." id="toc-under-the-hood-stan-code-design-matrices-etc." class="nav-link" data-scroll-target="#under-the-hood-stan-code-design-matrices-etc.">Under the hood: Stan code, design matrices etc.</a>
+  <ul class="collapse">
+  <li><a href="#extract-the-stan-code" id="toc-extract-the-stan-code" class="nav-link" data-scroll-target="#extract-the-stan-code">Extract the Stan code</a></li>
+  <li><a href="#extract-stan-data" id="toc-extract-stan-data" class="nav-link" data-scroll-target="#extract-stan-data">Extract Stan data</a></li>
+  <li><a href="#inspect-design-matrices" id="toc-inspect-design-matrices" class="nav-link" data-scroll-target="#inspect-design-matrices">Inspect design matrices</a>
+  <ul class="collapse">
+  <li><a href="#population-level-effects" id="toc-population-level-effects" class="nav-link" data-scroll-target="#population-level-effects">Population-level effects</a></li>
+  <li><a href="#group-level-effects" id="toc-group-level-effects" class="nav-link" data-scroll-target="#group-level-effects">Group-level effects</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/01g-cheat-sheet.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Cheat sheet: common things to do with BRMS</h1>
+<p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Michael Franke </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This document provides a cursory run-down of common operations and manipulations for working with the <code>brms</code> package.</p>
+<section id="preamble" class="level1">
+<h1>Preamble</h1>
+<p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-1_11642363f01531d7574f212fab4d1d66">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pckgs_needed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"brms"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstan"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstanarm"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"remotes"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidybayes"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bridgesampling"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shinystan"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mgcv"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pckgs_installed <span class="ot">&lt;-</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pckgs_2_install <span class="ot">&lt;-</span> pckgs_needed[<span class="sc">!</span>(pckgs_needed <span class="sc">%in%</span> pckgs_installed)]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(pckgs_2_install)) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pckgs_2_install)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># install additional packages from GitHub (unless installed)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"aida"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/aida-package"</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"faintr"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/faintr"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"cspplot"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CogSciPrag/cspplot"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pckgs_needed, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aida)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faintr)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cspplot)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># these options help Stan run faster</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># use the CSP-theme for plotting</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_csp</span>())</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># global color scheme from CSP</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>project_colors <span class="ot">=</span> cspplot<span class="sc">::</span><span class="fu">list_colors</span>() <span class="sc">|&gt;</span> <span class="fu">pull</span>(hex)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># names(project_colors) &lt;- cspplot::list_colors() |&gt; pull(name)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># setting theme colors globally</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>scale_colour_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>scale_fill_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="running-a-regression-model" class="level1">
+<h1>Running a regression model</h1>
+<p>As a running example, we fit a multi-level model.</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-2_8c45442821cc95662b30d249766aa8a5">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_MC <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_MC_preprocessed <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">condition =</span> <span class="fu">factor</span>(<span class="fu">as.character</span>(block), </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"goNoGo"</span>, <span class="st">"reaction"</span>, <span class="st">"discrimination"</span>)))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fit_MC <span class="ot">&lt;-</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># "brmsformula" object specifies the model to fit</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> RT <span class="sc">~</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">+</span> shape <span class="sc">|</span> submission_id),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data to fit model to</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_MC,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># "iter" is the number of iterations</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">4000</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># control parameters for MCMC</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.9</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="updating-a-model" class="level2">
+<h2 class="anchored" data-anchor-id="updating-a-model">Updating a model</h2>
+<p>Using <code>stats::update()</code>, refit a model based on an existing model fit, keeping everything as is, except for what is explicitly set:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-3_f68354363a2b14a89563ca1e51dc95da">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># take existing fit, refit on smaller data set, just take 100 samples (all else equal)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_first_five <span class="ot">&lt;-</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">update</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">object =</span> fit_MC,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">100</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use first five participants only</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> data_MC <span class="sc">|&gt;</span> <span class="fu">filter</span>(submission_id <span class="sc">&gt;=</span> <span class="dv">8550</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="formula-syntax" class="level2">
+<h2 class="anchored" data-anchor-id="formula-syntax">Formula syntax</h2>
+<p>The basic form of a <code>brms</code> formula is: <code>response ~ pterms + (gterms | group)</code></p>
+<section id="multi-level-modeling" class="level3">
+<h3 class="anchored" data-anchor-id="multi-level-modeling">Multi-level modeling</h3>
+<ul>
+<li><code>(gterms || group)</code> : suppress correlation between gterms</li>
+<li><code>(gterms | g1 + g2)</code> : syntactic sugar for <code>(gterms | g1) + (gterms | g2)</code></li>
+<li><code>(gterms | g1 : g2)</code> : all combinations of <code>g1</code> and <code>g2</code> (Cartesian product)</li>
+<li><code>(gterms | g1 / g2)</code> : nesting <code>g2</code> within <code>g1</code>; equals <code>(gterms | g1) + (gterms | g1 : g2)</code></li>
+<li><code>(gterms | IDx | group)</code> : correlation for all group-level categories with <code>IDx</code>
+<ul>
+<li>useful for multi-formula models (e.g., non-linear models)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="general-information-about-the-model-fit" class="level1">
+<h1>General information about the model fit</h1>
+<section id="summaries" class="level2">
+<h2 class="anchored" data-anchor-id="summaries">Summaries</h2>
+<p>Standard summary of the model fit:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-4_2453310c44b844e75a48f49e0cf2fa1c">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RT ~ condition + (1 + condition + shape | submission_id) 
+   Data: data_MC (Number of observations: 2519) 
+  Draws: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
+         total post-warmup draws = 8000
+
+Group-Level Effects: 
+~submission_id (Number of levels: 50) 
+                                               Estimate Est.Error l-95% CI
+sd(Intercept)                                     46.86      8.20    32.32
+sd(conditionreaction)                             26.90     12.02     3.64
+sd(conditiondiscrimination)                       89.44     12.12    67.92
+sd(shapesquare)                                   18.66     10.05     1.21
+cor(Intercept,conditionreaction)                  -0.37      0.30    -0.81
+cor(Intercept,conditiondiscrimination)             0.65      0.17     0.29
+cor(conditionreaction,conditiondiscrimination)    -0.29      0.30    -0.82
+cor(Intercept,shapesquare)                        -0.05      0.35    -0.66
+cor(conditionreaction,shapesquare)                -0.10      0.41    -0.83
+cor(conditiondiscrimination,shapesquare)           0.25      0.32    -0.45
+                                               u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)                                     64.34 1.00     4544     5338
+sd(conditionreaction)                             50.47 1.00     1522     1923
+sd(conditiondiscrimination)                      115.16 1.00     3967     5113
+sd(shapesquare)                                   38.17 1.00     1796     3655
+cor(Intercept,conditionreaction)                   0.35 1.00     6608     4746
+cor(Intercept,conditiondiscrimination)             0.93 1.00     2234     3163
+cor(conditionreaction,conditiondiscrimination)     0.32 1.00     1899     2809
+cor(Intercept,shapesquare)                         0.70 1.00     5305     4742
+cor(conditionreaction,shapesquare)                 0.70 1.00     3459     4705
+cor(conditiondiscrimination,shapesquare)           0.79 1.00     7157     4354
+
+Population-Level Effects: 
+                        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept                 441.68      9.13   424.09   459.72 1.00     6519
+conditionreaction        -130.64      8.64  -147.99  -113.69 1.00    13034
+conditiondiscrimination    74.35     14.68    45.59   103.08 1.00     6279
+                        Tail_ESS
+Intercept                   6939
+conditionreaction           6111
+conditiondiscrimination     5861
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma   135.50      2.02   131.64   139.54 1.00    11542     5761
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Same in tidy format:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-5_b624c767c231bd7e945d7757ffc5735a">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 216 × 10
+   variable         mean   median     sd    mad       q5      q95  rhat ess_bulk
+   &lt;chr&gt;           &lt;num&gt;    &lt;num&gt;  &lt;num&gt;  &lt;num&gt;    &lt;num&gt;    &lt;num&gt; &lt;num&gt;    &lt;num&gt;
+ 1 b_Intercept   442.     441.     9.13   9.05   427.     457.     1.00    6519.
+ 2 b_condition… -131.    -131.     8.64   8.45  -145.    -116.     1.00   13034.
+ 3 b_condition…   74.3     74.3   14.7   14.7     50.5     98.5    1.00    6279.
+ 4 sd_submissi…   46.9     46.4    8.20   8.11    34.4     61.3    1.00    4544.
+ 5 sd_submissi…   26.9     27.0   12.0   12.3      6.33    46.6    1.00    1522.
+ 6 sd_submissi…   89.4     88.7   12.1   11.9     70.9    111.     1.00    3967.
+ 7 sd_submissi…   18.7     18.5   10.1   11.1      2.49    35.3    1.00    1796.
+ 8 cor_submiss…   -0.367   -0.413  0.297  0.272   -0.761    0.206  1.00    6608.
+ 9 cor_submiss…    0.654    0.672  0.168  0.169    0.348    0.898  1.00    2234.
+10 cor_submiss…   -0.286   -0.297  0.296  0.309   -0.760    0.215  1.00    1899.
+# ℹ 206 more rows
+# ℹ 1 more variable: ess_tail &lt;num&gt;</code></pre>
+</div>
+</div>
+<p>Summary of just the fixed effects:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-6_969390b68bdfe100fa308c487366b39b">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">fixef</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          Estimate Est.Error       Q2.5     Q97.5
+Intercept                441.67961  9.128774  424.09439  459.7175
+conditionreaction       -130.64122  8.640328 -147.98715 -113.6942
+conditiondiscrimination   74.34819 14.676519   45.59474  103.0760</code></pre>
+</div>
+</div>
+<p>Summary of just the random effects (this is huge, so output suppressed):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-7_32ed003a92e83ece1373c5f21d92aa1e">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">ranef</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="retrieve-names-of-model-variables" class="level2">
+<h2 class="anchored" data-anchor-id="retrieve-names-of-model-variables">Retrieve names of model variables</h2>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-8_9f004edcbf9ea3af972adf2caeedb04c">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">get_variables</span>(fit_MC)[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "b_Intercept"                                                  
+ [2] "b_conditionreaction"                                          
+ [3] "b_conditiondiscrimination"                                    
+ [4] "sd_submission_id__Intercept"                                  
+ [5] "sd_submission_id__conditionreaction"                          
+ [6] "sd_submission_id__conditiondiscrimination"                    
+ [7] "sd_submission_id__shapesquare"                                
+ [8] "cor_submission_id__Intercept__conditionreaction"              
+ [9] "cor_submission_id__Intercept__conditiondiscrimination"        
+[10] "cor_submission_id__conditionreaction__conditiondiscrimination"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="mcmc-diagnostics" class="level1">
+<h1>MCMC diagnostics</h1>
+<p>Retrieve R-hat numerically (so you can calculate it or include it in a reproducible document):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-9_f9245b2ddf2fe78e2e980ead6fc4f265">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">rhat</span>(fit_MC) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              b_Intercept 
+                                 1.000116 
+                      b_conditionreaction 
+                                 1.000166 
+                b_conditiondiscrimination 
+                                 1.000179 
+              sd_submission_id__Intercept 
+                                 1.000037 
+      sd_submission_id__conditionreaction 
+                                 1.001548 
+sd_submission_id__conditiondiscrimination 
+                                 1.000235 </code></pre>
+</div>
+</div>
+<p>Retrieve ration of efficient samples numerically (so you can calculate it or include it in a reproducible document):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-10_3973343f6eb3a880317ffea9ef88f9cf">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">neff_ratio</span>(fit_MC) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              b_Intercept 
+                                0.8149087 
+                      b_conditionreaction 
+                                0.7639370 
+                b_conditiondiscrimination 
+                                0.7326441 
+              sd_submission_id__Intercept 
+                                0.5680263 
+      sd_submission_id__conditionreaction 
+                                0.1901896 
+sd_submission_id__conditiondiscrimination 
+                                0.4958896 </code></pre>
+</div>
+</div>
+<p>Retrieve all per-sample diagnostics from a fitted object:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-11_e1c4ec561f870d19007896f5b4be1116">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_MC <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">"__"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8,000 × 7
+      lp__ accept_stat__ stepsize__ treedepth__ n_leapfrog__ divergent__
+     &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1 -16283.         0.824     0.0935           6           63           0
+ 2 -16254.         1.00      0.0935           6           63           0
+ 3 -16265.         0.978     0.0935           6           63           0
+ 4 -16249.         0.991     0.0935           6           63           0
+ 5 -16255.         0.910     0.0935           6           63           0
+ 6 -16254.         0.988     0.0935           6           63           0
+ 7 -16240.         0.964     0.0935           6           63           0
+ 8 -16237.         0.927     0.0935           6           63           0
+ 9 -16247.         0.895     0.0935           6           63           0
+10 -16242.         0.915     0.0935           6           63           0
+# ℹ 7,990 more rows
+# ℹ 1 more variable: energy__ &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p><span style="color:darkgreen">fill me</span></p>
+</section>
+<section id="extracting-samples" class="level1">
+<h1>Extracting samples</h1>
+<section id="tidy-samples-with-tidybayes" class="level2">
+<h2 class="anchored" data-anchor-id="tidy-samples-with-tidybayes">Tidy samples with <code>tidybayes</code></h2>
+<p>Retrieve all samples with <code>tidybayes::tidy_draws()</code>:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-12_ef09d63e38940c3062678387ba7c5625">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8,000 × 225
+   .chain .iteration .draw b_Intercept b_conditionreaction
+    &lt;int&gt;      &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;               &lt;dbl&gt;
+ 1      1          1     1        438.               -118.
+ 2      1          2     2        464.               -147.
+ 3      1          3     3        439.               -124.
+ 4      1          4     4        451.               -142.
+ 5      1          5     5        439.               -127.
+ 6      1          6     6        433.               -124.
+ 7      1          7     7        437.               -131.
+ 8      1          8     8        434.               -132.
+ 9      1          9     9        448.               -136.
+10      1         10    10        445.               -142.
+# ℹ 7,990 more rows
+# ℹ 220 more variables: b_conditiondiscrimination &lt;dbl&gt;,
+#   sd_submission_id__Intercept &lt;dbl&gt;,
+#   sd_submission_id__conditionreaction &lt;dbl&gt;,
+#   sd_submission_id__conditiondiscrimination &lt;dbl&gt;,
+#   sd_submission_id__shapesquare &lt;dbl&gt;,
+#   cor_submission_id__Intercept__conditionreaction &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+</section>
+<section id="getting-summaries-for-samples" class="level2">
+<h2 class="anchored" data-anchor-id="getting-summaries-for-samples">Getting summaries for samples</h2>
+<p>To get (Bayesian) summary statistics for a vector of samples from a parameter you can do this:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-13_d83013d983a15f27f5a0ef8683684e6a">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>posterior_Intercept <span class="ot">&lt;-</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_MC) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="st">"b_Intercept"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>tidybayes::hdi</code> function gives the upper and lower bound of a Bayesian credible interval:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-14_4dd12f79598962632e132a8628038e43">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">hdi</span>(posterior_Intercept, <span class="at">credMass =</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]     [,2]
+[1,] 424.0953 459.7212</code></pre>
+</div>
+</div>
+<p>The function <code>aida::summarize_sample_vector</code> does so, too.</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-15_6525fbb9280e79d2dc1cb32ba3649436">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(posterior_Intercept, <span class="at">name =</span> <span class="st">"Intercept"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  Parameter `|95%`  mean `95%|`
+  &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 Intercept   424.  442.   460.</code></pre>
+</div>
+</div>
+<p>Here is how you can do this for several vectors at once:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-16_97532b3a49a8576c70b3397cc2d49395">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(fit_MC) <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"b_"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name) <span class="sc">|&gt;</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(aida<span class="sc">::</span><span class="fu">summarize_sample_vector</span>(value)[<span class="sc">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  name                      `|95%`   mean `95%|`
+  &lt;chr&gt;                      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 b_Intercept                424.   442.    460.
+2 b_conditiondiscrimination   45.7   74.3   103.
+3 b_conditionreaction       -148.  -131.   -114.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="plotting-posteriors" class="level1">
+<h1>Plotting posteriors</h1>
+<section id="population-level-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="population-level-parameters">Population-level parameters</h2>
+<p>To plot the posteriors over model paramters, you can use various plots from the <code>bayesplot</code> package (here information <a href="http://mc-stan.org/bayesplot/">here</a>):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-17_275b94f4cc6a27a722b51de12b365341">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>posterior_draws <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">as_draws_matrix</span>(fit_MC)[,<span class="fu">c</span>(<span class="st">"b_conditionreaction"</span>, <span class="st">"b_conditiondiscrimination"</span>)]</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">mcmc_areas</span>(posterior_draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Or, use the <code>tidybayes</code> package:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-18_ec8180f7cb76b7e52e641be653b879f5">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_MC <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_draws</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"b_con"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">reaction =</span> b_conditionreaction,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">discrimination =</span> b_conditiondiscrimination) <span class="sc">|&gt;</span> </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">stat_halfeye</span>(<span class="at">fill =</span> project_colors[<span class="dv">1</span>]) <span class="sc">+</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="group-level-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="group-level-parameters">Group-level parameters</h2>
+<p>Here is an example of plotting the posterior for random effects (here: the by-subject random intercepts):</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-19_5c0906e0768fed9cda369223b3e8906f">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranef</span>(fit_MC)<span class="sc">$</span>submission_id[,,<span class="st">"Intercept"</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"submission_id"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> submission_id, <span class="at">x =</span> Estimate)) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="st">`</span><span class="at">Q2.5</span><span class="st">`</span>, <span class="at">xmax =</span> <span class="st">`</span><span class="at">Q97.5</span><span class="st">`</span>), </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> project_colors[<span class="dv">6</span>], <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> project_colors[<span class="dv">1</span>], </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="posterior-predictives" class="level1">
+<h1>Posterior predictives</h1>
+<section id="visual-ppcs" class="level2">
+<h2 class="anchored" data-anchor-id="visual-ppcs">Visual PPCs</h2>
+<p>Use tools from the <code>bayesplot</code> package. The basic <code>bayesplot::pp_check()</code> plots the distribution of <code>ndraws</code> samples from the posterior (data) predictive against the distribution of the data the model was trained on:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-20_cced2457b584c8ce30fc033757241d20">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>There are many tweaks to <code>pp_check</code>:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-21_5201068c5b4c53390f0d0d47ab54da76">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">pp_check</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">30</span>, <span class="at">type =</span> <span class="st">"hist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>You can also directly use underlying functions like <code>ppc_stat</code>. See <code>help("PPC-overview")</code> and <code>help("PPD-overview")</code> for what is available.</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-22_fdf4cdfc312345aaaebd7d479b038821">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>predictive_samples <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">posterior_predict</span>(fit_MC, <span class="at">ndraws =</span> <span class="dv">1000</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>predictive_samples[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]     [,2]      [,3]     [,4]     [,5]
+[1,] 452.5855 401.8040 290.24997 658.5761 281.8349
+[2,] 211.1855 240.9224 447.85106 333.6155 231.4785
+[3,] 273.4148 305.9838 263.02300 196.9013 267.2447
+[4,] 449.6540 180.2882 424.35761 463.1497 127.6889
+[5,] 154.8472 612.7897  54.88001 457.8997 132.9140</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> data_MC<span class="sc">$</span>RT, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># specify the test statistic of interest</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> <span class="cf">function</span>(x){<span class="fu">quantile</span>(x, <span class="fl">0.8</span>)})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01g-cheat-sheet_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="extracting-samples-from-the-posterior-predictive-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-samples-from-the-posterior-predictive-distribution">Extracting samples from the posterior predictive distribution</h2>
+<p>There are three kinds of commonly relevant variables a generalized linear model predicts:</p>
+<ol type="1">
+<li>the central tendency of data <span class="math inline">\(y\)</span> for some predictor <span class="math inline">\(x\)</span>,</li>
+<li>the shape of the (hypothetical) data <span class="math inline">\(y'\)</span> for <span class="math inline">\(x\)</span>, and</li>
+<li>a linear predictor value given values of <span class="math inline">\(x\)</span>.</li>
+</ol>
+<p>All of these measures can be obtained from a fitted model with different functions, e.g., from the <code>tidyverse</code> package. Here, it does not matter whether the model was fitted to data or it is a “prior model”, so to speak, fit with the flag <code>sample_prior = "only"</code>.</p>
+<p>Here is an example for a logistic regression model (where all the three measures clearly show their conceptual difference).</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-23_f2092dae984de83ec9885604135cbc01">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fit_MT_logistic <span class="ot">&lt;-</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> correct <span class="sc">~</span> group <span class="sc">*</span> condition,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> aida<span class="sc">::</span>data_MT,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>()</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-24_5909bc77da4b12d031881332c2efa470">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predicted central tendency</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_epred_draws</span>(</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 7
+# Groups:   group, condition, .row [4]
+  group condition  .row .chain .iteration .draw .epred
+  &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;
+1 touch Atypical      1     NA         NA     1  0.908
+2 touch Atypical      1     NA         NA     2  0.885
+3 touch Typical       2     NA         NA     1  0.944
+4 touch Typical       2     NA         NA     2  0.939
+5 click Atypical      3     NA         NA     1  0.868
+6 click Atypical      3     NA         NA     2  0.871
+7 click Typical       4     NA         NA     1  0.959
+8 click Typical       4     NA         NA     2  0.959</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples from the predictive distribution (data samples)</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_predicted_draws</span>(</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 7
+# Groups:   group, condition, .row [4]
+  group condition  .row .chain .iteration .draw .prediction
+  &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;       &lt;int&gt;
+1 touch Atypical      1     NA         NA     1           1
+2 touch Atypical      1     NA         NA     2           1
+3 touch Typical       2     NA         NA     1           1
+4 touch Typical       2     NA         NA     2           1
+5 click Atypical      3     NA         NA     1           1
+6 click Atypical      3     NA         NA     2           1
+7 click Typical       4     NA         NA     1           1
+8 click Typical       4     NA         NA     2           1</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 samples for the linear predictor</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_MT <span class="sc">|&gt;</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, condition) <span class="sc">|&gt;</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    fit_MT_logistic,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws =</span> <span class="dv">2</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 7
+# Groups:   group, condition, .row [4]
+  group condition  .row .chain .iteration .draw .linpred
+  &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;
+1 touch Atypical      1     NA         NA     1     2.30
+2 touch Atypical      1     NA         NA     2     2.17
+3 touch Typical       2     NA         NA     1     2.77
+4 touch Typical       2     NA         NA     2     2.77
+5 click Atypical      3     NA         NA     1     1.82
+6 click Atypical      3     NA         NA     2     2.08
+7 click Typical       4     NA         NA     1     3.41
+8 click Typical       4     NA         NA     2     3.34</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="priors" class="level1">
+<h1>Priors</h1>
+<section id="inspecting-default-priors-without-running-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="inspecting-default-priors-without-running-the-model">Inspecting default priors without running the model</h2>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-25_600ae612b698885d5019585954b61c51">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the model as a "brmsformula" object</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>myFormula <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">bf</span>(RT <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> condition <span class="sc">|</span> submission_id))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get prior information</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">get_prior</span>(</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myFormula,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    prior     class                    coef         group resp
+ student_t(3, 385, 133.4) Intercept                                           
+                   (flat)         b                                           
+                   (flat)         b conditiondiscrimination                   
+                   (flat)         b       conditionreaction                   
+            gamma(1, 0.1)      beta                                           
+                   lkj(1)       cor                                           
+                   lkj(1)       cor                         submission_id     
+   student_t(3, 0, 133.4)        sd                                           
+   student_t(3, 0, 133.4)        sd                         submission_id     
+   student_t(3, 0, 133.4)        sd               Intercept submission_id     
+   student_t(3, 0, 133.4)        sd conditiondiscrimination submission_id     
+   student_t(3, 0, 133.4)        sd       conditionreaction submission_id     
+   student_t(3, 0, 133.4)     sigma                                           
+ dpar nlpar lb ub       source
+                       default
+                       default
+                  (vectorized)
+                  (vectorized)
+             0         default
+                       default
+                  (vectorized)
+             0         default
+             0    (vectorized)
+             0    (vectorized)
+             0    (vectorized)
+             0    (vectorized)
+             0         default</code></pre>
+</div>
+</div>
+</section>
+<section id="setting-priors" class="level2">
+<h2 class="anchored" data-anchor-id="setting-priors">Setting priors</h2>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-26_183d76ef020ec965b923b316b04aa697">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>myPrior <span class="ot">&lt;-</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(30,100)"</span>,  <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditiondiscrimination"</span>) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(-30,100)"</span>, <span class="at">class =</span> <span class="st">"b"</span>, <span class="at">coef =</span> <span class="st">"conditionreaction"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>fit_with_specified_prior <span class="ot">&lt;-</span> </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> myformula,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> data_MC,</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior   =</span> myPrior,</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="fu">exgaussian</span>()</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="sampling-from-the-prior" class="level2">
+<h2 class="anchored" data-anchor-id="sampling-from-the-prior">Sampling from the prior</h2>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-27_7906ec5f5b0ffd0b21e22fcfd1f9e9b9">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_samples_from_prior_only <span class="ot">&lt;-</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> myformula,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> data_MC,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior   =</span> myPrior,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family  =</span> <span class="fu">exgaussian</span>(),</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="under-the-hood-stan-code-design-matrices-etc." class="level1">
+<h1>Under the hood: Stan code, design matrices etc.</h1>
+<section id="extract-the-stan-code" class="level2">
+<h2 class="anchored" data-anchor-id="extract-the-stan-code">Extract the Stan code</h2>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-28_66c177654da5ac8db7f62efa7438ae37">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">stancode</span>(fit_MC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>// generated with brms 2.19.0
+functions {
+ /* compute correlated group-level effects
+  * Args:
+  *   z: matrix of unscaled group-level effects
+  *   SD: vector of standard deviation parameters
+  *   L: cholesky factor correlation matrix
+  * Returns:
+  *   matrix of scaled group-level effects
+  */
+  matrix scale_r_cor(matrix z, vector SD, matrix L) {
+    // r is stored in another dimension order than z
+    return transpose(diag_pre_multiply(SD, L) * z);
+  }
+}
+data {
+  int&lt;lower=1&gt; N;  // total number of observations
+  vector[N] Y;  // response variable
+  int&lt;lower=1&gt; K;  // number of population-level effects
+  matrix[N, K] X;  // population-level design matrix
+  // data for group-level effects of ID 1
+  int&lt;lower=1&gt; N_1;  // number of grouping levels
+  int&lt;lower=1&gt; M_1;  // number of coefficients per level
+  int&lt;lower=1&gt; J_1[N];  // grouping indicator per observation
+  // group-level predictor values
+  vector[N] Z_1_1;
+  vector[N] Z_1_2;
+  vector[N] Z_1_3;
+  vector[N] Z_1_4;
+  int&lt;lower=1&gt; NC_1;  // number of group-level correlations
+  int prior_only;  // should the likelihood be ignored?
+}
+transformed data {
+  int Kc = K - 1;
+  matrix[N, Kc] Xc;  // centered version of X without an intercept
+  vector[Kc] means_X;  // column means of X before centering
+  for (i in 2:K) {
+    means_X[i - 1] = mean(X[, i]);
+    Xc[, i - 1] = X[, i] - means_X[i - 1];
+  }
+}
+parameters {
+  vector[Kc] b;  // population-level effects
+  real Intercept;  // temporary intercept for centered predictors
+  real&lt;lower=0&gt; sigma;  // dispersion parameter
+  vector&lt;lower=0&gt;[M_1] sd_1;  // group-level standard deviations
+  matrix[M_1, N_1] z_1;  // standardized group-level effects
+  cholesky_factor_corr[M_1] L_1;  // cholesky factor of correlation matrix
+}
+transformed parameters {
+  matrix[N_1, M_1] r_1;  // actual group-level effects
+  // using vectors speeds up indexing in loops
+  vector[N_1] r_1_1;
+  vector[N_1] r_1_2;
+  vector[N_1] r_1_3;
+  vector[N_1] r_1_4;
+  real lprior = 0;  // prior contributions to the log posterior
+  // compute actual group-level effects
+  r_1 = scale_r_cor(z_1, sd_1, L_1);
+  r_1_1 = r_1[, 1];
+  r_1_2 = r_1[, 2];
+  r_1_3 = r_1[, 3];
+  r_1_4 = r_1[, 4];
+  lprior += student_t_lpdf(Intercept | 3, 385, 133.4);
+  lprior += student_t_lpdf(sigma | 3, 0, 133.4)
+    - 1 * student_t_lccdf(0 | 3, 0, 133.4);
+  lprior += student_t_lpdf(sd_1 | 3, 0, 133.4)
+    - 4 * student_t_lccdf(0 | 3, 0, 133.4);
+  lprior += lkj_corr_cholesky_lpdf(L_1 | 1);
+}
+model {
+  // likelihood including constants
+  if (!prior_only) {
+    // initialize linear predictor term
+    vector[N] mu = rep_vector(0.0, N);
+    mu += Intercept;
+    for (n in 1:N) {
+      // add more terms to the linear predictor
+      mu[n] += r_1_1[J_1[n]] * Z_1_1[n] + r_1_2[J_1[n]] * Z_1_2[n] + r_1_3[J_1[n]] * Z_1_3[n] + r_1_4[J_1[n]] * Z_1_4[n];
+    }
+    target += normal_id_glm_lpdf(Y | Xc, mu, b, sigma);
+  }
+  // priors including constants
+  target += lprior;
+  target += std_normal_lpdf(to_vector(z_1));
+}
+generated quantities {
+  // actual population-level intercept
+  real b_Intercept = Intercept - dot_product(means_X, b);
+  // compute group-level correlations
+  corr_matrix[M_1] Cor_1 = multiply_lower_tri_self_transpose(L_1);
+  vector&lt;lower=-1,upper=1&gt;[NC_1] cor_1;
+  // extract upper diagonal of correlation matrix
+  for (k in 1:M_1) {
+    for (j in 1:(k - 1)) {
+      cor_1[choose(k - 1, 2) + j] = Cor_1[j, k];
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</section>
+<section id="extract-stan-data" class="level2">
+<h2 class="anchored" data-anchor-id="extract-stan-data">Extract Stan data</h2>
+<p>This is the data passed to Stan. Useful for inspecting dimensions etc.</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-29_9bffc27644e45c547084ab962278009b">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC) <span class="sc">|&gt;</span> <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "N"          "Y"          "K"          "X"          "Z_1_1"     
+ [6] "Z_1_2"      "Z_1_3"      "Z_1_4"      "J_1"        "N_1"       
+[11] "M_1"        "NC_1"       "prior_only"</code></pre>
+</div>
+</div>
+</section>
+<section id="inspect-design-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="inspect-design-matrices">Inspect design matrices</h2>
+<section id="population-level-effects" class="level3">
+<h3 class="anchored" data-anchor-id="population-level-effects">Population-level effects</h3>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-30_8e11a2f8b7c0c7681081d613d430e5e2">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)<span class="sc">$</span>X</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>X <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Intercept conditionreaction conditiondiscrimination
+1         1                 1                       0
+2         1                 1                       0
+3         1                 1                       0
+4         1                 1                       0
+5         1                 1                       0
+6         1                 1                       0</code></pre>
+</div>
+</div>
+</section>
+<section id="group-level-effects" class="level3">
+<h3 class="anchored" data-anchor-id="group-level-effects">Group-level effects</h3>
+<p>The group-level design matrix is spread out over different variables (all names <code>Z_</code> followed by some indices), but retrievable like so:</p>
+<div class="cell" data-hash="01g-cheat-sheet_cache/html/unnamed-chunk-31_16f0dc7599c1c73c3d3b431aea7ed58e">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>data4Stan <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">standata</span>(fit_MC)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> data4Stan[<span class="fu">str_detect</span>(data4Stan <span class="sc">|&gt;</span> <span class="fu">names</span>(), <span class="st">"Z_"</span>)] <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>Z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,519 × 4
+       Z_1_1     Z_1_2     Z_1_3     Z_1_4
+   &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;dbl[1d]&gt;
+ 1         1         1         0         0
+ 2         1         1         0         1
+ 3         1         1         0         1
+ 4         1         1         0         1
+ 5         1         1         0         0
+ 6         1         1         0         1
+ 7         1         1         0         1
+ 8         1         1         0         0
+ 9         1         1         0         1
+10         1         1         0         0
+# ℹ 2,509 more rows</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
