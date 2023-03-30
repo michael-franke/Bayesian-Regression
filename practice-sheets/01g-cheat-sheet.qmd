@@ -133,6 +133,16 @@ fit_MC |>
   dplyr::select(ends_with("__"))
 ```
 
+Retrieve all samples with divergent transitions:
+
+```{r}
+fit_MC |> 
+  tidybayes::tidy_draws() |> 
+  dplyr::select(ends_with("__")) |> 
+  filter(divergent__ == TRUE)
+```
+
+
 [fill me]{style="color:darkgreen"}
 
 # Extracting samples

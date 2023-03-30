@@ -52,6 +52,8 @@ website:
             text: MLMs & pooling
       - section: "03: GLMs & beyond"
         contents:
+          - href: 03-GLM.qmd
+            text: Overview
           - href: practice-sheets/03a-GLM-tutorial.qmd
             text: GLM (tutorial)
           - href: practice-sheets/03b-GLM-exercises.qmd
@@ -65,7 +67,9 @@ website:
           - href: 04-MCMC.qmd
             text: Overview
           - href: practice-sheets/04a-MCMC-diagnostics.qmd
-            text: MCMC diagnostics (tutorial)
+            text: MCMC diagnostics
+          - href: practice-sheets/04b-divergences.qmd
+            text: Divergent transitions
       - section: "05: Model comparison"
         contents:
           - href: 05-model-comparison.qmd
