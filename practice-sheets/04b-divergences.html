@@ -257,6 +257,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../03-GLM.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../practice-sheets/03a-GLM-tutorial.html" class="sidebar-item-text sidebar-link">GLM (tutorial)</a>
   </div>
 </li>
@@ -279,12 +284,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">04: MCMC sampling</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">04: MCMC sampling</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../04-MCMC.html" class="sidebar-item-text sidebar-link">Overview</a>
@@ -292,7 +297,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/04a-MCMC-diagnostics.html" class="sidebar-item-text sidebar-link">MCMC diagnostics (tutorial)</a>
+  <a href="../practice-sheets/04a-MCMC-diagnostics.html" class="sidebar-item-text sidebar-link">MCMC diagnostics</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04b-divergences.html" class="sidebar-item-text sidebar-link active">Divergent transitions</a>
   </div>
 </li>
       </ul>
@@ -362,12 +372,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
-  <li><a href="#divergent-transitions-and-how-to-tame-at-least-some-of-them" id="toc-divergent-transitions-and-how-to-tame-at-least-some-of-them" class="nav-link" data-scroll-target="#divergent-transitions-and-how-to-tame-at-least-some-of-them">Divergent transitions, and how to tame (at least some of) them</a>
+  <li><a href="#the-eight-schools-example" id="toc-the-eight-schools-example" class="nav-link" data-scroll-target="#the-eight-schools-example">The “eight schools” example</a></li>
+  <li><a href="#a-first-model-centered-parameterization" id="toc-a-first-model-centered-parameterization" class="nav-link" data-scroll-target="#a-first-model-centered-parameterization">A first model: centered parameterization</a></li>
+  <li><a href="#divergent-transition-where-and-why" id="toc-divergent-transition-where-and-why" class="nav-link" data-scroll-target="#divergent-transition-where-and-why">Divergent transition: where and why</a></li>
+  <li><a href="#a-second-model-non-centered-parameterization" id="toc-a-second-model-non-centered-parameterization" class="nav-link" data-scroll-target="#a-second-model-non-centered-parameterization">A second model: non-centered parameterization</a></li>
+  <li><a href="#explaining-non-central-parameterization" id="toc-explaining-non-central-parameterization" class="nav-link" data-scroll-target="#explaining-non-central-parameterization">Explaining non-central parameterization</a>
   <ul class="collapse">
-  <li><a href="#a-draw-the-model" id="toc-a-draw-the-model" class="nav-link" data-scroll-target="#a-draw-the-model">3.a Draw the model</a></li>
-  <li><a href="#b-run-the-model-inspect-and-explain-the-divergent-transitions" id="toc-b-run-the-model-inspect-and-explain-the-divergent-transitions" class="nav-link" data-scroll-target="#b-run-the-model-inspect-and-explain-the-divergent-transitions">3.b Run the model, inspect and explain the divergent transitions</a></li>
-  <li><a href="#c-non-centered-parameterization" id="toc-c-non-centered-parameterization" class="nav-link" data-scroll-target="#c-non-centered-parameterization">3.c Non-centered parameterization</a></li>
-  <li><a href="#explaining-non-central-parameterization" id="toc-explaining-non-central-parameterization" class="nav-link" data-scroll-target="#explaining-non-central-parameterization">Explaining non-central parameterization</a></li>
+  <li><a href="#why-is-non-central-paramterization-better" id="toc-why-is-non-central-paramterization-better" class="nav-link" data-scroll-target="#why-is-non-central-paramterization-better">Why is non-central paramterization better?</a></li>
+  <li><a href="#why-care-about-divergent-transitions" id="toc-why-care-about-divergent-transitions" class="nav-link" data-scroll-target="#why-care-about-divergent-transitions">Why care about divergent transitions?</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/04b-divergences.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -460,9 +472,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 </div>
 </section>
-<section id="divergent-transitions-and-how-to-tame-at-least-some-of-them" class="level1">
-<h1>Divergent transitions, and how to tame (at least some of) them</h1>
-<p>The “eight schools” example is a classic and a simple illustration of a <strong>hierarchical model</strong>. There are <span class="math inline">\(N =8\)</span> pairs of observations, each pair from a different school. For each school <span class="math inline">\(i\)</span>, we have an estimated effect size <span class="math inline">\(y_i\)</span> and an estimated standard error <span class="math inline">\(\sigma_i\)</span> for the reported effect size. (The experiments conducted at each school which gave us these pairs investigated whether short-term coaching has a effect on SAT scores.)</p>
+<section id="the-eight-schools-example" class="level1">
+<h1>The “eight schools” example</h1>
+<p>The “eight schools” example (going back to Rubin ([1981])(https://www.jstor.org/stable/1164617)) is an often used simple illustration of a <strong>hierarchical model</strong>. There are <span class="math inline">\(N =8\)</span> pairs of observations, each pair from a different school. For each school <span class="math inline">\(i\)</span>, we have an estimated effect size <span class="math inline">\(y_i\)</span> and an estimated standard error <span class="math inline">\(\sigma_i\)</span> for the reported effect size. (The experiments conducted at each school which gave us these pairs investigated whether short-term coaching has a effect on SAT-V scores, but this is not important for our purposes here.)</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -473,6 +485,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+</section>
+<section id="a-first-model-centered-parameterization" class="level1">
+<h1>A first model: centered parameterization</h1>
 <p>We are interested in inferring the latent true effect size <span class="math inline">\(\theta_i\)</span> for each school <span class="math inline">\(i\)</span> that could have generated the observed effect size <span class="math inline">\(y_i\)</span> given spread <span class="math inline">\(\sigma_i\)</span>.</p>
 <p>We could assume that each school’s true effect size <span class="math inline">\(\theta_i\)</span> is entirely independent of any other. In contrast, we could assume that there is a single true effect size for all schools <span class="math inline">\(\theta_i = \theta_j\)</span> for all <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. Or, more reasonably, we let the data decide and consider a model that tries to estimate how likely it is that <span class="math inline">\(\theta_i\)</span> and <span class="math inline">\(\theta_j\)</span> for different schools <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are similar or not.</p>
 <p>To do so, we assume a hierarchical model. The true effect sizes <span class="math inline">\(\theta_i\)</span> and <span class="math inline">\(\theta_j\)</span> of schools <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are assumed:</p>
@@ -486,48 +501,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 \theta_i &amp; \sim \mathcal{N}(\mu, \sigma') \\
 \mu &amp; \sim \mathcal{N}(0, 10) \\
-\sigma &amp; \sim \text{half-Cauchy}(0, 10) \\
+\sigma' &amp; \sim \text{half-Cauchy}(0, 10) \\
 \end{align*}
 \]</span></p>
-<section id="a-draw-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="a-draw-the-model">3.a Draw the model</h2>
-<p>Draw a graphical representation of this mixture model, following the conventions outlined <a href="https://michael-franke.github.io/intro-data-analysis/Chap-03-03-models-representation.html">here</a>. Again, any format which we can decipher easily is fine, as long as it is practical (and fun) for you.</p>
-</section>
-<section id="b-run-the-model-inspect-and-explain-the-divergent-transitions" class="level2">
-<h2 class="anchored" data-anchor-id="b-run-the-model-inspect-and-explain-the-divergent-transitions">3.b Run the model, inspect and explain the divergent transitions</h2>
-<p>The Stan code for this model is shown below and also included in file <code>ADA-W09-Ex3a-8schools-centered.stan</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] y;</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt;[N] sigma;</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_prime;</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] theta;</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  sigma_prime ~ cauchy(<span class="dv">0</span>, <span class="dv">10</span>);</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  theta ~ normal(mu, sigma_prime);</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  y ~ normal(theta, sigma);</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell" data-warnings="true">
+<p>The Stan code for this model is shown below and also included in file <code>8schools-centered.stan</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt;[N] sigma;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_prime;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] theta;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  sigma_prime ~ cauchy(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  theta ~ normal(mu, sigma_prime);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  y ~ normal(theta, sigma);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s run the code (setting a seed for reproducibility):</p>
+<div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stan_fit_3a_8schoolsC <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stan_fit_8schoolsC <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/8schools-centered.stan'</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_eight_schools,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Normally, there are a lot of divergent transitions when you run this code:</p>
+<p>Normally, there are a lot of divergent transitions when you run this code. This number can be retrieved (for <code>stanfit</code> objects, but not for <code>brmsfit</code> objects) with the function <code>rstan::get_num_divergent()</code>:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_divergent_iterations</span>(stan_fit_3a_8schoolsC) <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rstan<span class="sc">::</span><span class="fu">get_num_divergent</span>(stan_fit_8schoolsC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 223</code></pre>
@@ -537,18 +546,22 @@ y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(stan_fit_3a_8schoolsC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>shinystan<span class="sc">::</span><span class="fu">launch_shinystan</span>(stan_fit_8schoolsC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>You can also produce your own (funnel) plots with the code shown below, which may be even clearer because it uses a log-transform. Again, points with divergencies are shown in red.</p>
+</section>
+<section id="divergent-transition-where-and-why" class="level1">
+<h1>Divergent transition: where and why</h1>
+<p>The model has divergent transitions. But these are not random. They occur for specific samples. This gives us a clue as to why they arise.</p>
+<p>To see the regularity, here is a scatter plot of posterior samples from two parameters: <span class="math inline">\(\theta_1\)</span> (arbitrary choice of index!) and <span class="math inline">\(\sigma'\)</span>. We use log-transforms of the latter for better visibility: Points with divergencies are shown in red.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a> bayesplot<span class="sc">::</span><span class="fu">mcmc_scatter</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.array</span>(stan_fit_3a_8schoolsC),</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.array</span>(stan_fit_8schoolsC),</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"theta[1]"</span>, <span class="st">"sigma_prime"</span>),</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">transform =</span> <span class="fu">list</span>(<span class="at">sigma_prime =</span> <span class="st">"log"</span>),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">np =</span> <span class="fu">nuts_params</span>(stan_fit_3a_8schoolsC),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">np =</span> <span class="fu">nuts_params</span>(stan_fit_8schoolsC),</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">1</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -556,13 +569,12 @@ y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 <p><img src="04b-divergences_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Explain in your own intuitive terms why these divergent transitions occur. E.g., you might want to say something like: “Since the step size parameter is …, we see divergencies … because the more … this variable is, the more/less … that variable …”</p>
-<p><strong>Solution:</strong></p>
-<p>Since the step size parameter for approximating the Hamiltonian dynamics is set globally, we run into divergent transitions specifically for cases where <span class="math inline">\(\sigma'\)</span> is very small (roughly <span class="math inline">\(&lt;1\)</span>), because for such smaller values of <span class="math inline">\(\sigma'\)</span>, the “reasonable” values for <span class="math inline">\(\theta_i\)</span> are much more constraint / have lower variance than for higher values. That’s why the globally optimal step size leads to divergences inside the narrow part of the “funnel”.</p>
+<p>This plot shape is also referred to as a “funnel” because it looks like, well, a funnel. We see now that the samples with divergencies actually happened mostly deep in the funnel. And that tells us something.</p>
+<p>Since the step size parameter for approximating the Hamiltonian dynamics is set globally, we run into divergent transitions specifically for cases where <span class="math inline">\(\sigma'\)</span> is very small (roughly <span class="math inline">\(&lt;1\)</span>), because for such smaller values of <span class="math inline">\(\sigma'\)</span>, the “reasonable” values for <span class="math inline">\(\theta_i\)</span> are much more constrained / have lower variance than for higher values. That’s why the globally optimal step size leads to divergences inside the narrow part of the “funnel”.</p>
 </section>
-<section id="c-non-centered-parameterization" class="level2">
-<h2 class="anchored" data-anchor-id="c-non-centered-parameterization">3.c Non-centered parameterization</h2>
-<p>An alternative model, with so-called non-central parameterization does not have this problem with divergent transitions (they can still occur occasionally, though).</p>
+<section id="a-second-model-non-centered-parameterization" class="level1">
+<h1>A second model: non-centered parameterization</h1>
+<p>An alternative model, with so-called non-central parameterization does not have this problem with divergent transitions (or better: not that much of a problem; they can still occur occasionally even in this model).</p>
 <p>This non-central model can be written like so:</p>
 <p><span class="math display">\[
 \begin{align*}
@@ -570,51 +582,84 @@ y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 \theta_i &amp; = \mu + \sigma' \eta_i \\
 \eta_i &amp; \sim \mathcal{N}(0, 1) \\
 \mu &amp; \sim \mathcal{N}(0, 10) \\
-\sigma &amp; \sim \text{half-Cauchy}(0, 10) \\
+\sigma' &amp; \sim \text{half-Cauchy}(0, 10) \\
 \end{align*}
 \]</span></p>
-<p>Implement and run this model in Stan. Report if you got any divergent transitions, e.g., with command <code>get_divergent_iterations</code> applied to the <code>stanfit</code> object.</p>
-<p><strong>Solution:</strong></p>
-<div class="cell" data-warnings="true">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stan_fit_3c_8schoolsNC <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/8schools-non-centered.stan'</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_eight_schools</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
+<p>The Stan code for this model looks as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt;[N] sigma;</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_prime;</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] eta;</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed parameters</span> {</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] theta;</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  theta = mu + sigma_prime * eta;</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  sigma_prime ~ cauchy(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  eta ~ normal(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  y ~ normal(theta, sigma);</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can run the model as follows:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_divergent_iterations</span>(stan_fit_3c_8schoolsNC) <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>stan_fit_3c_8schoolsNC <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">'stan-files/8schools-non-centered.stan'</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_eight_schools,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1969</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let’s see if we got any divergent transitions now:</p>
+<div class="cell">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rstan<span class="sc">::</span><span class="fu">get_num_divergent</span>(stan_fit_3c_8schoolsNC) <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
 </div>
+<p>NB: if this model has divergent transitions, they will be few so that increasing <code>adapt_delta</code> will almost surely remove them.</p>
 </section>
-<section id="explaining-non-central-parameterization" class="level2">
-<h2 class="anchored" data-anchor-id="explaining-non-central-parameterization">Explaining non-central parameterization</h2>
+<section id="explaining-non-central-parameterization" class="level1">
+<h1>Explaining non-central parameterization</h1>
 <p>Let’s look at a plot similar to the one we looked at for the model with central parameterization in 3.b:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a> bayesplot<span class="sc">::</span><span class="fu">mcmc_scatter</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.array</span>(stan_fit_3c_8schoolsNC),</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"theta[1]"</span>, <span class="st">"sigma_prime"</span>),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">transform =</span> <span class="fu">list</span>(<span class="at">sigma_prime =</span> <span class="st">"log"</span>),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">np =</span> <span class="fu">nuts_params</span>(stan_fit_3c_8schoolsNC),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">1</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a> bayesplot<span class="sc">::</span><span class="fu">mcmc_scatter</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.array</span>(stan_fit_3c_8schoolsNC),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"theta[1]"</span>, <span class="st">"sigma_prime"</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">transform =</span> <span class="fu">list</span>(<span class="at">sigma_prime =</span> <span class="st">"log"</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">np =</span> <span class="fu">nuts_params</span>(stan_fit_3c_8schoolsNC),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">1</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="04b-divergences_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>What is the main striking difference (apart from the presence/absence of divergent transitions)? How is this difference a reason for why divergent transitions can be problematic? Is any estimated posterior mean for any parameter noticeably affected by this?</p>
-<p><strong>Solution:</strong></p>
-<p>The “funnel” in the non-central model fit is much “deeper”. The samples for <span class="math inline">\(\log \sigma'\)</span> stopped at around 1 for the central-parameterization model. But for the non-central one they go to values of -4. While this is in log-scale, it nevertheless shows how the divergencies can cause failure to explore a reasonable chunk of the posterior space. Expectations based on samples with such restrictions can consequently be biased. Indeed, the estimated mean for <span class="math inline">\(\sigma'\)</span> is discernibly lower for the non-centralized parameterization.</p>
+<section id="why-is-non-central-paramterization-better" class="level2">
+<h2 class="anchored" data-anchor-id="why-is-non-central-paramterization-better">Why is non-central paramterization better?</h2>
+<p>To understand (intuitively) why is non-central paramterization more resilient against divergent, first recall the reason for the divergencies in the first model. Inside the funnel, so to speak, the variance of “good” <span class="math inline">\(\theta_i\)</span> values were much smaller than outside of it. So, the sampler was not able to to flexibly accommodate differences in changes to <span class="math inline">\(\theta_i\)</span> parameters as <span class="math inline">\(\sigma'\)</span> changed. The non-central parameterization overcomes exactly this problem, because it decouples <span class="math inline">\(\sigma'\)</span> and <span class="math inline">\(theta_i\)</span> via an additional parameter <span class="math inline">\(\eta_i\)</span>.</p>
+</section>
+<section id="why-care-about-divergent-transitions" class="level2">
+<h2 class="anchored" data-anchor-id="why-care-about-divergent-transitions">Why care about divergent transitions?</h2>
+<p>We see why we should care about divergent transitions based on this simple example if we ask concretely:</p>
+<ul>
+<li>What is the main striking difference (apart from the presence/absence of divergent transitions)?</li>
+<li>How is this difference a reason for why divergent transitions can be problematic?</li>
+<li>Is any estimated posterior mean for any parameter noticeably affected by this?</li>
+</ul>
+<p>The “funnel” in the non-central model fit is much “deeper”. The samples for <span class="math inline">\(\log \sigma'\)</span> stopped at around 1 for the first model with central-parameterization. But for the non-central one they go to values of -4. While this is in log-scale, it nevertheless shows how the divergencies can cause failure to explore a reasonable chunk of the posterior space. Expectations based on samples with such restrictions can consequently be biased. Indeed, the estimated mean for <span class="math inline">\(\sigma'\)</span> is discernibly lower for the non-centralized parameterization.</p>
 
 
 </section>
