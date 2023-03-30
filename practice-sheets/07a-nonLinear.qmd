@@ -1,5 +1,5 @@
 ---
-title: "XX: Non-linear models in `brms`"
+title: "Non-linear models in `brms`"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -47,9 +47,11 @@ data_forget <- tibble(
 
 data_forget |>
   ggplot(aes(x = t, y = y)) +
-  geom_point() +
+  geom_line(color = project_colors[6]) +
+  geom_point(color = project_colors[2], size = 2.5) +
+  ylim(0,1) +
   xlab("time after memorization") +
-  ylab("recall rate")
+  ylab("recall rate") 
 ```
 
 There are two competing models on the table.
@@ -60,17 +62,38 @@ $$
 \begin{align*}
 k & \sim \text{Binomial}( \theta, 100) \\
 \theta &= a \exp (-bt) \\
-a,b &\sim \dots \text{some prior} \dots
+a,b & \sim \text{log-Normal}(0, 0.5)
 \end{align*}
 $$
+
+In contrast, the power model assumes that forgetting curves follow a power function:
 
 $$
 \begin{align*}
 k & \sim \text{Binomial}( \theta, 100) \\
 \theta &= ct^{-d} \\
-c,d &\sim \dots \text{some prior} \dots
+c,d &\sim \text{log-Normal}(0, 0.5)
 \end{align*}
 $$
+
+We can think of these models as composed of a regular likelihood function (Binomial) with a non-linear predictor function $F(x,y)$ (exponential or power), instead of the usual logistic-transformed linear predictor we know from logistic regression.
+
+To define these non-linear models in `brms`, we use special syntax in the `brmsformula`.
+For the exponential model, for example, we use:
+
+```{r}
+#| eval: false
+brms::bf(k | trials(N) ~ a * exp(-b * t), 
+         a + b ~ 1, 
+         nl=TRUE),
+```
+
+Noteworthy here is that we can define the regressor part as a Stan function, introducing hitherto unknown variables `a` and `b`, which we can then regress against liner predictor terms.
+Since in the currenct case, we only want to fit these two parameters, we write this like an intercept-only model.
+Importantly, we must declare the model explicitly as a non-linear model using the parameter `nl=TRUE`.
+
+The full function call also specifies priors for the parameters `a` and `b` (notice the explicit setting of a lower bound at zero).
+We also must declare the likelihood function (Binomial) and the link function (here: identity, because the non-linear predictor is the expected value already; not need to transform it with another link function).
 
 ```{r}
 #| results: hide
@@ -86,6 +109,8 @@ fit_exponential <- brms::brm(
   )
 ```
 
+The power model is set-up in parallel.
+
 ```{r}
 #| results: hide
 fit_power <- brms::brm(
@@ -96,23 +121,35 @@ fit_power <- brms::brm(
     prior   = prior(lognormal(0,0.5), nlpar = "c", lb = 0) + 
               prior(lognormal(0,0.5), nlpar = "d", lb = 0),
     family  = binomial(link = "identity"),
-    control = list(adapt_delta = 0.99),
-    iter    = 8000
+    control = list(adapt_delta = 0.99)
   )
 ```
 
-Compare models with `loo`.
+Let's try using leave-one-out cross-validation to address the question which model provides a fit to this data set.
 
 ```{r}
-#| eval: false
 loo_compare <- 
   loo_compare(
     loo(fit_exponential), 
-    loo(fit_power, moment_match = TRUE))
+    loo(fit_power))
 ```
 
-Use longer data
 
+There is a problem.
+The `loo` function throws a warning that at least one observation is problematic under the Pareto-k diagnostic.
+We see that this is the first one:
+
+```{r}
+plot(loo(fit_power))
+```
+
+But that plot also shows that we may have done something weird!
+We have treated as a single data point all 100 observations for each time step. 
+No wonder that some of these observations heavily influence to total likelihood.
+These observations are huge chunks of atomic observations.
+
+Let's run these models again, but not as a Binomial model, but with a Bernoulli likelihood function, so that in LOO-based model comparison single observations are individual trials, not all trials from a given time point.
+Towards this end, we first unrol the data using `uncount()`.
 
 ```{r}
 data_forget_long <- 
@@ -123,6 +160,8 @@ data_forget_long <-
   uncount(value) |> 
   mutate(y = ifelse(y == "k", TRUE, FALSE))
 ```
+
+And then we fit the models again:
 
 ```{r}
 #| results: hide
@@ -152,10 +191,77 @@ fit_power <- brms::brm(
   )
 ```
 
+Now we can try the LOO-based model comparison again:
+
 ```{r}
-#| eval: false
-loo_compare <- 
+loo_comp <- 
   loo_compare(
     loo(fit_exponential), 
     loo(fit_power))
+loo_comp
 ```
+
+That worked smoothly.
+The results show that the power model has a worse LOO-fit, and that the difference in expected log-probability density is substantial (a smaller standard error than the difference itself).
+
+We may use Ben Lambert's test for significance, just to out a number (a $p$-value) to it:
+
+```{r}
+1- pnorm(-loo_compare[2,1], loo_comp[2,2])
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 
+
+Run a (linear) logistic regression model `y ~ t` and compare it to the two non-linear models with `loo_compare`.
+Interpret your results.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+#| results: hide
+fit_logistic <- 
+  brms::brm(
+    formula = y ~ t,
+    data    = data_forget_long,
+    family  = bernoulli(link = "logit")
+  )
+```
+
+```{r}
+loo_comp <- 
+  loo_compare(
+    list(
+      loo(fit_logistic),
+      loo(fit_exponential),
+      loo(fit_power)
+    ))
+loo_comp
+```
+
+Models are ordered from better to worse.
+Differences are with respect to the best model (not the previous).
+We must therefore also compare the latter two directly:
+
+```{r}
+loo_comp <- 
+  loo_compare(
+    list(
+      loo(fit_logistic),
+      loo(fit_power)
+    ))
+loo_comp
+```
+
+The non-linear power model and the linear logistic model seem to be on a par.
+
+```{r}
+1- pnorm(-loo_compare[2,1], loo_comp[2,2])
+```
+
+The linear model seems slightly worse, but that difference may not be substantial. 
+
+
+:::
+:::

@@ -111,6 +111,12 @@ brms::ranef(fit_MC)
 tidybayes::get_variables(fit_MC)[1:10]
 ```
 
+## Explore via `shinystan`
+
+```{r}
+shinystan::launch_shinystan(fit_MC)
+```
+
 # MCMC diagnostics
 
 Retrieve R-hat numerically (so you can calculate it or include it in a reproducible document):
