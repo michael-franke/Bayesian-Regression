@@ -56,122 +56,72 @@ scale_fill_discrete <- function(...) {
 }
 
 ##################################################
-## run a model predicting RT based on correctness
+## load, process and plot the data
 ##################################################
 
-data_MT <- aida::data_MT
+data_polite <- aida::data_polite
 
-fit_MT <- 
-  brms::brm(
-    formula = RT ~ correct,
-    data    = data_MT
+data_polite.agg <- 
+  data_polite %>% 
+  group_by(gender, context, sentence) %>% 
+  summarize(mean_frequency = mean(pitch))
+
+data_polite.agg2 <- 
+  data_polite %>%
+  group_by(gender, context) %>% 
+  summarize(mean_frequency = round(mean(pitch), 0))
+
+ggplot(data = data_polite.agg, 
+       aes(x = gender, 
+           y = mean_frequency, 
+           colour = context)) + 
+  geom_point(position = position_dodge(0.5), 
+             alpha = 0.3, 
+             size = 3) +
+  geom_point(data = data_polite.agg2, 
+             aes(x = gender, 
+                 y = mean_frequency, 
+                 fill = context),
+             position = position_dodge(0.5), 
+             pch = 21, 
+             colour = "black",
+             size = 5) +
+  scale_x_discrete(breaks = c("F", "M"),
+                   labels = c("female", "male")) +
+  scale_y_continuous(expand = c(0, 0), breaks = (c(50,100,150,200,250,300)), limits = c(50,300)) +
+  scale_colour_manual(breaks = c("inf", "pol"),
+                      labels = c("informal", "polite"),
+                      values = c(project_colors[1], project_colors[2])) +
+  scale_fill_manual(breaks = c("inf", "pol"),
+                    labels = c("informal", "polite"),
+                    values = c(project_colors[1], project_colors[2])) +
+  ylab("pitch in Hz\n") +
+  xlab("\ngender")
+
+##################################################
+## run a model with max RE structure
+##################################################
+
+fit_polite <- brms::brm(
+  formula = pitch ~ gender * context + 
+    (1 + gender * context | sentence) + 
+    (1 + context | subject),
+  data    = data_polite,
+  control = list(adapt_delta = 0.99),
+  prior   = prior("student_t(1,100,200)")
   )
 
 ##################################################
-## sample from the posterior predictive
+## test whether context matters for female pitch
 ##################################################
 
-tidybayes::predicted_draws(
-  object  = fit_MT,
-  newdata = tibble(correct = c(1, 0, 1, 0)),
-  ndraws  = 1
-  )  
-  
-tidybayes::linpred_draws(
-  object  = fit_MT,
-  newdata = tibble(correct = c(1, 0)),
-  ndraws  = 2
+brms::hypothesis(fit_polite, "contextpol - exp(genderM) < 0")
+
+faintr::compare_groups(
+  fit_polite,
+  higher = gender == "F" & context == "inf",
+  lower  = gender == "F" & context == "pol",
+  include_bf = TRUE
 )
-
-tidybayes::epred_draws(
-  object  = fit_MT,
-  newdata = tibble(correct = c(1, 0)),
-  ndraws  = 2
-)
-
-
-##################################################
-## sample from the prior predictive
-##################################################
-
-fit_MT_prior <- 
-  brms::brm(
-    formula = RT ~ correct,
-    data    = data_MT,
-    prior   = prior(student_t(1, 0, 500)),
-    sample_prior = "only"
-  )
-
-tidybayes::predicted_draws(
-  object  = fit_MT_prior,
-  newdata = tibble(correct = c(1, 0, 1, 0)),
-  ndraws  = 1
-)  
-
-tidybayes::linpred_draws(
-  object  = fit_MT_prior,
-  newdata = tibble(correct = c(1, 0)),
-  ndraws  = 2
-)
-
-tidybayes::epred_draws(
-  object  = fit_MT_prior,
-  newdata = tibble(correct = c(1, 0)),
-  ndraws  = 2
-)
-
-##################################################
-## visual posterior predictive checks
-##################################################
-
-bayesplot::pp_check(fit_MT, ndraws = 50)
-
-##################################################
-## visual PPC with summary statistic
-##################################################
-
-predictive_samples <- 
-  brms::posterior_predict(
-    object = fit_MT, 
-    ndraws = 1000)
-
-bayesplot::ppc_stat(
-  y    = data_MT$RT, 
-  yrep = predictive_samples,
-  stat = median)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

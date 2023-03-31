@@ -28,7 +28,7 @@ $$
 \theta_i = X'' \beta_{\theta_i}
 $$
 
-# Preamble 
+# Preamble
 
 {{< include 00-preamble.qmd >}}
 
@@ -56,7 +56,6 @@ data_forget |>
 
 There are two competing models on the table.
 The exponential model assumes that recall rates are predicted by exponential decay:
-
 
 $$
 \begin{align*}
@@ -134,7 +133,6 @@ loo_compare <-
     loo(fit_power))
 ```
 
-
 There is a problem.
 The `loo` function throws a warning that at least one observation is problematic under the Pareto-k diagnostic.
 We see that this is the first one:
@@ -144,7 +142,7 @@ plot(loo(fit_power))
 ```
 
 But that plot also shows that we may have done something weird!
-We have treated as a single data point all 100 observations for each time step. 
+We have treated as a single data point all 100 observations for each time step.
 No wonder that some of these observations heavily influence to total likelihood.
 These observations are huge chunks of atomic observations.
 
@@ -211,7 +209,7 @@ We may use Ben Lambert's test for significance, just to out a number (a $p$-valu
 ```
 
 ::: {.callout-caution collapse="false"}
-## Exercise 
+## Exercise
 
 Run a (linear) logistic regression model `y ~ t` and compare it to the two non-linear models with `loo_compare`.
 Interpret your results.
@@ -260,8 +258,6 @@ The non-linear power model and the linear logistic model seem to be on a par.
 1- pnorm(-loo_compare[2,1], loo_comp[2,2])
 ```
 
-The linear model seems slightly worse, but that difference may not be substantial. 
-
-
+The linear model seems slightly worse, but that difference may not be substantial.
 :::
 :::

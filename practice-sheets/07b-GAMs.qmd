@@ -19,9 +19,9 @@ GAMs approximate wiggly curves by "smoothed splines".
 The central idea to internalize here is that *we can think of smoothed splines as a random effect*.
 This is, indeed, how `brms` deals with GAMs.
 
-<span style = "color:darkgreen"> The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/). </span>  
+[ The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/). ]{style="color:darkgreen"}
 
-# Preamble 
+# Preamble
 
 {{< include 00-preamble.qmd >}}
 
@@ -49,15 +49,16 @@ We can probably do better.
 
 The goals for the remainder of this tutorial are:
 
-1. To understand how a wiggly curve can be constructed from a set of "atomic wiggles".
-2. To see the parallel between (i) fitting weights over "atomic wiggles", with a penalty against excessive wiggliness, and fitting (ii) group-level effects.
-3. To be able to run a Bayesian regression model with penalized smoothing splines using `brms`.
+1.  To understand how a wiggly curve can be constructed from a set of "atomic wiggles".
+2.  To see the parallel between (i) fitting weights over "atomic wiggles", with a penalty against excessive wiggliness, and fitting (ii) group-level effects.
+3.  To be able to run a Bayesian regression model with penalized smoothing splines using `brms`.
 
 # Wiggly curves as mixtures over "atomic wiggles"
 
 Let's play a game!
 It's called "make a wiggle".
-Here's how it's played: I give you a bunch of "atomic wiggles", you adjust some weights, and out pops ... TADA! ... a smoothing spline.
+Here's how it's played: I give you a bunch of "atomic wiggles", you adjust some weights, and out pops ... TADA!
+... a smoothing spline.
 
 Or, for those dull at heart, in technical terms, I give you a set of *basis functions*.
 This set is also called *basis*.
@@ -137,7 +138,7 @@ make_a_wiggle <- function(some_curves, weights, data = NULL) {
 And here are some examples:
 
 ```{r}
-weights <- c(0,2,-1,1,1,2,1,1,1,1,1,1,1,10,1,1,1,1,1,1)
+weights <- c(0,2,-1,1,1,2,1,5,5,-7,1,1,1,10,1,1,1,1,1,1)
 make_a_wiggle(some_curves, weights)
 ```
 
@@ -149,7 +150,7 @@ make_a_wiggle(some_curves, weights)
 And a not so wiggly wiggle:
 
 ```{r}
-weights <- c(1,rep(0, times = 19))
+weights <- c(0,1,10,rep(0, times = 17))
 make_a_wiggle(some_curves, weights)
 ```
 
@@ -157,9 +158,7 @@ make_a_wiggle(some_curves, weights)
 ## Exercise 1: Try a manual fit
 
 Play around with weights and try to find a constellation that approximates the shape of the motorcycle data in `data_motor` that we plotted above.
-
 :::
-
 
 # Penalizing wiggliness and group-level effects
 
@@ -181,11 +180,12 @@ fit_motor_FE <- brms::brm(
   formula = accel ~ times + curve_1 + curve_2 + curve_3 + curve_4 + curve_5 + curve_6 + curve_7 + curve_8 + curve_9 + curve_10 +
     curve_11 + curve_12 + curve_13 + curve_14 + curve_15 + curve_16 + curve_17 + curve_18 + curve_19,
   data    = motor_basis,
-  prior   = prior(normal(0,10))
+  prior   = prior(normal(0,50))
 )
 ```
 
-This really only works if we specify some constraints via the priors for the coefficients! (Try a fit with improper priors!)
+This really only works if we specify some constraints via the priors for the coefficients!
+(Try a fit with improper priors!)
 
 Here is a plot of the posterior linear predictor:
 
@@ -215,7 +215,6 @@ plot_post_linPred(fit_motor_FE, motor_basis)
 
 That looks like it's on the right track, but it's not wiggly enough.
 
-
 ::: {.callout-caution collapse="false"}
 ## Exercise 2: Increasing smoothness of the predictor
 
@@ -238,21 +237,20 @@ fit_motor_FE_wider <- brms::brm(
 
 plot_post_linPred(fit_motor_FE_wider, motor_basis)
 ```
-
 :::
 :::
 
 Taking stock so far, all of this shows that:
 
-- By adjusting weights of basis functions, we can get smoothed curves.
-- These weights can be learned from the data (visual results look good).
-- BUT: *the degree of smoothness is determined by the prior on coefficients*.
+-   By adjusting weights of basis functions, we can get smoothed curves.
+-   These weights can be learned from the data (visual results look good).
+-   BUT: *the degree of smoothness is determined by the prior on coefficients*.
 
-The latter problem is worrisome because we do not want to manually adjust an important parameter like that. 
+The latter problem is worrisome because we do not want to manually adjust an important parameter like that.
 Ideally, the smoothness of the curve should be dictated by the data itself.
 Otherwise, we might overfit or remain too linear, so to speak.
 
-Notice that the parameter to tweak is the standard deviation of the normal distribution of the prior over coefficients. 
+Notice that the parameter to tweak is the standard deviation of the normal distribution of the prior over coefficients.
 The smaller this is, the more linear a curve we predict.
 The bigger the more smoothed the fit.
 So, we want a model that let's the data decide what the standard deviation is supposed to be for additive offsets to what is otherwise a vanilla regression model.
@@ -269,8 +267,7 @@ $$
 b & \sim \mathcal{N}(o, \sigma_b) \\
 \sigma_b & \sim \dots \text{some prior} \dots
 \end{align*}
-$$
-And that is exactly the structure of a group-level / random-effects model.
+$$ And that is exactly the structure of a group-level / random-effects model.
 Random effects are supposed to be small, where what counts as small enough is to be determined by the data.
 Likewise, weights of basis functions are suppose to be small and, likewise, what counts as small is not to be fixed by hand but governed by the needs of the data.
 (Here we are again: we should think of group-level effects as putting up an (elastic) fence and letting the sheep graze where they want; a gentle anything-goes within a flexible margin.)
@@ -304,12 +301,9 @@ It is interesting to interpret the summary:
 summary(fit_motor)
 ```
 
-
 The "Smooth Term" `sds(stimes_1)` is essentially the standard deviation $\sigma$ in the equations above.
-(The "sigma" is the usual standard deviation of the Gaussian likelihood function.)
-The intercept is the usual intercept, and the term "stimes_1" is the normal linear regressions slope. 
+(The "sigma" is the usual standard deviation of the Gaussian likelihood function.) The intercept is the usual intercept, and the term "stimes_1" is the normal linear regressions slope.
 But these are so distorted by the penalized smooths in which they are wrapped that is is not prudent to draw strong conclusions from them (in my understanding; though I am not certain for it).
-
 
 # Exercises
 
@@ -343,17 +337,15 @@ postPred |>
   geom_point(size = 2)
 
 ```
-
 :::
 :::
-
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 4: Posterior predictive check
 
-Consult visual posterior predictive checks for the GAM. 
-Does it look alright? Anything systematicaly amiss?
-
+Consult visual posterior predictive checks for the GAM.
+Does it look alright?
+Anything systematicaly amiss?
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -365,7 +357,6 @@ This explains why the PPCs are flatter, less pronounced.
 ```{r}
 pp_check(fit_motor, ndraws = 40)
 ```
-
 :::
 :::
 
@@ -413,13 +404,11 @@ postPred |>
 ```
 
 We see a tighter credible interval for early time points, but the change to the non-distributional model is not very large.
-
 :::
 :::
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 6: A GAM for World Temperature
-
 
 Run a Bayesian GAM for the World Temperature data (`aida::data_WorldTemp`).
 Plot the expected posterior predictor of central tendency together with the data.
@@ -475,11 +464,7 @@ tidybayes::summarise_draws(fit_temp_vanilla)[1:4,]
 
 The population-level slope parameter represents the unsmoothed linear predictor line for the splines model, but it is difficult to interpret (because we have to strip off the smoothing splines, so to speak).
 There seems to be an indication of a positive linear effect underneath the smooth, but I, personally, would not base firm conclusions on this.
-
 :::
 :::
 
-
-
-
-<span style = "color:darkgreen"> replace talk of "linear predictor" with central tendency </span>  
+[ replace talk of "linear predictor" with central tendency ]{style="color:darkgreen"}
