@@ -1,0 +1,15 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Causal inference (w/ Bayesian regression)"
+author: "Michael Franke"
+---
+
+This unit introduces the basics of causal inference, following the approach of Judea Pearl.
+The material presented here draws heavily on [this excellent primer](http://bayes.cs.ucla.edu/PRIMER/).
+What we add to this is the Bayesian-regression perspective.
+We show how to quantify uncertainty of estimates of causal effects, using Bayesian regression modeling.
+
+There is a [tutorial script](https://michael-franke.github.io/Bayesian-Regression/practice-sheets/06-causal-inference.html), 
+and here are [slides for this unit](slides/07-causal_inference.pdf).
+
+
