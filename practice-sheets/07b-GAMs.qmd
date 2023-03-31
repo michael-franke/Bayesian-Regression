@@ -16,7 +16,7 @@ editor:
 
 This tutorial provides both a conceptual and a practical introduction to fitting generalized additive models (GAMs) in `brms`.
 GAMs approximate wiggly curves by "smoothed splines".
-The central idea to internalize here is that we can think of smoothed splines as a random effect.
+The central idea to internalize here is that *we can think of smoothed splines as a random effect*.
 This is, indeed, how `brms` deals with GAMs.
 
 <span style = "color:darkgreen"> The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/). </span>  
@@ -61,7 +61,7 @@ Here's how it's played: I give you a bunch of "atomic wiggles", you adjust some 
 
 Or, for those dull at heart, in technical terms, I give you a set of *basis functions*.
 This set is also called *basis*.
-Then you build intuitions about how, by adjusting numerical weights, for the basis functions, we can flexibly approximate non-linear data.
+Then you build intuitions about how, by adjusting numerical weights for the basis functions, we can flexibly approximate non-linear data.
 
 The following code gives you a function `get_basis()` which takes as input a sequence of observations $x$ for which we would like to construct a non-linear line.
 The output is a set of "atomic wiggles" (see plot below).
@@ -185,7 +185,7 @@ fit_motor_FE <- brms::brm(
 )
 ```
 
-This really only works if we specify some constraints on the priors for the coefficients! (Try a fit with improper priors!)
+This really only works if we specify some constraints via the priors for the coefficients! (Try a fit with improper priors!)
 
 Here is a plot of the posterior linear predictor:
 
@@ -246,11 +246,11 @@ Taking stock so far, all of this shows that:
 
 - By adjusting weights of basis functions, we can get smoothed curves.
 - These weights can be learned from the data (visual results look good).
-- BUT: the degree of smoothness is determined by the prior on coefficients.
+- BUT: *the degree of smoothness is determined by the prior on coefficients*.
 
 The latter problem is worrisome because we do not want to manually adjust an important parameter like that. 
 Ideally, the smoothness of the curve should be dictated by the data itself.
-Otherwise, we might overfit or remain to linear, so to speak.
+Otherwise, we might overfit or remain too linear, so to speak.
 
 Notice that the parameter to tweak is the standard deviation of the normal distribution of the prior over coefficients. 
 The smaller this is, the more linear a curve we predict.
@@ -258,7 +258,7 @@ The bigger the more smoothed the fit.
 So, we want a model that let's the data decide what the standard deviation is supposed to be for additive offsets to what is otherwise a vanilla regression model.
 But, hey, that's *exactly* what group-level effects do, too!
 
-Concretely, we want a predictor $\eta$ which consists of the usual linear regression part $X \beta$ with an additional part $Z b$, which specifies how much deviate from the vanilla linear prediction.
+Concretely, we want a predictor $\eta$ which consists of the usual linear regression part $X \beta$ with an additional part $Z b$, which specifies how much to deviate from the vanilla linear prediction.
 In the case at hand, the matrix $Z$ is, essentially, the basis (rows are for each observation of `times`, columns correspond to the basis functions).
 We also want the coefficient's $b$ to be close to zero but with unknown variance, which is to be inferred from the data.
 The overal structure of this model is therefore:
@@ -273,8 +273,9 @@ $$
 And that is exactly the structure of a group-level / random-effects model.
 Random effects are supposed to be small, where what counts as small enough is to be determined by the data.
 Likewise, weights of basis functions are suppose to be small and, likewise, what counts as small is not to be fixed by hand but governed by the needs of the data.
+(Here we are again: we should think of group-level effects as putting up an (elastic) fence and letting the sheep graze where they want; a gentle anything-goes within a flexible margin.)
 
-It is for this reason that `brms` implements GAMs as, essentially, multi-level models, even though the touch-and-feel maybe different.
+Indeed, `brms` implements GAMs as, essentially, multi-level models, even though the touch-and-feel maybe different.
 
 # Implementing GAMs in `brms`
 
@@ -304,10 +305,10 @@ summary(fit_motor)
 ```
 
 
-The "Smooth Term" `sds(stimes_1)` is essentially the standard deviation $sigma$ in the equations above.
+The "Smooth Term" `sds(stimes_1)` is essentially the standard deviation $\sigma$ in the equations above.
 (The "sigma" is the usual standard deviation of the Gaussian likelihood function.)
 The intercept is the usual intercept, and the term "stimes_1" is the normal linear regressions slope. 
-But these are so distorted by the penalized smoothed in which they are wrapped that is is not prudent (in my understanding; though I am not certain for it) to draw strong conclusions from them.
+But these are so distorted by the penalized smooths in which they are wrapped that is is not prudent to draw strong conclusions from them (in my understanding; though I am not certain for it).
 
 
 # Exercises
@@ -477,8 +478,6 @@ There seems to be an indication of a positive linear effect underneath the smoot
 
 :::
 :::
-
-
 
 
 
