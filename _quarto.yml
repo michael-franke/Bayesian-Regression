@@ -78,6 +78,8 @@ website:
             text: Model comparison
       - section: "06: Causal inference"
         contents:
+          - href: 06-causal-inference.qmd
+            text: Overview
           - href: practice-sheets/06-causal-inference.qmd
             text: Causal inference
       - section: "07: Non-linear models"
