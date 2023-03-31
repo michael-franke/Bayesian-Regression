@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - Priors in brms: inspecting, setting &amp; sampling</title>
+<title>Bayesian Regression: Theory &amp; Practice - Gaussian process regression in brms</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -134,7 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Priors in <code>brms</code>: inspecting, setting &amp; sampling</h1>
+      <h1 class="quarto-secondary-nav-title">Gaussian process regression in <code>brms</code></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -164,12 +164,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">01: Basics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">01: Basics</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../01-basics.html" class="sidebar-item-text sidebar-link">Overview</a>
@@ -192,7 +192,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link active">Priors</a>
+  <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link">Priors</a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -344,12 +344,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">07: Non-linear models</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">07: Non-linear models</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../practice-sheets/07a-nonLinear.html" class="sidebar-item-text sidebar-link">Custom non-linearity</a>
@@ -362,7 +362,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/07c-Gaussian-processes.html" class="sidebar-item-text sidebar-link">Gaussian processes regression</a>
+  <a href="../practice-sheets/07c-Gaussian-processes.html" class="sidebar-item-text sidebar-link active">Gaussian processes regression</a>
   </div>
 </li>
       </ul>
@@ -377,18 +377,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
-  <li><a href="#set-up-example" id="toc-set-up-example" class="nav-link" data-scroll-target="#set-up-example">Set up example</a></li>
-  <li><a href="#inspect-change-priors" id="toc-inspect-change-priors" class="nav-link" data-scroll-target="#inspect-change-priors">Inspect &amp; change priors</a></li>
-  <li><a href="#sample-from-prior" id="toc-sample-from-prior" class="nav-link" data-scroll-target="#sample-from-prior">Sample from prior</a></li>
+  <li><a href="#gaussian-processes" id="toc-gaussian-processes" class="nav-link" data-scroll-target="#gaussian-processes">Gaussian processes</a></li>
+  <li><a href="#a-compact-prior-over-functions" id="toc-a-compact-prior-over-functions" class="nav-link" data-scroll-target="#a-compact-prior-over-functions">A compact prior over functions</a></li>
+  <li><a href="#gp-regression-in-brms" id="toc-gp-regression-in-brms" class="nav-link" data-scroll-target="#gp-regression-in-brms">GP regression in <code>brms</code></a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/01c-priors.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/07c-Gaussian-processes.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Priors in <code>brms</code>: inspecting, setting &amp; sampling</h1>
+<h1 class="title d-none d-lg-block">Gaussian process regression in <code>brms</code></h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -410,11 +410,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This tutorial covers how to inspect, set and sample priors in Bayesian regression models with <code>brms</code>. The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution. How to obtain samples from the prior predictive distribution is covered in a separate chapter.</p>
+<p>This tutorial provides both a brief conceptual introduction into Gaussian process regression. It develops intuitions about how, from a generalization of multi-variate normal distributions, we can obtain something like a “prior over functions”. It also demonstrates how a Gaussian process regression can be implemented in <code>brms</code>.</p>
 <section id="preamble" class="level1">
 <h1>Preamble</h1>
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-1_7d8c63c2877685b05540029d4f407382">
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-1_b34fe7d5c382b07276bcafaab9cb6098">
 <details>
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
@@ -472,300 +472,210 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 </div>
 </section>
-<section id="set-up-example" class="level1">
-<h1>Set up example</h1>
-<p>We work with the mouse-tracking data from the <code>aida</code> package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve <code>AUC</code> and <code>MAD</code>. Here is the relevant data plot:</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-2_b09eaec87cf47178f24dc3a804aacba3">
+<section id="gaussian-processes" class="level1">
+<h1>Gaussian processes</h1>
+<p>A Gaussian process is a generalization of a multi-variate normal distribution, which in turn is a generalization of a simple normal distribution. A simple normal distribution provides a likelihood for a single response variable <span class="math inline">\(y\)</span> based on a pair of <em>single</em> numbers for mean <span class="math inline">\(x\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>:</p>
+<p><span class="math display">\[
+y \sim \mathcal{N}(x, \sigma)
+\]</span></p>
+<p>A multivariate Gaussian extends this to provide a probability of a vector <span class="math inline">\(\mathbf{y}\)</span> of <span class="math inline">\(k\)</span> finite numbers for a <span class="math inline">\(k\)</span>-place vector of means <span class="math inline">\(\mathbf{x}\)</span> and a <span class="math inline">\(k \times k\)</span> covariance matrix <span class="math inline">\(\Sigma\)</span>:</p>
+<p><span class="math display">\[
+\mathbf{y} \sim \text{MV-Normal}(\mathbf{x}, \Sigma)
+\]</span></p>
+<p>One heuristic way of thinking of a Gaussian process is as a whole (infinite) set of systematically related multi-variate normal distributions. For each vector <span class="math inline">\(\mathbf{x}\)</span> of means, with arbitrary finite length <span class="math inline">\(k\)</span>, this set contains a multi-variate normal distribution for us. So, we are not stuck with one specific <span class="math inline">\(k\)</span>, but we have exactly one for each <span class="math inline">\(\mathbf{x}\)</span> no matter what <span class="math inline">\(k\)</span>, as long as it is finite.</p>
+<p>To obtain such a set, we construct a function which, for a given <span class="math inline">\(\mathbf{x}\)</span>, constructs a covariance matrix <span class="math inline">\(\Sigma\)</span> for us in a systematic way. This is done via a so-called <strong>kernel</strong>. The kernel is what gives us the “systematicity” in our set of multi-variate normal distributions. (It also regulates the overal shape of functions implied by the Gaussian process; more on this below.)</p>
+<p>There are many different useful kernels, but the most salient one is perhaps the <strong>radial basis function kernel</strong>. It is defined as follows:</p>
+<p><span class="math display">\[
+k(\mathbf{x},\mathbf{x}') = \sigma_f^2 \ \exp \left [ - \frac{||\mathbf{x} - \mathbf{x}'||^2}{2 \lambda}\right]
+\]</span></p>
+<p>Here <span class="math inline">\(||\cdot||\)</span> is the Euclidean norm, defined as <span class="math inline">\(||\mathbf{x}|| = \sqrt{x_1^2 + \dots + x_k^2}\)</span>, an expression of the length of a vector. There are two parameters in the radial basis kernel:</p>
+<ul>
+<li><span class="math inline">\(\sigma_f\)</span> is <em>signal variance</em>, and</li>
+<li><span class="math inline">\(\lambda\)</span> is the *length scale.</li>
+</ul>
+<p>For a given vector <span class="math inline">\(\mathbf{x}\)</span>, we can use the kernel to construct finite multi-variate normal distribution associated with it like so:</p>
+<p><span class="math display">\[
+\mathbf{x} \mapsto_{GP} \text{MV-Norm}(m(\mathbf{x}), k(\mathbf{x},  \mathbf{x}))
+\]</span></p>
+<p>where <span class="math inline">\(m\)</span> is a function that specifies the mean for the distribution associated with <span class="math inline">\(\mathbf{x}\)</span>. This mapping is essentially the Gaussian process: a systematic association of vectors of arbitrary length with a suitable multi-variate normal distribution.</p>
+</section>
+<section id="a-compact-prior-over-functions" class="level1">
+<h1>A compact prior over functions</h1>
+<p>Cool, but why do we care? We care because a Gaussian process (GP) allows us to specify a vast amount of non-linear curves, so to speak. More concretely, a GP, defined by a kernel <span class="math inline">\(k(\cdot)\)</span>, a mean function <span class="math inline">\(m(\cdot)\)</span>, and the parameters <span class="math inline">\(\sigma_f\)</span> and <span class="math inline">\(\lambda\)</span>, implies a prior of functions. This is very abstract and best explored through simulation.</p>
+<p>Here are two convenience functions. The first is called <code>get_GP_simulation</code> and it samples from a Gaussian process regression. It takes as input a vector <code>x</code> to generated predictions for, values for the kernel parameters <code>sigma_f</code> and <code>lambda</code> and also the usual simple linear regression parameters <code>Intercept</code>, <code>slope</code> and <code>sigma</code>. The second function is called <code>plot_GP_simulation</code> takes as input what the first function delivers and provides a plot.</p>
+<p>Using these functions we can explore how we can “generate wiggly lines” for different input vectors <code>x</code> and parameter settings.</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-2_53cc4a649edeb03fcfa1752dbc61e24e">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># catchy name for the data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dolphin <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_MT</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create aggregate data</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="ot">&lt;-</span> dolphin <span class="sc">|&gt;</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(correct <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subject_id) <span class="sc">|&gt;</span> </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">median</span>(AUC, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAD =</span> <span class="fu">median</span>(MAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="sc">|&gt;</span> </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> MAD, <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_GP_simulation <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">10</span>, <span class="at">by =</span> <span class="fl">0.1</span>), </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">Intercept =</span> <span class="dv">0</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">slope =</span> <span class="dv">1</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">sigma =</span> <span class="dv">1</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">sigma_f=</span><span class="fl">0.5</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">lambda=</span><span class="dv">100</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span> <span class="fu">is.null</span>(seed)){</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">set.seed</span>(seed)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># number of points to generate prediction for</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    N <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># linear predictor (vanilla LM)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    eta <span class="ot">=</span> Intercept <span class="sc">+</span> slope <span class="sc">*</span> x</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># kernel function (here: radial basis function kernel)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    get_covmatrix <span class="ot">&lt;-</span> <span class="cf">function</span>(x, sigma_f, lambda) {</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      K <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow=</span>N, <span class="at">ncol=</span>N)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>          K[i,j] <span class="ot">=</span> sigma_f<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">exp</span>(<span class="fu">sqrt</span>((i<span class="sc">-</span>j)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span>lambda))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(K)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># covariance matrix</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">get_covmatrix</span>(x, sigma_f, lambda)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gaussian process wiggles</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    epsilon_gp <span class="ot">&lt;-</span> mvtnorm<span class="sc">::</span><span class="fu">rmvnorm</span>(</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">n     =</span> <span class="dv">1</span>, </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean  =</span> <span class="fu">rep</span>(<span class="dv">0</span>, N),</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">sigma =</span> K)[<span class="dv">1</span>,]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># central tendency</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> epsilon_gp <span class="sc">+</span> eta</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data prediction</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(x, eta, mu, y) </span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>plot_GP_simulation <span class="ot">&lt;-</span> <span class="cf">function</span>(GP_simulation) {</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  GP_simulation <span class="sc">|&gt;</span> </span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> eta )) <span class="sc">+</span> </span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">color =</span> project_colors[<span class="dv">1</span>], <span class="at">size =</span> <span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> mu), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> y), <span class="at">color =</span> project_colors[<span class="dv">3</span>], <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="fl">1.2</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Here is an example:</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-3_1c24e3e7f8693715d1f50424921b5fb8">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_GP_simulation</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">500</span>), </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intercept =</span> <span class="dv">0</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">slope =</span> <span class="fl">0.3</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_f =</span> <span class="fl">0.05</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda  =</span> <span class="dv">20</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_GP_simulation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="01c-priors_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+<p><img src="07c-Gaussian-processes_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-3_8d2cb0b98e06a52e008f34faf421dcc4">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run the model</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">=</span> <span class="fu">brm</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="inspect-change-priors" class="level1">
-<h1>Inspect &amp; change priors</h1>
-<p>We can inspect the priors used in in a model fit like so:</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-4_6961ed1b1c4bec0efa43b0bae1d7ee15">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">prior_summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>                          prior     class coef group resp dpar nlpar lb ub
- student_t(3, 14864.2, 32772.3) Intercept                                 
-                         (flat)         b                                 
-                         (flat)         b  MAD                            
-       student_t(3, 0, 32772.3)     sigma                             0   
-       source
-      default
-      default
- (vectorized)
-      default</code></pre>
-</div>
-</div>
-<p>The table gives information about the kind of prior used for different parameters. Parameters are classified into different classes (column “class”). The “b” class contains the slope coeffiecients. Here, we only have one slope (for MAD), which is identified in the “coef” column. For more complex models, the other colums may be important (e.g., identifying groups in multi-level models, for parameters in distributional and non-linear models, as well as lower and upper bounded paramters).</p>
-<p>This particular output tells us that the priors for the slope coefficient for the variable <code>MAD</code> was “flat”. Per default, <code>brms</code> uses so-called <em>improper priors</em> for slope coefficients, i.e., not specifying any prior at all, so that every parameter value is equally weighted (even if this is not a proper probability distribution since the support is infinite).</p>
-<p>In contrast, <code>brms</code> /does/ use more specific, in fact rather smart, priors for the intercept and for the standard deviation. These priors are informed by the data. Look:</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-5_aa5b743b59931f464b43ca4dabf5cc55">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="sc">|&gt;</span> <span class="fu">pull</span>(AUC) <span class="sc">|&gt;</span> <span class="fu">median</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 14864.25</code></pre>
-</div>
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="sc">|&gt;</span> <span class="fu">pull</span>(AUC) <span class="sc">|&gt;</span> <span class="fu">sd</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 49258.31</code></pre>
-</div>
-</div>
-<p>We can change the priors used to fit the model with the <code>prior</code> attribute and the <code>brms::prior()</code> function. Here, we set it to a normal (with ridiculously small standard deviation).</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-6_343a37ccb6e8960d4a9ffb33d48f2654">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">class =</span> <span class="st">"b"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>The <code>brms::prior()</code> function expects the prior to be specified as a Stan expression. Full documentation of the available functions for priors is in the <a href="https://mc-stan.org/docs/functions-reference/index.html">Stan Functions Reference</a>.</p>
+<p>The blue line is a regular, simple linear regression line, the <em>linear predictor</em> part, if you will. The red line is the <em>predictor of central tendency</em>, obtained by overlaying the linear predictor with “wiggles” sampled from the Gaussian process. The yellow dots are actual samples (obtained from a normal distribution) around the central predictor line.</p>
 <div class="callout-caution callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Exercise 1a
+Exercise
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Fit a third model <code>model3</code> as the previous ones, but set the prior for the slope coefficient to a Student’s <span class="math inline">\(t\)</span> distribution with mean 0, standard deviation 100 and one degree of freedom.</p>
-<div class="callout-tip callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-7_3dcfd024766b532bf801072827c64836">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">100</span>), <span class="at">class =</span> <span class="st">"b"</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<p>Using these functions get intuitions for the kinds of curves you generate for different input vectors and parameter constellations.</p>
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="callout-caution callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Exercise 1b
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
-<div class="callout-body-container callout-body">
-<p>Compare the mean posteriors for all three main parameters (intercept, slope for MAD and sigma) in all three models. What effect did changing the prior on the slope parameter have for models 2 and 3? Remember that the priors for these models are quite “unreasonable” in the sense that they are far away from the posterior obtained for model 1.</p>
-<div class="callout-tip callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-8_e8080a6dd3ada96d1c487b73306f8d88">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>extract_info <span class="ot">&lt;-</span> <span class="cf">function</span>(model_fit, label) {</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>(model_fit) <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> label) <span class="sc">|&gt;</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(model, variable, q5, mean, q95) <span class="sc">|&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'b_Intercept'</span>, <span class="st">'b_MAD'</span>, <span class="st">'sigma'</span>))</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_info</span>(model1, <span class="st">"model 1"</span>),</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_info</span>(model2, <span class="st">"model 2"</span>),</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_info</span>(model3, <span class="st">"model 3"</span>)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(variable, model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 9 × 5
-  model   variable          q5    mean     q95
-  &lt;chr&gt;   &lt;chr&gt;          &lt;num&gt;   &lt;num&gt;   &lt;num&gt;
-1 model 1 b_Intercept -2685.     465.   3491. 
-2 model 2 b_Intercept 14960.   22212.  29436. 
-3 model 3 b_Intercept -2551.     517.   3578. 
-4 model 1 b_MAD         428.     455.    482. 
-5 model 2 b_MAD           5.79    22.0    38.0
-6 model 3 b_MAD         428.     454.    482. 
-7 model 1 sigma       15388.   17193.  19267. 
-8 model 2 sigma       42085.   47338.  53323. 
-9 model 3 sigma       15362.   17178.  19233. </code></pre>
-</div>
-</div>
-<p>We see that the Student-t prior in model 3 gives a very similar fit as for model 1. This is likely due to the heavier tails of the Student-t distribution.</p>
-<p>We also see that the more restricted model 2 has a much lower mean posterior for the slope coefficient (because this parameter is “leashed close to zero” by the prior). Instead, model 2 compensates with a much higher intercept estimate.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<p>The important upshot of this exercise is that <strong>since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters</strong> (who have to “go out of their way” to compensate for what the other parameter can or cannot do, so to speak).</p>
-<p>This raises the question of how to determine “good priors”. This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: <strong>priors should be evaluated in the context of the (prior) predictions they entail</strong>. That’s the topic we attend to in the next section.</p>
+<p><strong>Caveat.</strong> This generation script is a simplified procedural illustration of a Gaussian process regression (an intuition gym). The actual implementation of a Bayesian Gaussian process regression (e.g., in <code>brms</code>) is much more involved. Nevertheless, we can appreciate the most important idea: for a set of parameter values supplied to the function <code>get_GP_simulation</code> we get different wiggly regression lines. So, reverting this generative process (or one similar to it), we can ask: which parameter values are likely to have generated a set of <span class="math inline">\(x,y\)</span> observations? And that is the simple and elegant idea behing Bayesian Gaussian process regression.</p>
 </section>
-<section id="sample-from-prior" class="level1">
-<h1>Sample from prior</h1>
-<p>Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option <code>sample_prior = "only"</code> to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-9_46f9ae33fccec6f490875db30e390ce7">
+<section id="gp-regression-in-brms" class="level1">
+<h1>GP regression in <code>brms</code></h1>
+<p>To implement GP regression in <code>brms</code> (using a radial basis function kernel; the only kernel currently implemented), just need to specify <code>gp()</code> for the predictor for which we want “GP wiggles”, so to speak.</p>
+<p>In practice, GPR can be slow and parameters hard to identify. Let’s therefore try a simple example of parameter recovery, keeping in mind that the underyling implementation in <code>brms</code> may be slightly different from the heuristic protocol used for intuition-building here. It will therefore be particularly interesting to see if we can recover the intercept and slope of the generating model, i.e., the “linear core” from which we are most likely to draw relevant conclusions eventually (e.g., is there a main (linear) effect of factor XYZ underneath the wiggliness).</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-4_b86a1424e77d6f625457fb60913cf846">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model2_priorOnly <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">class =</span> <span class="st">"b"</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">'only'</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>GP_simulation <span class="ot">&lt;-</span> <span class="fu">get_GP_simulation</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">100</span>), </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intercept =</span> <span class="dv">0</span>, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">slope =</span> <span class="dv">1</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_f =</span> <span class="fl">0.5</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda  =</span> <span class="dv">2</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="fl">0.0001</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1996</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_GP_simulation</span>(GP_simulation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07c-Gaussian-processes_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here is the GP-regression model in <code>brms</code>:</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-5_ff47c367050b24bb46a50b69fd6f050c">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># results: hide</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fit_GPR <span class="ot">&lt;-</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">gp</span>(x) <span class="sc">+</span> x,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> GP_simulation,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter    =</span> <span class="dv">4000</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-10_9c88ea7e69222555d1bd79b6bed1c9ea">
+<p>It seems that we have recoverd the “linear core” parameters reasonably well, even if the estimates of the other parameter diverge from those we used to create the data (which is because the data-generating models are actually different).</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-6_5ee79046f23a4d2476f9b27baba6a7ae">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model2_priorOnly <span class="sc">|&gt;</span> tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>() <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  variable         mean      median       sd      mad       q5
-  &lt;chr&gt;           &lt;num&gt;       &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
-1 b_Intercept 14717.    14813.      73087.   37719.   -61413. 
-2 b_MAD          -0.134    -0.00763    10.1     10.1     -16.8
-3 sigma       35757.    25675.      39130.   23083.     2453. 
-4 lprior        -27.4     -26.9         1.74     1.36    -30.7
-5 lp__          -17.4     -17.0         1.63     1.31    -20.4</code></pre>
-</div>
-</div>
-<p>It is also possible to obtain a posterior fit /and/ prior samples at the same time, but that is a bit more fickle, as the prior samples will have other names, and (AFAICS) other functions are required than for posterior samples, entailing other formatting of the returned samples.</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-11_85eefe20596a5606135dc707d7635d43">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model2_priorAdded <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">class =</span> <span class="st">"b"</span>),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="cn">TRUE</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-12_d5802ea1b0163866c543e270225e3a6b">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior samples</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>model2_priorAdded <span class="sc">|&gt;</span> tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>() <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_GPR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 6
-  variable              mean     median       sd       mad        q5
-  &lt;chr&gt;                &lt;num&gt;      &lt;num&gt;    &lt;num&gt;     &lt;num&gt;     &lt;num&gt;
-1 b_Intercept     22311.     22271.      4515.    4603.     15071.  
-2 b_MAD              21.7       21.6       10.2     10.4        4.87
-3 sigma           47382.     47221.      3393.    3361.     42084.  
-4 prior_Intercept 15349.     14059.     55660.   39814.    -60965.  
-5 prior_b            -0.0959     0.0351    10.1     10.2      -17.0 
-6 prior_sigma     37971.     25452.     45590.   23776.      2050.  
-7 lprior            -29.3      -28.8        2.31     2.07     -33.7 
-8 lp__            -1335.     -1334.         1.21     0.981  -1337.  </code></pre>
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: y ~ gp(x) + x 
+   Data: GP_simulation (Number of observations: 100) 
+  Draws: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
+         total post-warmup draws = 8000
+
+Gaussian Process Terms: 
+            Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sdgp(gpx)       0.44      0.08     0.31     0.61 1.01      870      862
+lscale(gpx)     0.03      0.00     0.02     0.04 1.01      353      338
+
+Population-Level Effects: 
+          Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept     0.07      0.11    -0.15     0.29 1.00     3021     2846
+x             1.16      0.20     0.78     1.57 1.00     1808     1002
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma     0.21      0.02     0.17     0.25 1.00     1993     2464
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
+</div>
+<p>The fitted curve also looks very reasonable.</p>
+<div class="cell" data-hash="07c-Gaussian-processes_cache/html/unnamed-chunk-7_b345329680fd3da9ed8c972bb5b63566">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prior samples</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">prior_samples</span>(model2_priorAdded) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(fit_GPR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Intercept             b                 sigma         
- Min.   :-558085   Min.   :-40.40793   Min.   :     1.2  
- 1st Qu.: -11931   1st Qu.: -6.83035   1st Qu.: 12027.3  
- Median :  14059   Median :  0.03513   Median : 25452.1  
- Mean   :  15349   Mean   : -0.09590   Mean   : 37971.3  
- 3rd Qu.:  41601   3rd Qu.:  6.89005   3rd Qu.: 48406.1  
- Max.   : 486243   Max.   : 31.14966   Max.   :677048.6  </code></pre>
-</div>
-</div>
-<p>A third possibility is to use <code>stats::update()</code> to draw additional prior samples from an already fitted object, like so:</p>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-13_6a5efb368d882a5f00fb56d40dc988b1">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this fit only contains priors but keeps them with the same names and structure</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># as the posterior samples in `model2`</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>model2_priorUpdate <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">update</span>(model2, <span class="at">sample_prior =</span> <span class="st">"only"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-14_36368e5f5fd57f5d7e9b2205cc7dc1eb">
-<details open="">
-<summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model2_priorUpdate <span class="sc">|&gt;</span> tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>() <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  variable         mean    median       sd      mad       q5
-  &lt;chr&gt;           &lt;num&gt;     &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
-1 b_Intercept 15002.    15430.    69846.   38872.   -68581. 
-2 b_MAD           0.360     0.491    10.1      9.97    -16.2
-3 sigma       36695.    24807.    41620.   24104.     1969. 
-4 lprior        -27.5     -27.0       1.80     1.41    -30.9
-5 lp__          -17.5     -17.1       1.67     1.32    -20.7</code></pre>
+<div class="cell-output-display">
+<p><img src="07c-Gaussian-processes_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
