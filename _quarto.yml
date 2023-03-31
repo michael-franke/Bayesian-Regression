@@ -75,17 +75,19 @@ website:
           - href: 05-model-comparison.qmd
             text: Overview
           - href: practice-sheets/05a-model-comparison.qmd
-            text: Model comparison (practice)
+            text: Model comparison
       - section: "06: Causal inference"
         contents:
           - href: practice-sheets/06-causal-inference.qmd
-            text: Causal inference (practice)
+            text: Causal inference
       - section: "07: Non-linear models"
         contents:
           - href: practice-sheets/07a-nonLinear.qmd
             text: Custom non-linearity
           - href: practice-sheets/07b-GAMs.qmd
-            text: GAMs
+            text: Generalized additive models
+          - href: practice-sheets/07c-Gaussian-processes.qmd
+            text: Gaussian processes regression
 
 format:
   html:
