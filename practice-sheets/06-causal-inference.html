@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - 07: Causal inference</title>
+<title>Bayesian Regression: Theory &amp; Practice - Causal inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -134,7 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">07: Causal inference</h1>
+      <h1 class="quarto-secondary-nav-title">Causal inference</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -322,7 +322,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/05a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison (practice)</a>
+  <a href="../practice-sheets/05a-model-comparison.html" class="sidebar-item-text sidebar-link">Model comparison</a>
   </div>
 </li>
       </ul>
@@ -337,7 +337,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/06-causal-inference.html" class="sidebar-item-text sidebar-link active">Causal inference (practice)</a>
+  <a href="../06-causal-inference.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/06-causal-inference.html" class="sidebar-item-text sidebar-link active">Causal inference</a>
   </div>
 </li>
       </ul>
@@ -408,7 +413,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">07: Causal inference</h1>
+<h1 class="title d-none d-lg-block">Causal inference</h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -499,9 +504,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="case-1-gender">Case 1: Gender</h2>
 <p>In the first scenario (referred to as “Case 1: Gender as a confound”), the data was collected by the following procedure:</p>
 <ul>
-<li>700 participants were recruited, out of which 357 identified as <code>male</code> and 343 identified as <code>350</code> female</li>
-<li>each participant decides whether or not to take a new drug</li>
-<li>we observe whether the patient recovered or not</li>
+<li>700 participants were recruited, out of which 357 identified as male and 343 identified as female</li>
+<li>each participant decided whether or not to take the drug</li>
+<li>we observed whether the participant recovered or not (binary outcome)</li>
 </ul>
 <p>Here is the data for the first scenario:</p>
 <div class="cell" data-hash="06-causal-inference_cache/html/unnamed-chunk-2_ffbd8e0f6e8e0d8a09eb764a4d085a44">
@@ -551,9 +556,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>But now consider a second scenario. Data was collected by the following process:</p>
 <ul>
 <li>700 participants were recruited</li>
-<li>each participant decides whether or not to take a new drug</li>
-<li>each patient is assigned to a <code>high</code> and <code>low</code> blood pressure group, after a blood pressure measurement (if a patient took the drug, this measurement happens <em>after</em> having taken the drug)</li>
-<li>we observe whether each patient recovered or not</li>
+<li>each participant decided whether or not to take the drug</li>
+<li>each participant’s blood pressure is measured and, based on this measurement, the participant is assigned to a <code>high</code> and <code>low</code> blood pressure group (measurement happens <em>after</em> having taken the drug)</li>
+<li>we observed whether each participant recovered or not</li>
 </ul>
 <p>The data for this scenario look as follows:</p>
 <div class="cell" data-hash="06-causal-inference_cache/html/unnamed-chunk-4_504b95cda422b36444f85d9fe016ecb5">
@@ -606,7 +611,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p></p><figcaption class="figure-caption">Causal structure of scenario 1: gender is a confound</figcaption><p></p>
 </figure>
 </div>
-<p>Now consider the second scenario. Again, we have three binary variables. But since <code>blood pressure</code> is measures <em>after</em> the treatment, it is not plausible that it could have influenced the decision of whether to take the drug or not. Reversely, it <em>is</em> plausible to assume, i.e., to at least allow for the possibility, that <code>blood pressure</code> was affected by gender and that it may have affected <code>recovery</code>. As before, we also make room for the possibility that <code>drug</code> may affect <code>recovery</code> also directly.</p>
+<p>Now consider the second scenario. Again, we have three binary variables. But since <code>blood pressure</code> is measured <em>after</em> the treatment, it is not plausible that it could have influenced the decision of whether to take the drug or not. Reversely, it <em>is</em> plausible to assume, i.e., to at least allow for the possibility, that <code>blood pressure</code> was affected by gender and that it may have affected <code>recovery</code>. As before, we also make room for the possibility that <code>drug</code> may affect <code>recovery</code> also directly.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><embed src="../pics/Simpson-paradox-mediator.pdf" class="img-fluid"></p>
@@ -1123,7 +1128,7 @@ Solution
 </div>
 </div>
 </div>
-<p><span style="color:darkgreen"> TODO: include direct effect computation for mediator case </span></p>
+<!-- [TODO: include direct effect computation for mediator case]{style="color:darkgreen"} -->
 
 
 </section>
