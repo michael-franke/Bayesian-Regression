@@ -417,7 +417,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This tutorial provides both a conceptual and a practical introduction to fitting generalized additive models (GAMs) in <code>brms</code>. GAMs approximate wiggly curves by “smoothed splines”. The central idea to internalize here is that we can think of smoothed splines as a random effect. This is, indeed, how <code>brms</code> deals with GAMs.</p>
+<p>This tutorial provides both a conceptual and a practical introduction to fitting generalized additive models (GAMs) in <code>brms</code>. GAMs approximate wiggly curves by “smoothed splines”. The central idea to internalize here is that <em>we can think of smoothed splines as a random effect</em>. This is, indeed, how <code>brms</code> deals with GAMs.</p>
 <p><span style="color:darkgreen"> The material here leans heavily on <a href="https://www.tjmahr.com/random-effects-penalized-splines-same-thing/">T.J. Mahr’s excellent tutorial</a>. </span></p>
 <section id="preamble" class="level1">
 <h1>Preamble</h1>
@@ -512,7 +512,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="wiggly-curves-as-mixtures-over-atomic-wiggles" class="level1">
 <h1>Wiggly curves as mixtures over “atomic wiggles”</h1>
 <p>Let’s play a game! It’s called “make a wiggle”. Here’s how it’s played: I give you a bunch of “atomic wiggles”, you adjust some weights, and out pops … TADA! … a smoothing spline.</p>
-<p>Or, for those dull at heart, in technical terms, I give you a set of <em>basis functions</em>. This set is also called <em>basis</em>. Then you build intuitions about how, by adjusting numerical weights, for the basis functions, we can flexibly approximate non-linear data.</p>
+<p>Or, for those dull at heart, in technical terms, I give you a set of <em>basis functions</em>. This set is also called <em>basis</em>. Then you build intuitions about how, by adjusting numerical weights for the basis functions, we can flexibly approximate non-linear data.</p>
 <p>The following code gives you a function <code>get_basis()</code> which takes as input a sequence of observations <span class="math inline">\(x\)</span> for which we would like to construct a non-linear line. The output is a set of “atomic wiggles” (see plot below). The function also takes an integer value <code>k</code> as input, which is the number of “atomic wiggles” that you get.</p>
 <p>Do not worry about the details of this function, better to directly look at its output. But if you must know: this function uses the <code>gam</code> function from the <code>mgcv</code> package to construct (indirectly, through the model matrix internally built up by <code>mgcv::gam</code>) <code>k</code> cubic regression splines. The <code>brms</code> package uses the function <code>mgcv:s</code> which is called here in the model formula as well (more on this below).</p>
 <div class="cell" data-hash="07b-GAMs_cache/html/unnamed-chunk-3_983bb3ffaa7eb93623df07fe2a3c02a2">
@@ -653,7 +653,7 @@ Exercise 1: Try a manual fit
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>This really only works if we specify some constraints on the priors for the coefficients! (Try a fit with improper priors!)</p>
+<p>This really only works if we specify some constraints via the priors for the coefficients! (Try a fit with improper priors!)</p>
 <p>Here is a plot of the posterior linear predictor:</p>
 <div class="cell" data-hash="07b-GAMs_cache/html/unnamed-chunk-10_fca6a4dcf4b0a9ec77541d66443bf493">
 <details open="">
@@ -735,19 +735,19 @@ Solution
 <ul>
 <li>By adjusting weights of basis functions, we can get smoothed curves.</li>
 <li>These weights can be learned from the data (visual results look good).</li>
-<li>BUT: the degree of smoothness is determined by the prior on coefficients.</li>
+<li>BUT: <em>the degree of smoothness is determined by the prior on coefficients</em>.</li>
 </ul>
-<p>The latter problem is worrisome because we do not want to manually adjust an important parameter like that. Ideally, the smoothness of the curve should be dictated by the data itself. Otherwise, we might overfit or remain to linear, so to speak.</p>
+<p>The latter problem is worrisome because we do not want to manually adjust an important parameter like that. Ideally, the smoothness of the curve should be dictated by the data itself. Otherwise, we might overfit or remain too linear, so to speak.</p>
 <p>Notice that the parameter to tweak is the standard deviation of the normal distribution of the prior over coefficients. The smaller this is, the more linear a curve we predict. The bigger the more smoothed the fit. So, we want a model that let’s the data decide what the standard deviation is supposed to be for additive offsets to what is otherwise a vanilla regression model. But, hey, that’s <em>exactly</em> what group-level effects do, too!</p>
-<p>Concretely, we want a predictor <span class="math inline">\(\eta\)</span> which consists of the usual linear regression part <span class="math inline">\(X \beta\)</span> with an additional part <span class="math inline">\(Z b\)</span>, which specifies how much deviate from the vanilla linear prediction. In the case at hand, the matrix <span class="math inline">\(Z\)</span> is, essentially, the basis (rows are for each observation of <code>times</code>, columns correspond to the basis functions). We also want the coefficient’s <span class="math inline">\(b\)</span> to be close to zero but with unknown variance, which is to be inferred from the data. The overal structure of this model is therefore:</p>
+<p>Concretely, we want a predictor <span class="math inline">\(\eta\)</span> which consists of the usual linear regression part <span class="math inline">\(X \beta\)</span> with an additional part <span class="math inline">\(Z b\)</span>, which specifies how much to deviate from the vanilla linear prediction. In the case at hand, the matrix <span class="math inline">\(Z\)</span> is, essentially, the basis (rows are for each observation of <code>times</code>, columns correspond to the basis functions). We also want the coefficient’s <span class="math inline">\(b\)</span> to be close to zero but with unknown variance, which is to be inferred from the data. The overal structure of this model is therefore:</p>
 <p><span class="math display">\[
 \begin{align*}
 \eta &amp;= X \beta + Z b \\
 b &amp; \sim \mathcal{N}(o, \sigma_b) \\
 \sigma_b &amp; \sim \dots \text{some prior} \dots
 \end{align*}
-\]</span> And that is exactly the structure of a group-level / random-effects model. Random effects are supposed to be small, where what counts as small enough is to be determined by the data. Likewise, weights of basis functions are suppose to be small and, likewise, what counts as small is not to be fixed by hand but governed by the needs of the data.</p>
-<p>It is for this reason that <code>brms</code> implements GAMs as, essentially, multi-level models, even though the touch-and-feel maybe different.</p>
+\]</span> And that is exactly the structure of a group-level / random-effects model. Random effects are supposed to be small, where what counts as small enough is to be determined by the data. Likewise, weights of basis functions are suppose to be small and, likewise, what counts as small is not to be fixed by hand but governed by the needs of the data. (Here we are again: we should think of group-level effects as putting up an (elastic) fence and letting the sheep graze where they want; a gentle anything-goes within a flexible margin.)</p>
+<p>Indeed, <code>brms</code> implements GAMs as, essentially, multi-level models, even though the touch-and-feel maybe different.</p>
 </section>
 <section id="implementing-gams-in-brms" class="level1">
 <h1>Implementing GAMs in <code>brms</code></h1>
@@ -805,7 +805,7 @@ and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<p>The “Smooth Term” <code>sds(stimes_1)</code> is essentially the standard deviation <span class="math inline">\(sigma\)</span> in the equations above. (The “sigma” is the usual standard deviation of the Gaussian likelihood function.) The intercept is the usual intercept, and the term “stimes_1” is the normal linear regressions slope. But these are so distorted by the penalized smoothed in which they are wrapped that is is not prudent (in my understanding; though I am not certain for it) to draw strong conclusions from them.</p>
+<p>The “Smooth Term” <code>sds(stimes_1)</code> is essentially the standard deviation <span class="math inline">\(\sigma\)</span> in the equations above. (The “sigma” is the usual standard deviation of the Gaussian likelihood function.) The intercept is the usual intercept, and the term “stimes_1” is the normal linear regressions slope. But these are so distorted by the penalized smooths in which they are wrapped that is is not prudent to draw strong conclusions from them (in my understanding; though I am not certain for it).</p>
 </section>
 <section id="exercises" class="level1">
 <h1>Exercises</h1>
