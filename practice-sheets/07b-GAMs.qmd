@@ -1,5 +1,5 @@
 ---
-title: "XX: Generalized additive models in `brms`"
+title: "Generalized additive models in `brms`"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
