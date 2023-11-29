@@ -161,6 +161,75 @@ Here is a summary of the fit:
 summary(fit_logistic)
 ```
 
+::: {.callout-caution collapse="false"}
+## Exercise 1a
+
+This exercise tries to highlight the difference between the linear predictor and the prediction of central tendency.
+
+Use the function `faintr::extract_cell_draws` to get posterior samples for the linear predictor $\eta$ for each cell.
+Transform each sample with the logistic function, this gives you a sample of the predictor of central tendency $\xi$, and take the mean over these.
+
+Compare the estimated cell means to the empirical means.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+logistic <- function(x) {
+  1 / (1+ exp(-x))
+}
+
+faintr::extract_cell_draws(fit_logistic) |> 
+  # drop variables for chain, iteration, draw
+  select(-starts_with(".")) |> 
+  # apply logistic function to each column
+  mutate(across(c(1:4), logistic)) |> 
+  # that the mean for each col
+  summarize(across(everything(), mean))
+
+```
+
+There is no reason to believe (given model and data) that this conjecture is true.
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 1b
+
+We can get samples from the predicted central tendency for each cell also more efficiently, by using a function like `tidybayes::add_epred_draws`.
+
+To do this, first create a tibble with each combination of levels from `group` and `condition`, e.g., by `select`-ing only these columns from the data frame, and then using `unique` to only keep the unique entries.
+Next, use the function ``tidybayes::add_epred_draws` to obtain samples from the posterior predictive distribution of the central tendency.
+
+Inspect the means for each cell (combination of `group` and `condition`) to the empirical means and the results from Exercise 1a.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+
+samples_centralTendency <- data_MT |> 
+  dplyr::select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_epred_draws(
+    fit_logistic,
+    ndraws = 20
+    )
+
+samples_centralTendency |> 
+  group_by(group, condition) |> 
+  reframe(aida::summarize_sample_vector(.epred)[-1])
+
+```
+
+The means of predictors of central tendecy correspond to the empirical means and the results from Exercise 1a.
+
+:::
+:::
+
+
 To test whether typical examples had credibly higher accuracy, the `faintr` package can be used like so:
 
 ```{r}
@@ -174,7 +243,7 @@ compare_groups(
 Based on these results, we may conclude that, given the model and the data, we should believe that typical examples had higher accuracy.
 
 ::: {.callout-caution collapse="false"}
-## Exercise 1a
+## Exercise 1c
 
 Test whether there is reason to believe, given model and data, that the touch group was more accurate than the click group.
 (After all, the click group could change their minds until the very last moment.)
@@ -198,7 +267,7 @@ There is no reason to believe (given model and data) that this conjecture is tru
 :::
 
 ::: {.callout-caution collapse="false"}
-## Exercise 1b
+## Exercise 1d
 
 If you look back at the plot of accuracy, it looks as if the change from atypical to typical condition does not have the same effect, at least not at the same level of strength, for the click and the touch group, i.e., it seems that there is an interaction between these two variables (`group` and `condition`).
 Use the function `brms::hypothesis()` to examine the interaction term of the model fit.
