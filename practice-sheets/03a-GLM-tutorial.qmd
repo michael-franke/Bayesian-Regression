@@ -153,7 +153,11 @@ fit_logistic <- brm(
                             levels = c("incorrect", "correct"))),
   family = bernoulli(link="logit")
 )
+```
 
+Here is a summary of the fit:
+
+```{r}
 summary(fit_logistic)
 ```
 
@@ -356,7 +360,7 @@ It's the 'left' position, because there is a coefficient for the 'right' positio
 ::: {.callout-caution collapse="false"}
 ## Exercise 2b
 
-Look at the names of the coefficients in the fit summary to find out: What is the reference level of the categories to be predicted in the multinomial model?
+Look at the names of the coefficients in the fit summary to find out what the reference level is of the categories to be predicted in the multinomial model.
 
 ::: {.callout-tip collapse="true"}
 ### Solution

@@ -19,7 +19,7 @@ GAMs approximate wiggly curves by "smoothed splines".
 The central idea to internalize here is that *we can think of smoothed splines as a random effect*.
 This is, indeed, how `brms` deals with GAMs.
 
-[ The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/). ]{style="color:darkgreen"}
+[The material here leans heavily on [T.J. Mahr's excellent tutorial](https://www.tjmahr.com/random-effects-penalized-splines-same-thing/).]{style="color:darkgreen"}
 
 # Preamble
 
@@ -467,4 +467,4 @@ There seems to be an indication of a positive linear effect underneath the smoot
 :::
 :::
 
-[ replace talk of "linear predictor" with central tendency ]{style="color:darkgreen"}
+[replace talk of "linear predictor" with central tendency]{style="color:darkgreen"}
