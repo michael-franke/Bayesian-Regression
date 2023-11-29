@@ -224,7 +224,7 @@ samples_centralTendency |>
 
 ```
 
-The means of predictors of central tendecy correspond to the empirical means and the results from Exercise 1a.
+The means of predictors of central tendency correspond to the empirical means and the results from Exercise 1a.
 
 :::
 :::
