@@ -519,7 +519,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>ordinal regression</li>
 <li>Poisson regression</li>
 </ul>
-<p>The shared form of all of these GLMs is the following “feed-forward computation” (here illustrated for a single datum of the predicted variable <span class="math inline">\(y\)</span> for a vector <span class="math inline">\(x\)</span> of predictor variables and a vector of coefficients <span class="math inline">\(\beta\)</span>:</p>
+<p>The shared form of all of these GLMs is the following “feed-forward computation” (here illustrated for a single datum of the predicted variable <span class="math inline">\(y\)</span> for a vector <span class="math inline">\(\mathbf{x}\)</span> of predictor variables and a vector of coefficients <span class="math inline">\(\vec{\beta}\)</span>:</p>
 <ol type="1">
 <li>compute a <strong>linear predictor</strong>: <span class="math inline">\(\eta = \mathbf{x} \cdot \beta\)</span>;</li>
 <li>compute a <strong>predictor of central tendency</strong> using an appropriate link function <span class="math inline">\(\text{LF}\)</span>: <span class="math inline">\(\xi = \text{LF}(\eta ; \theta_{\text{LF}})\)</span>;</li>
@@ -529,9 +529,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Simple linear regression is the special case of this scheme where the link function is just the identity function and the likelihood is given by <span class="math inline">\(y \sim \mathcal{N}(\xi; \sigma)\)</span>. Different types of regression are used to account for different kinds predicted variable <span class="math inline">\(y\)</span>:</p>
 <table class="table">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 42%">
-<col style="width: 32%">
+<col style="width: 12%">
+<col style="width: 51%">
+<col style="width: 35%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -558,7 +558,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;">ordinal</td>
-<td style="text-align: center;"><span class="math inline">\(\xi = \text{cumulative-logit}(\eta; {\delta})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\xi = \text{cumulative-logit}(\eta; {\mathbf{d}})\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(y \sim \text{Categorical}({\xi})\)</span></td>
 </tr>
 <tr class="odd">
@@ -582,12 +582,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The logistic regression model is then defined as:</p>
+<p>The logistic regression model is then defined as (for a single observation <span class="math inline">\(y\)</span> and predictor vector<span class="math inline">\(\mathbf{x}\)</span>):</p>
 <p><span class="math display">\[
 \begin{align*}
-\eta_i  &amp;= \mathbf{x}_i \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\xi_i &amp;= \text{logistic}(\eta_i) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y_i &amp; \sim \text{Bernoulli}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta &amp;= \mathbf{x} \cdot \beta    &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\xi  &amp;= \text{logistic}(\eta)     &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+y    &amp; \sim \text{Bernoulli}(\xi) &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 <p>The linear predictor values <span class="math inline">\(\eta\)</span> can be interpreted directly, as the log odds-ratio of the predicted probability <span class="math inline">\(\xi\)</span>. This is because the inverse of the logistic function is the <strong>logit function</strong>, which has the following form:</p>
@@ -627,10 +627,10 @@ y_i &amp; \sim \text{Bernoulli}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood
 # Groups:   group [2]
   group condition     n accuracy ci_lower  mean ci_upper
   &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1 click Atypical    318    0.874    0.836 0.874    0.908
-2 click Typical     689    0.964    0.949 0.963    0.977
-3 touch Atypical    330    0.909    0.876 0.909    0.939
-4 touch Typical     715    0.941    0.925 0.941    0.957</code></pre>
+1 click Atypical    318    0.874    0.838 0.874    0.908
+2 click Typical     689    0.964    0.950 0.964    0.977
+3 touch Atypical    330    0.909    0.877 0.909    0.939
+4 touch Typical     715    0.941    0.923 0.941    0.957</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -675,15 +675,15 @@ Formula: correct ~ group * condition
 
 Population-Level Effects: 
                             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-Intercept                       1.95      0.17     1.63     2.29 1.00     2752
-grouptouch                      0.37      0.26    -0.14     0.87 1.00     2079
-conditionTypical                1.34      0.26     0.83     1.85 1.00     1977
-grouptouch:conditionTypical    -0.87      0.36    -1.57    -0.14 1.00     1718
+Intercept                       1.95      0.17     1.62     2.30 1.00     2145
+grouptouch                      0.36      0.26    -0.14     0.87 1.00     1715
+conditionTypical                1.34      0.26     0.85     1.87 1.00     1549
+grouptouch:conditionTypical    -0.87      0.37    -1.62    -0.17 1.00     1463
                             Tail_ESS
-Intercept                       2859
-grouptouch                      2614
-conditionTypical                2183
-grouptouch:conditionTypical     1984
+Intercept                       2982
+grouptouch                      2422
+conditionTypical                2489
+grouptouch:conditionTypical     2325
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -736,7 +736,7 @@ Solution
 <pre><code># A tibble: 1 × 4
   `touch:Atypical` `touch:Typical` `click:Atypical` `click:Typical`
              &lt;dbl&gt;           &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
-1            0.909           0.941            0.874           0.963</code></pre>
+1            0.909           0.941            0.875           0.964</code></pre>
 </div>
 </div>
 <p>There is no reason to believe (given model and data) that this conjecture is true.</p>
@@ -792,13 +792,13 @@ Solution
 <pre><code># A tibble: 4 × 5
   group condition `|95%`  mean `95%|`
   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1 click Atypical   0.835 0.877  0.906
-2 click Typical    0.944 0.962  0.972
-3 touch Atypical   0.879 0.908  0.941
-4 touch Typical    0.924 0.942  0.957</code></pre>
+1 click Atypical   0.840 0.877  0.905
+2 click Typical    0.953 0.964  0.979
+3 touch Atypical   0.868 0.905  0.933
+4 touch Typical    0.921 0.938  0.957</code></pre>
 </div>
 </div>
-<p>The means of predictors of central tendecy correspond to the empirical means and the results from Exercise 1a.</p>
+<p>The means of predictors of central tendency correspond to the empirical means and the results from Exercise 1a.</p>
 </div>
 </div>
 </div>
@@ -819,8 +819,8 @@ Solution
 <pre><code>Outcome of comparing groups: 
  * higher:  condition == "Typical" 
  * lower:   condition == "Atypical" 
-Mean 'higher - lower':  0.9069 
-95% HDI:  [ 0.5561 ; 1.256 ]
+Mean 'higher - lower':  0.9047 
+95% HDI:  [ 0.5633 ; 1.259 ]
 P('higher - lower' &gt; 0):  1 
 Posterior odds:  Inf </code></pre>
 </div>
@@ -864,10 +864,10 @@ Solution
 <pre><code>Outcome of comparing groups: 
  * higher:  group == "click" 
  * lower:   group == "touch" 
-Mean 'higher - lower':  0.0685 
-95% HDI:  [ -0.3091 ; 0.4083 ]
-P('higher - lower' &gt; 0):  0.6465 
-Posterior odds:  1.829 </code></pre>
+Mean 'higher - lower':  0.07561 
+95% HDI:  [ -0.2815 ; 0.4217 ]
+P('higher - lower' &gt; 0):  0.663 
+Posterior odds:  1.967 </code></pre>
 </div>
 </div>
 <p>There is no reason to believe (given model and data) that this conjecture is true.</p>
@@ -910,7 +910,7 @@ Solution
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
                 Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio
-1 (grouptouch:condi... &lt; 0    -0.87      0.36    -1.46    -0.26      96.56
+1 (grouptouch:condi... &lt; 0    -0.87      0.37    -1.51    -0.28     132.33
   Post.Prob Star
 1      0.99    *
 ---
@@ -1035,7 +1035,7 @@ s_j = \mathbf{x} \cdot \beta^j
 <ul>
 <li><strong>Conjecture:</strong> the <em>difference</em> in probability between straight vs curved is higher when the target is on the right than when it is on the left.</li>
 </ul>
-<p>This is not a real “research hypothesis” but a conjecture about the data. Let’s still run a multinomial regression model to test address this conjecture.</p>
+<p>This is not a real “research hypothesis” but a conjecture about the data. Let’s still run a multinomial regression model to address this conjecture.</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -1062,15 +1062,15 @@ Formula: prototype_label ~ target_position
 
 Population-Level Effects: 
                               Estimate Est.Error l-95% CI u-95% CI Rhat
-mucurved_Intercept               -1.71      0.09    -1.89    -1.53 1.00
-muCoM_Intercept                  -1.71      0.09    -1.90    -1.53 1.00
-mucurved_target_positionright    -0.44      0.14    -0.73    -0.17 1.00
-muCoM_target_positionright       -0.00      0.13    -0.26     0.25 1.00
+mucurved_Intercept               -1.71      0.10    -1.90    -1.53 1.00
+muCoM_Intercept                  -1.71      0.09    -1.89    -1.53 1.00
+mucurved_target_positionright    -0.43      0.15    -0.72    -0.14 1.00
+muCoM_target_positionright       -0.01      0.13    -0.26     0.25 1.00
                               Bulk_ESS Tail_ESS
-mucurved_Intercept                4974     2495
-muCoM_Intercept                   4308     3108
-mucurved_target_positionright     4561     3248
-muCoM_target_positionright        4339     3071
+mucurved_Intercept                4761     3335
+muCoM_Intercept                   4008     2939
+mucurved_target_positionright     4190     3308
+muCoM_target_positionright        4150     3005
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1114,7 +1114,7 @@ Exercise 2a
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Look at the names of the coefficients in the fit summary to find out:What is the reference level for the categorical predictor variable?</p>
+<p>Look at the names of the coefficients in the fit summary to find out what the reference level is for the categorical predictor variable?</p>
 <div class="callout callout-style-simple callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1191,7 +1191,7 @@ Solution
 </div>
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Yes! Our conjecture is about the difference in probability of the ‘straight’ vs he ‘curved’ category. This difference is directly encoded in regression coefficients. Concretely, the coefficient ‘mucurved_Intercept’ gives us the log odds of the ‘straight’ vs’ the ‘curved’ category for the ‘left’-position cases. The difference of log odds for the ‘right’-position cases is simply the coefficient ‘mucurved_target_positionright’. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.</p>
+<p>Yes! Our conjecture is about the difference in probability of the ‘straight’ vs the ‘curved’ category. This difference is directly encoded in regression coefficients. Concretely, the coefficient ‘mucurved_Intercept’ gives us the log odds of the ‘straight’ vs the ‘curved’ category for the ‘left’-position cases. The difference of log odds for the ‘right’-position cases is simply the coefficient ‘mucurved_target_positionright’. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.</p>
 </div>
 </div>
 </div>
@@ -1234,8 +1234,8 @@ Solution
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(posterior_means, <span class="at">names =</span> <span class="fu">colnames</span>(posterior_means))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -1.708296e+00 -1.710021e+00 -4.382486e-01 -4.609322e-03 -4.487285e+00
-[6] -1.499803e+03</code></pre>
+<pre><code>[1] -1.710728e+00 -1.709849e+00 -4.341231e-01 -5.113446e-03 -4.487435e+00
+[6] -1.499831e+03</code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -1265,7 +1265,7 @@ Solution
 2 left            curved            136     0.133      0.133 
 3 left            CoM               136     0.133      0.133 
 4 right           straight          793     0.771      0.771 
-5 right           curved             93     0.0904     0.0901
+5 right           curved             93     0.0904     0.0903
 6 right           CoM               143     0.139      0.139 </code></pre>
 </div>
 </div>
@@ -1281,32 +1281,33 @@ Solution
 <h1>Ordinal regression</h1>
 <section id="explanation-2" class="level2">
 <h2 class="anchored" data-anchor-id="explanation-2">Explanation</h2>
-<p>When <span class="math inline">\(k&gt;2\)</span> categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the <strong>cumulative logit function</strong> which takes the linear predictor and a vector <span class="math inline">\(\delta\)</span> of <span class="math inline">\(k-1\)</span> thresholds as arguments to return a probability vector, here denoted as <span class="math inline">\(\mathbf{p}\)</span>, whose components are defined like so:</p>
+<p>When <span class="math inline">\(k&gt;2\)</span> categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account. A common choice of link function for this case is the <strong>cumulative logit function</strong> which takes the linear predictor and a vector <span class="math inline">\(\mathbf{d} = \langle \delta_1, \dots, \delta_{k-1} \rangle\)</span> of <span class="math inline">\(k-1\)</span> thresholds as arguments to return a probability vector, here denoted as <span class="math inline">\(\mathbf{p} = \langle \xi_{1}, \dots, \xi_{k} \rangle\)</span>, whose components are defined like so:</p>
 <p><span class="math display">\[
-p_j = \text{cumulative-logit}(\eta_1; \delta) =
+\xi_j = \text{cumulative-logit}(\eta, j; \mathbf{d}) =
 \begin{cases}
-\text{logistic}(\delta_1 - \eta_1) &amp; \text{if } j=1 \\
-\text{logistic}(\delta_{i} - \eta_1) - p_{j-1} &amp; \text{if } j&gt;1 \\
+\text{logistic}(\delta_1 - \eta)             &amp; \text{if } j=1 \\
+\text{logistic}(\delta_{i} - \eta) - p_{j-1} &amp; \text{if } j&gt;1 \\
 \end{cases}
 \]</span></p>
-<p>To see what is going on, consider the a case with three categories. Fix the two threshold <span class="math inline">\(\delta_1=-0.75\)</span> and <span class="math inline">\(\delta_2=1.6\)</span> just for illustration. Now assume that we have a case there the linear predictor value <span class="math inline">\(p\)</span> is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:</p>
+<p>To see what is going on, consider a case with three categories. Fix the two thresholds <span class="math inline">\(\delta_1=-0.75\)</span> and <span class="math inline">\(\delta_2=1.6\)</span> just for illustration. Now assume that we have a case there the linear predictor value <span class="math inline">\(\eta\)</span> is zero. The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>If the linear predictor <span class="math inline">\(\xi\)</span> is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount). For example, the plot below shows the case of <span class="math inline">\(\xi=1\)</span> where the probability of the first category decreases while that of the third increases.</p>
+<p>If the linear predictor <span class="math inline">\(\eta\)</span> is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount). For example, the plot below shows the case of <span class="math inline">\(\eta=1\)</span> where the probability of the first category decreases while that of the third increases.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="03a-GLM-tutorial_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>In sum, the cumulative-logit model for ordinal regression, is defined as follows:</p>
+<p>In sum, the cumulative-logit model for ordinal regression, is defined as follows (for a single observation <span class="math inline">\(y\)</span> and predictor vector<span class="math inline">\(\mathbf{x}\)</span>):</p>
 <p><span class="math display">\[
 \begin{align*}
-\eta_i  &amp;= \mathbf{x}_i \cdot \beta       &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
-\xi_i &amp;= \text{cumulative-logit}(\eta_i; \delta) &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
-y_i &amp; \sim \text{Categorical}(\xi_i) &amp;&amp; \color{gray}{\text{[likelihood]}}
+\eta       &amp;= \mathbf{x}_i \cdot \beta                     &amp;&amp; \color{gray}{\text{[linear predictor]}} \\
+\mathbf{p} &amp;= \langle \xi_1, \dots, \xi_k \rangle          &amp;&amp; \color{gray}{\text{[predictor of central tendency]}} \\
+\xi_j      &amp;= \text{cumulative-logit}(\eta, j; \mathbf{d}) &amp;&amp; \color{gray}{\text{[predictor for category $j$] }} \\
+y          &amp; \sim \text{Categorical}(\mathbf{p})           &amp;&amp; \color{gray}{\text{[likelihood]}}
 \end{align*}
 \]</span></p>
 </section>
@@ -1357,9 +1358,9 @@ Formula: prototype_label ~ MAD
 
 Population-Level Effects: 
              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept[1]     4.05      0.18     3.71     4.43 1.00     2332     2317
-Intercept[2]     9.51      0.53     8.51    10.57 1.00     2035     1661
-MAD              0.02      0.00     0.02     0.03 1.00     2396     2651
+Intercept[1]     4.04      0.18     3.69     4.40 1.00     2175     2101
+Intercept[2]     9.50      0.53     8.51    10.55 1.00     1485     1722
+MAD              0.02      0.00     0.02     0.03 1.00     1788     2062
 
 Family Specific Parameters: 
      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
