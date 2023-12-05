@@ -28,7 +28,7 @@ This tutorial covers common types of generalized linear regression models (GLMs)
 -   ordinal regression
 -   Poisson regression
 
-The shared form of all of these GLMs is the following "feed-forward computation" (here illustrated for a single datum of the predicted variable $y$ for a vector $x$ of predictor variables and a vector of coefficients $\beta$:
+The shared form of all of these GLMs is the following "feed-forward computation" (here illustrated for a single datum of the predicted variable $y$ for a vector $\mathbf{x}$ of predictor variables and a vector of coefficients $\vec{\beta}$:
 
 1.  compute a **linear predictor**: $\eta = \mathbf{x} \cdot \beta$;
 2.  compute a **predictor of central tendency** using an appropriate link function $\text{LF}$: $\xi = \text{LF}(\eta ; \theta_{\text{LF}})$;
@@ -39,13 +39,13 @@ Link function and likelihood function may have additional free parameters, $\the
 Simple linear regression is the special case of this scheme where the link function is just the identity function and the likelihood is given by $y \sim \mathcal{N}(\xi; \sigma)$.
 Different types of regression are used to account for different kinds predicted variable $y$:
 
-| type of $y$ |             (inverse) link function             |         likelihood function         |
-|:-----------------|:-----------------------------:|:----------------------:|
-| metric      |                  $\xi = \eta$                   | $y \sim \text{Normal}(\xi; \sigma)$ |
-| binary      |          $\xi = \text{logistic}(\eta)$          |   $y \sim \text{Bernoulli}(\xi)$    |
-| nominal     |          $\xi = \text{soft-max}(\eta)$          | $y \sim \text{Categorical}({\xi})$  |
-| ordinal     | $\xi = \text{cumulative-logit}(\eta; {\delta})$ | $y \sim \text{Categorical}({\xi})$  |
-| count       |               $\xi = \exp(\eta)$                |    $y \sim \text{Poisson}(\xi)$     |
+| type of $y$ | (inverse) link function                             | likelihood function                 |
+|:------------|:---------------------------------------------------:|:-----------------------------------:|
+| metric      | $\xi = \eta$                                        | $y \sim \text{Normal}(\xi; \sigma)$ |
+| binary      | $\xi = \text{logistic}(\eta)$                       | $y \sim \text{Bernoulli}(\xi)$      |
+| nominal     | $\xi = \text{soft-max}(\eta)$                       | $y \sim \text{Categorical}({\xi})$  |
+| ordinal     | $\xi = \text{cumulative-logit}(\eta; {\mathbf{d}})$ | $y \sim \text{Categorical}({\xi})$  |
+| count       | $\xi = \exp(\eta)$                                  | $y \sim \text{Poisson}(\xi)$        |
 
 # Logistic regression
 
@@ -71,13 +71,13 @@ ggplot(data.frame(x = c(-5,5)), aes(x)) +
 
 ```
 
-The logistic regression model is then defined as:
+The logistic regression model is then defined as (for a single observation $y$ and predictor vector$\mathbf{x}$):
 
 $$
 \begin{align*}
-\eta_i  &= \mathbf{x}_i \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
-\xi_i &= \text{logistic}(\eta_i) && \color{gray}{\text{[predictor of central tendency]}} \\
-y_i & \sim \text{Bernoulli}(\xi_i) && \color{gray}{\text{[likelihood]}}
+\eta &= \mathbf{x} \cdot \beta    && \color{gray}{\text{[linear predictor]}} \\
+\xi  &= \text{logistic}(\eta)     && \color{gray}{\text{[predictor of central tendency]}} \\
+y    & \sim \text{Bernoulli}(\xi) && \color{gray}{\text{[likelihood]}}
 \end{align*}
 $$
 
@@ -373,7 +373,7 @@ We might consider the following:
 -   **Conjecture:** the *difference* in probability between straight vs curved is higher when the target is on the right than when it is on the left.
 
 This is not a real "research hypothesis" but a conjecture about the data.
-Let's still run a multinomial regression model to test address this conjecture.
+Let's still run a multinomial regression model to address this conjecture.
 
 ```{r}
 #| results: hide
@@ -415,7 +415,7 @@ fit_multinom |>
 ::: {.callout-caution collapse="false"}
 ## Exercise 2a
 
-Look at the names of the coefficients in the fit summary to find out:What is the reference level for the categorical predictor variable?
+Look at the names of the coefficients in the fit summary to find out what the reference level is for the categorical predictor variable?
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -447,7 +447,7 @@ Can you extract information about our conjecture from this plot (or the summary 
 ::: {.callout-tip collapse="true"}
 ### Solution
 
-Yes! Our conjecture is about the difference in probability of the 'straight' vs he 'curved' category. This difference is directly encoded in regression coefficients. Concretely, the coefficient 'mucurved_Intercept' gives us the log odds of the 'straight' vs' the 'curved' category for the 'left'-position cases. The difference of log odds for the 'right'-position cases is simply the coefficient 'mucurved_target_positionright'. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.
+Yes! Our conjecture is about the difference in probability of the 'straight' vs the 'curved' category. This difference is directly encoded in regression coefficients. Concretely, the coefficient 'mucurved_Intercept' gives us the log odds of the 'straight' vs the 'curved' category for the 'left'-position cases. The difference of log odds for the 'right'-position cases is simply the coefficient 'mucurved_target_positionright'. The is credibly smaller than zero (by a margin), so we may conclude that model and data provide support for our conjecture.
 
 
 :::
@@ -502,19 +502,19 @@ sum_stats |> ungroup() |>
 ## Explanation
 
 When $k>2$ categories have a natural ordering, the problem of predicting probabilities for each category can be simplified by taking this ordering into account.
-A common choice of link function for this case is the **cumulative logit function** which takes the linear predictor and a vector $\delta$ of $k-1$ thresholds as arguments to return a probability vector, here denoted as $\mathbf{p}$, whose components are defined like so:
+A common choice of link function for this case is the **cumulative logit function** which takes the linear predictor and a vector $\mathbf{d} = \langle \delta_1, \dots, \delta_{k-1} \rangle$ of $k-1$ thresholds as arguments to return a probability vector, here denoted as $\mathbf{p} = \langle \xi_{1}, \dots, \xi_{k} \rangle$, whose components are defined like so:
 
 $$
-p_j = \text{cumulative-logit}(\eta_1; \delta) = 
+\xi_j = \text{cumulative-logit}(\eta, j; \mathbf{d}) = 
 \begin{cases}
-\text{logistic}(\delta_1 - \eta_1) & \text{if } j=1 \\
-\text{logistic}(\delta_{i} - \eta_1) - p_{j-1} & \text{if } j>1 \\
+\text{logistic}(\delta_1 - \eta)             & \text{if } j=1 \\
+\text{logistic}(\delta_{i} - \eta) - p_{j-1} & \text{if } j>1 \\
 \end{cases}
-$$ 
+$$
 
-To see what is going on, consider the a case with three categories.
-Fix the two threshold $\delta_1=-0.75$ and $\delta_2=1.6$ just for illustration.
-Now assume that we have a case there the linear predictor value $p$ is zero.
+To see what is going on, consider a case with three categories.
+Fix the two thresholds $\delta_1=-0.75$ and $\delta_2=1.6$ just for illustration.
+Now assume that we have a case there the linear predictor value $\eta$ is zero.
 The cumulative logit function above then entails the category probabilities as shown in this plot, as the length of the colored bar segments:
 
 ```{r}
@@ -560,8 +560,8 @@ tibble(x = seq(-4,4, length.out = 100),
   xlab("") + ylab("")
 ```
 
-If the linear predictor $\xi$ is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount).
-For example, the plot below shows the case of $\xi=1$ where the probability of the first category decreases while that of the third increases.
+If the linear predictor $\eta$ is estimated to be bigger than zero, this intuitively means that we shift all of the threshold to the left (by the same amount).
+For example, the plot below shows the case of $\eta=1$ where the probability of the first category decreases while that of the third increases.
 
 ```{r}
 #| echo: false
@@ -606,13 +606,14 @@ tibble(x = seq(-4,4, length.out = 100),
   xlab("") + ylab("")
 ```
 
-In sum, the cumulative-logit model for ordinal regression, is defined as follows:
+In sum, the cumulative-logit model for ordinal regression, is defined as follows (for a single observation $y$ and predictor vector$\mathbf{x}$):
 
 $$
 \begin{align*}
-\eta_i  &= \mathbf{x}_i \cdot \beta       && \color{gray}{\text{[linear predictor]}} \\
-\xi_i &= \text{cumulative-logit}(\eta_i; \delta) && \color{gray}{\text{[predictor of central tendency]}} \\
-y_i & \sim \text{Categorical}(\xi_i) && \color{gray}{\text{[likelihood]}}
+\eta       &= \mathbf{x} \cdot \beta                       && \color{gray}{\text{[linear predictor]}} \\
+\mathbf{p} &= \langle \xi_1, \dots, \xi_k \rangle          && \color{gray}{\text{[predictor of central tendency]}} \\
+\xi_j      &= \text{cumulative-logit}(\eta, j; \mathbf{d}) && \color{gray}{\text{[predictor for category $j$] }} \\
+y          & \sim \text{Categorical}(\mathbf{p})           && \color{gray}{\text{[likelihood]}}
 \end{align*}
 $$
 
