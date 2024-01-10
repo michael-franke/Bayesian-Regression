@@ -498,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="the-eight-schools-example" class="level1">
 <h1>The “eight schools” example</h1>
-<p>The “eight schools” example (going back to Rubin ([1981])(https://www.jstor.org/stable/1164617)) is an often used simple illustration of a <strong>hierarchical model</strong>. There are <span class="math inline">\(N =8\)</span> pairs of observations, each pair from a different school. For each school <span class="math inline">\(i\)</span>, we have an estimated effect size <span class="math inline">\(y_i\)</span> and an estimated standard error <span class="math inline">\(\sigma_i\)</span> for the reported effect size. (The experiments conducted at each school which gave us these pairs investigated whether short-term coaching has a effect on SAT-V scores, but this is not important for our purposes here.)</p>
+<p>The “eight schools” example (going back to Rubin (<a href="https://www.jstor.org/stable/1164617">1981</a>) is an often used simple illustration of a <strong>hierarchical model</strong>. There are <span class="math inline">\(N =8\)</span> pairs of observations, each pair from a different school. For each school <span class="math inline">\(i\)</span>, we have an estimated effect size <span class="math inline">\(y_i\)</span> and an estimated standard error <span class="math inline">\(\sigma_i\)</span> for the reported effect size. (The experiments conducted at each school which gave us these pairs investigated whether short-term coaching has a effect on SAT-V scores, but this is not important for our purposes here.)</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -563,7 +563,7 @@ y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rstan<span class="sc">::</span><span class="fu">get_num_divergent</span>(stan_fit_8schoolsC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 223</code></pre>
+<pre><code>[1] 48</code></pre>
 </div>
 </div>
 <p>Let’s go explore these divergent transitions using <code>shinystan</code>. Execute the command below, go to the tab “Explore” in the Shiny App, select “Bivariate” and explore plots of <span class="math inline">\(\sigma'\)</span> against <span class="math inline">\(\theta_i\)</span> for different <span class="math inline">\(i\)</span>. Points that experienced divergent transitions are shown in red.</p>
@@ -673,7 +673,8 @@ y_i &amp; \sim \mathcal{N}(\theta_i, \sigma_i) \\
 </div>
 <section id="why-is-non-central-paramterization-better" class="level2">
 <h2 class="anchored" data-anchor-id="why-is-non-central-paramterization-better">Why is non-central paramterization better?</h2>
-<p>To understand (intuitively) why is non-central paramterization more resilient against divergent, first recall the reason for the divergencies in the first model. Inside the funnel, so to speak, the variance of “good” <span class="math inline">\(\theta_i\)</span> values were much smaller than outside of it. So, the sampler was not able to to flexibly accommodate differences in changes to <span class="math inline">\(\theta_i\)</span> parameters as <span class="math inline">\(\sigma'\)</span> changed. The non-central parameterization overcomes exactly this problem, because it decouples <span class="math inline">\(\sigma'\)</span> and <span class="math inline">\(theta_i\)</span> via an additional parameter <span class="math inline">\(\eta_i\)</span>.</p>
+<p>To understand (intuitively) why is non-central paramterization more resilient against divergent, first recall the reason for the divergencies in the first model. Inside the funnel, so to speak, the variance of “good” <span class="math inline">\(\theta_i\)</span> values were much smaller than outside of it. So, the sampler was not able to to flexibly accommodate differences in changes to <span class="math inline">\(\theta_i\)</span> parameters as <span class="math inline">\(\sigma'\)</span> changed. The non-central parameterization overcomes exactly this problem, because it decouples <span class="math inline">\(\sigma'\)</span> and <span class="math inline">\(\theta_i\)</span> via an additional parameter <span class="math inline">\(\eta_i\)</span>.</p>
+<p>A heuristic way of seeing the crucial difference between models is that in the first (central parameterization) model, the distribution from which latent parameters are sampled depends itself on the value of sampled latent parameters, whereas in the second (non-central parameterization) model the distributions from which each latent parameter is sampled are fixed, i.e., independent from values of other parameters. Sampling from the latter is therefore easier to optimize.</p>
 </section>
 <section id="why-care-about-divergent-transitions" class="level2">
 <h2 class="anchored" data-anchor-id="why-care-about-divergent-transitions">Why care about divergent transitions?</h2>
