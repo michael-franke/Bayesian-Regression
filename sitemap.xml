@@ -2,130 +2,130 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01f-catPreds-exercises.html</loc>
-    <lastmod>2024-01-16T17:00:24.616Z</lastmod>
+    <lastmod>2024-01-16T17:05:12.068Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/07a-nonLinear.html</loc>
-    <lastmod>2024-01-16T17:00:25.350Z</lastmod>
+    <lastmod>2024-01-16T17:05:12.808Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/07b-GAMs.html</loc>
-    <lastmod>2024-01-16T17:00:26.414Z</lastmod>
+    <lastmod>2024-01-16T17:05:13.818Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/04b-divergences.html</loc>
-    <lastmod>2024-01-16T17:00:27.167Z</lastmod>
+    <lastmod>2024-01-16T17:05:14.534Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/00-preamble.html</loc>
-    <lastmod>2024-01-16T17:00:27.668Z</lastmod>
+    <lastmod>2024-01-16T17:05:15.038Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/03b-GLM-exercises.html</loc>
-    <lastmod>2024-01-16T17:00:28.708Z</lastmod>
+    <lastmod>2024-01-16T17:05:16.008Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02d-MLM-pooling.html</loc>
-    <lastmod>2024-01-16T17:00:29.523Z</lastmod>
+    <lastmod>2024-01-16T17:05:16.756Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/04a-MCMC-diagnostics.html</loc>
-    <lastmod>2024-01-16T17:00:30.306Z</lastmod>
+    <lastmod>2024-01-16T17:05:17.540Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/06b-causal-inference.html</loc>
-    <lastmod>2024-01-16T17:00:36.676Z</lastmod>
+    <lastmod>2024-01-16T17:05:18.578Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01g-cheat-sheet.html</loc>
-    <lastmod>2024-01-16T17:00:37.478Z</lastmod>
+    <lastmod>2024-01-16T17:05:19.421Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01b-simple-regression.html</loc>
-    <lastmod>2024-01-16T17:00:38.495Z</lastmod>
+    <lastmod>2024-01-16T17:05:20.417Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/03a-GLM-tutorial.html</loc>
-    <lastmod>2024-01-16T17:00:39.696Z</lastmod>
+    <lastmod>2024-01-16T17:05:21.625Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01a-wrangling-plotting.html</loc>
-    <lastmod>2024-01-16T17:00:41.133Z</lastmod>
+    <lastmod>2024-01-16T17:05:23.012Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/07c-Gaussian-processes.html</loc>
-    <lastmod>2024-01-16T17:00:41.842Z</lastmod>
+    <lastmod>2024-01-16T17:05:23.706Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02b-hierarchical-models-exercises.html</loc>
-    <lastmod>2024-01-16T17:00:42.640Z</lastmod>
+    <lastmod>2024-01-16T17:05:24.501Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02c-multi-membership.html</loc>
-    <lastmod>2024-01-16T17:00:43.404Z</lastmod>
+    <lastmod>2024-01-16T17:05:25.266Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01e-contrast-coding-tutorial.html</loc>
-    <lastmod>2024-01-16T17:00:44.939Z</lastmod>
+    <lastmod>2024-01-16T17:05:26.798Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01d-predictives.html</loc>
-    <lastmod>2024-01-16T17:00:46.031Z</lastmod>
+    <lastmod>2024-01-16T17:05:27.847Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/03d-mixture-models.html</loc>
-    <lastmod>2024-01-16T17:00:46.986Z</lastmod>
+    <lastmod>2024-01-16T17:05:28.800Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/06a-stochastic-dependence.html</loc>
-    <lastmod>2024-01-16T17:00:48.047Z</lastmod>
+    <lastmod>2024-01-16T17:05:29.413Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/01c-priors.html</loc>
-    <lastmod>2024-01-16T17:00:48.812Z</lastmod>
+    <lastmod>2024-01-16T17:05:30.165Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/03c-distributional-models.html</loc>
-    <lastmod>2024-01-16T17:00:49.447Z</lastmod>
+    <lastmod>2024-01-16T17:05:30.812Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/02a-hierarchical-models-tutorial.html</loc>
-    <lastmod>2024-01-16T17:00:50.416Z</lastmod>
+    <lastmod>2024-01-16T17:05:31.788Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/practice-sheets/05a-model-comparison.html</loc>
-    <lastmod>2024-01-16T17:00:51.487Z</lastmod>
+    <lastmod>2024-01-16T17:05:32.821Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/01-basics.html</loc>
-    <lastmod>2024-01-16T17:00:51.827Z</lastmod>
+    <lastmod>2024-01-16T17:05:33.144Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/03-GLM.html</loc>
-    <lastmod>2024-01-16T17:00:52.143Z</lastmod>
+    <lastmod>2024-01-16T17:05:33.441Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/index.html</loc>
-    <lastmod>2024-01-16T17:00:52.491Z</lastmod>
+    <lastmod>2024-01-16T17:05:33.802Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/04-MCMC.html</loc>
-    <lastmod>2024-01-16T17:00:52.818Z</lastmod>
+    <lastmod>2024-01-16T17:05:34.139Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/02-hierarchical-models.html</loc>
-    <lastmod>2024-01-16T17:00:53.141Z</lastmod>
+    <lastmod>2024-01-16T17:05:34.445Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/05-model-comparison.html</loc>
-    <lastmod>2024-01-16T17:00:53.510Z</lastmod>
+    <lastmod>2024-01-16T17:05:34.812Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/06-causal-inference.html</loc>
-    <lastmod>2024-01-16T17:00:53.828Z</lastmod>
+    <lastmod>2024-01-16T17:05:35.152Z</lastmod>
   </url>
   <url>
     <loc>https://michael-franke.github.io/Bayesian-Regression/xx-priorPredictives-categPredictors.html</loc>
-    <lastmod>2024-01-16T17:00:54.134Z</lastmod>
+    <lastmod>2024-01-16T17:05:35.440Z</lastmod>
   </url>
 </urlset>

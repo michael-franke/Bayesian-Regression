@@ -555,7 +555,7 @@ Solution
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Here is a reusable function:</p>
-<div class="cell" data-hash="06a-stochastic-dependence_cache/html/unnamed-chunk-3_95657660b17efd88ecb6b732c6102e7d">
+<div class="cell" data-hash="06a-stochastic-dependence_cache/html/unnamed-chunk-3_132247771d3007ff91c1137413ddad90">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>test_stochDep <span class="ot">&lt;-</span> <span class="cf">function</span>(input_data) {</span>
@@ -564,12 +564,12 @@ Solution
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  fit_multiple <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z, <span class="at">data =</span> input_data)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Effect of X in simple regression: "</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_simple, <span class="st">"X&gt;0"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_simple, <span class="st">"X&gt;0"</span>))</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Effect of X in multiple regression (controlling for Z): "</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_multiple, <span class="st">"X&gt;0"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_multiple, <span class="st">"X&gt;0"</span>))</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(input_data, <span class="fu">plot</span>(X,Y))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># with(input_data, plot(X,Y))</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
