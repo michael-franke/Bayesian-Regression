@@ -80,7 +80,9 @@ website:
         contents:
           - href: 06-causal-inference.qmd
             text: Overview
-          - href: practice-sheets/06-causal-inference.qmd
+          - href: practice-sheets/06a-stochastic-dependence.qmd
+            text: Stochastic dependence
+          - href: practice-sheets/06b-causal-inference.qmd
             text: Causal inference
       - section: "07: Non-linear models"
         contents:

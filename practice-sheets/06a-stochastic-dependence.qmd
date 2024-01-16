@@ -1,0 +1,135 @@
+---
+title: "Stochastic independence"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+---
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# Using regression modeling to test for stochastic independence
+
+Here are three data sets, each with triples of associated observations for variables $X$, $Y$, and $Z$.
+Ideally, you do not look at the code, so you will have more fun with the exercise below.
+
+```{r}
+
+##################################################
+# creating three data sets with various dependencies
+##################################################
+
+data_1 <- tibble(
+  X = rnorm(500),
+  Z = map_dbl(X, function(i) rnorm(1, mean = i)),
+  Y = map_dbl(Z, function(i) rnorm(1, mean = i))
+)
+
+data_2 <- tibble(
+  Z = rnorm(500),
+  X = map_dbl(Z, function(i) rnorm(1, mean = i)),
+  Y = map_dbl(Z, function(i) rnorm(1, mean = i))
+)
+
+data_3 <- tibble(
+  X = rnorm(500),
+  Y = rnorm(500),
+  Z = map2_dbl(X, Y, function(i,j) rnorm(1, mean = i+j)),
+)
+
+```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1: Use regression to assess stochastic independence
+
+Use linear regression to investigate whether:
+
+a. $X$ and $Y$ are stochastically independent
+b. $X$ and $Y$ are stochastically independent given Z
+
+in each of these data sets.
+
+Ideally, write a single that takes a data set as input and output information that tells you about whether $X$ and $Y$ are independent.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Here is a reusable function:
+
+```{r}
+#| results: hide
+
+test_stochDep <- function(input_data) {
+  
+  fit_simple <- brms::brm(Y ~ X, data = input_data)
+  fit_multiple <- brms::brm(Y ~ X + Z, data = input_data)
+  
+  
+  result_simple <- brms::hypothesis(fit_simple, "X>0")
+  
+  
+  result_multiple <-brms::hypothesis(fit_multiple, "X>0")
+  
+  return(list(simple = result_simple, multiple = result_multiple))
+}
+
+result_1 = test_stochDep(data_1)
+result_2 = test_stochDep(data_2)
+result_3 = test_stochDep(data_3)
+
+```
+
+In data set 1, $X$ and $Y$ are not stochastically independent, but turn independent given $Z$.
+
+```{r}
+result_1
+```
+
+In data set 2, $X$ and $Y$ are not stochastically independent, and stay independent given $Z$.
+
+```{r}
+result_2
+```
+
+In data set 3, $X$ and $Y$ are stochastically independent, but cease to be given $Z$.
+
+```{r}
+result_3
+```
+
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2: Interpret your results
+
+Infer which (if any) of the three data sets was created with one of the following causal structures:
+
+- collider: $X, Y \rightarrow Z$
+- chain:    $X \rightarrow Z \rightarrow Y$
+- fork:     $Z \rightarrow X,Y$
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Data set 1 is likely from a chain, because $X$ and $Y$ are not stochastically independent, but turn independent given $Z$.
+
+Data set 2 is likely from a fork, because $X$ and $Y$ are not stochastically independent, and stay independent given $Z$.
+
+Data set 3 is likely from a collider, because $X$ and $Y$ are stochastically independent, but cease to be given $Z$.
+
+
+:::
+:::
+

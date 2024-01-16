@@ -474,13 +474,13 @@ Using the `faintr` package and the logistic transformation, we can calculate sam
 
 ```{r}
 posterior_DrugTaken <- 
-  faintr::extract_cell_draws(fit_SP_RonBD, drug == "Take") |> 
-  pull(draws) |> 
+  faintr::extract_cell_draws(fit_SP_RonBD) |> 
+  pull(Take) |> 
   logistic()
 
 posterior_DrugRefused <- 
-  faintr::extract_cell_draws(fit_SP_RonBD, drug == "Refuse") |> 
-  pull(draws) |> 
+  faintr::extract_cell_draws(fit_SP_RonBD)|> 
+  pull(Refuse) |> 
   logistic()
 
 posterior_causalEffect <- 
