@@ -24,7 +24,7 @@ editor:
 The following uses a slight variation of a fictitious data set frequently used by Judea Pearl (e.g., in Pearl, Glymour and Jewell ("Causal Inference in Statistics: A primer", 2016)).
 There are two scenarios, to be introduced one after the other below, framed as data about the effect of a drug on the rate of recovery.
 
-The most important objective of this tutorial is to calculate the *total causal effect* (TCE) of the drug in each scenario, following the approach outline by Pearl et al. (2016).
+The most important objective of this tutorial is to calculate the *total causal effect* (TCE) of the drug in each scenario, following the approach outlined by Pearl et al. (2016).
 We first calculate a maximum-likelihood estimate of the TCE and then a Bayesian estimate derived from regression modeling.
 The advantage of the latter is that it allows quantification of uncertainty of the TCE estimate.
 
