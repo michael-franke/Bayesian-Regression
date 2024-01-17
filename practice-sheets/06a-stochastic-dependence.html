@@ -541,7 +541,7 @@ Exercise 1: Use regression to assess stochastic independence
 <li><span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are stochastically independent given Z</li>
 </ol>
 <p>in each of these data sets.</p>
-<p>Ideally, write a single that takes a data set as input and output information that tells you about whether <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent.</p>
+<p>Ideally, write a single function that takes a data set as input and output information that tells you about whether <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent.</p>
 <div class="callout callout-style-simple callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -555,26 +555,23 @@ Solution
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Here is a reusable function:</p>
-<div class="cell" data-hash="06a-stochastic-dependence_cache/html/unnamed-chunk-3_43ca1306df1bb3c6eaa7dfb84d2771cd">
+<div class="cell" data-hash="06a-stochastic-dependence_cache/html/unnamed-chunk-3_b130cf667877eda8980e4e2df64baf4b">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>test_stochDep <span class="ot">&lt;-</span> <span class="cf">function</span>(input_data) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  fit_simple <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> input_data)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  fit_simple   <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> input_data)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  fit_multiple <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z, <span class="at">data =</span> input_data)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  result_simple <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_simple, <span class="st">"X&gt;0"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  result_simple <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_simple, <span class="st">"X&gt;0"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  result_multiple <span class="ot">&lt;-</span>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_multiple, <span class="st">"X&gt;0"</span>)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  result_multiple <span class="ot">&lt;-</span>brms<span class="sc">::</span><span class="fu">hypothesis</span>(fit_multiple, <span class="st">"X&gt;0"</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">simple =</span> result_simple, <span class="at">multiple =</span> result_multiple))</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>result_1 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_1)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>result_2 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_2)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>result_3 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">simple =</span> result_simple, <span class="at">multiple =</span> result_multiple))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>result_1 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_1)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>result_2 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_2)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>result_3 <span class="ot">=</span> <span class="fu">test_stochDep</span>(data_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>In data set 1, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, but turn independent given <span class="math inline">\(Z\)</span>.</p>
@@ -605,7 +602,7 @@ for two-sided hypotheses, the value tested against lies outside the 95%-CI.
 Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
 </div>
 </div>
-<p>In data set 2, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, and stay independent given <span class="math inline">\(Z\)</span>.</p>
+<p>In data set 2, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, and turn independent given <span class="math inline">\(Z\)</span>.</p>
 <div class="cell" data-hash="06a-stochastic-dependence_cache/html/unnamed-chunk-5_0ce8817d16e9bfe1f83c1d04a0f752ac">
 <details open="">
 <summary>Toggle code</summary>
@@ -697,9 +694,8 @@ Solution
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Data set 1 is likely from a chain, because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, but turn independent given <span class="math inline">\(Z\)</span>.</p>
-<p>Data set 2 is likely from a fork, because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, and stay independent given <span class="math inline">\(Z\)</span>.</p>
-<p>Data set 3 is likely from a collider, because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are stochastically independent, but cease to be given <span class="math inline">\(Z\)</span>.</p>
+<p>Data sets 1 and 2 could be from a chain or a fork, because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not stochastically independent, but turn independent given <span class="math inline">\(Z\)</span>. We cannot say which based on these tests.</p>
+<p>Data set 3 could be from a collider, because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are stochastically independent, but cease to be given <span class="math inline">\(Z\)</span>.</p>
 </div>
 </div>
 </div>
