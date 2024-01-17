@@ -60,7 +60,7 @@ b. $X$ and $Y$ are stochastically independent given Z
 
 in each of these data sets.
 
-Ideally, write a single that takes a data set as input and output information that tells you about whether $X$ and $Y$ are independent.
+Ideally, write a single function that takes a data set as input and output information that tells you about whether $X$ and $Y$ are independent.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -72,13 +72,10 @@ Here is a reusable function:
 
 test_stochDep <- function(input_data) {
   
-  fit_simple <- brms::brm(Y ~ X, data = input_data)
+  fit_simple   <- brms::brm(Y ~ X, data = input_data)
   fit_multiple <- brms::brm(Y ~ X + Z, data = input_data)
   
-  
   result_simple <- brms::hypothesis(fit_simple, "X>0")
-  
-  
   result_multiple <-brms::hypothesis(fit_multiple, "X>0")
   
   return(list(simple = result_simple, multiple = result_multiple))
@@ -96,7 +93,7 @@ In data set 1, $X$ and $Y$ are not stochastically independent, but turn independ
 result_1
 ```
 
-In data set 2, $X$ and $Y$ are not stochastically independent, and stay independent given $Z$.
+In data set 2, $X$ and $Y$ are not stochastically independent, and turn independent given $Z$.
 
 ```{r}
 result_2
@@ -123,11 +120,10 @@ Infer which (if any) of the three data sets was created with one of the followin
 ::: {.callout-tip collapse="true"}
 ### Solution
 
-Data set 1 is likely from a chain, because $X$ and $Y$ are not stochastically independent, but turn independent given $Z$.
+Data sets 1 and 2 could be from a chain or a fork, because $X$ and $Y$ are not stochastically independent, but turn independent given $Z$.
+We cannot say which based on these tests.
 
-Data set 2 is likely from a fork, because $X$ and $Y$ are not stochastically independent, and stay independent given $Z$.
-
-Data set 3 is likely from a collider, because $X$ and $Y$ are stochastically independent, but cease to be given $Z$.
+Data set 3 could be from a collider, because $X$ and $Y$ are stochastically independent, but cease to be given $Z$.
 
 
 :::
