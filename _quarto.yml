@@ -20,12 +20,16 @@ website:
     contents:
       - href: index.qmd
         text: Overview
-      - section: "01: Basics"
+      - section: "00: Background"
+        contents:
+          - href: 00-background.qmd
+            text: Overview
+          - href: practice-sheets/00a-examples-WebPPL.qmd
+            text: Examples in WebPPL
+      - section: "01: Regression basics"
         contents:
           - href: 01-basics.qmd
             text: Overview
-          - href: practice-sheets/01a-wrangling-plotting.qmd
-            text: Wrangling & plotting
           - href: practice-sheets/01b-simple-regression.qmd
             text: Simple linear regression
           - href: practice-sheets/01e-contrast-coding-tutorial.qmd
@@ -36,8 +40,6 @@ website:
             text: Predictions
           - href: practice-sheets/01f-catPreds-exercises.qmd
             text: "Exercises: Bayesian LMs"
-          - href: practice-sheets/01g-cheat-sheet.qmd
-            text: Cheat sheet
       - section: "02: Multi-level models"
         contents:
           - href: 02-hierarchical-models.qmd
@@ -92,6 +94,12 @@ website:
             text: Generalized additive models
           - href: practice-sheets/07c-Gaussian-processes.qmd
             text: Gaussian processes regression
+      - section: "08: Practical stuff"
+        contents:
+          - href: practice-sheets/08a-cheat-sheet.qmd
+            text: Cheat sheet
+          - href: practice-sheets/08b-wrangling-plotting.qmd
+            text: Wrangling & plotting
 
 format:
   html:

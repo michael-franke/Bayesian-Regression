@@ -114,6 +114,7 @@ tidybayes::get_variables(fit_MC)[1:10]
 ## Explore via `shinystan`
 
 ```{r}
+#| eval: false
 shinystan::launch_shinystan(fit_MC)
 ```
 

@@ -1,0 +1,56 @@
+---
+title: "Testing WebPPL"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+include-before-body:
+      text: |
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-editor-1.0.9.css">
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-viz-0.7.11.css">
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-editor-1.0.9.js"></script>
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-viz-0.7.11.js"></script>
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-v0.9.13.js" defer async></script>
+---
+
+ # Example
+    
+Here is the three-card problem:
+
+<pre class="webppl">
+// three cards; with blue or red on either side
+var cards = [["blue", "blue"],
+             ["blue", "red"],
+             ["red", "red"]]
+
+var model = function() {
+  var card  = uniformDraw(cards)
+  var color = uniformDraw(card)
+  condition(color == "blue")
+  return card.join("-")
+}
+
+viz(Infer({method: "enumerate",
+           model: model
+           }))
+</pre>
+
+<script>
+// find all <pre> elements and set up the editor on them
+var preEls = Array.prototype.slice.call(
+                  document.getElementsByClassName("webppl"));
+preEls.map(function(el) {
+    console.log(el);
+    editor.setup(el, {language: 'webppl'}); });
+</script> 
+
+
+
