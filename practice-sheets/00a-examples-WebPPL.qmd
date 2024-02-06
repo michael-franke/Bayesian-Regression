@@ -1,5 +1,5 @@
 ---
-title: "Testing WebPPL"
+title: "Building Bayesian intuitions: Sampling from models of a data-generating process"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -21,9 +21,37 @@ include-before-body:
         <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-v0.9.13.js" defer async></script>
 ---
 
- # Example
-    
-Here is the three-card problem:
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# The three-card problem
+
+The three-card problem is a well-known probability puzzle.
+It is similar to the [Monty Hall Problem]{https://en.wikipedia.org/wiki/Monty_Hall_problem, but simpler.
+Here is how it goes.
+
+There are three cards.
+One is blue on both sides.
+A second is blue on one side and red on the other.
+A third is red on both sides.
+
+![The three cards in the three-cards problem](../pics/three-card-problem-statement.png){width=80%}
+
+Now, imagine that someone selects one of the three cards at random and then selects a random side of that card for you to see.
+Suppose that you saw a blue side of a card.
+What's the probability that the other side of that card is also blue?
+
+Many people tend to answer this question with $0.5$, but the true probability is $\frac{2}{3}$.
+To see this, we explicate the two-step **data-generating process**: what you see (the observed data, i.e., one side of the card), is determined by two chance events along the way.
+A picture of this process, together with the path probabilities for each way a single round of playing this game could turn out, is shown below.
+It tells us that there are only two ways of generating the observation "blue side": one from the blue-blue card, the other from the blue-red card.
+But the former is twice as likely to generate the observation we made, so the probability that the other side of a card, whose blue side we saw, being blue as well is $\frac{2}{3}$.
+A longer treatment of the three-cards problem, also including an introduction to probability and Bayes rule, is [here](https://www.problang.org/chapters/app-01-probability.html).
+
+![Data-generating process in the three-cards problem](../pics/three-card-process.png){width=80%}
+
+Here is the three-card problem implemented in [WebPPL](webppl.org):
 
 <pre class="webppl">
 // three cards; with blue or red on either side
@@ -31,17 +59,112 @@ var cards = [["blue", "blue"],
              ["blue", "red"],
              ["red", "red"]]
 
+// non-normalized prior weights for each card
+var prior_cards = [1, 1, 1]
+
+// data-generating model (sampling based)
 var model = function() {
-  var card  = uniformDraw(cards)
+  var card  = categorical({ps: prior_cards, vs: cards})
   var color = uniformDraw(card)
   condition(color == "blue")
   return card.join("-")
 }
 
-viz(Infer({method: "enumerate",
-           model: model
-           }))
+// use 'enumerate' to compute the posterior
+var posterior_cards = Infer(
+  {method: "enumerate",
+   model: model
+  }
+)
+
+// display the results
+display(posterior_cards)
+
+// other output formats
+// print(posterior_cards)
+// viz(posterior_cards)
+// viz.table(posterior_cards)
 </pre>
+
+ 
+
+::: {.callout-caution collapse="false"}
+## Exercise 1
+
+(1) Try to figure out (roughly) how the code above works.
+    Do not worry about how exactly the `Infer()` or the `condition()` function works.
+    Everything else should be reasonably intuitive.
+
+(2) Try out the differ output formats suggested in the commented-out part of the code above.
+
+(3) Change the priors `prior_cards` for drawing each card.
+    Make a mental prediction of how that will affect the posterior before you run the code.
+    Was your prediction correct?
+
+:::
+
+
+# Inferring a coin-flip bias
+
+We flip a coin $N$ times and observed $k$ successes (heads).
+The coin has unknown bias $\theta$.
+We use a [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) to model the prior over $\theta$.
+A uniform distribution over the unit interval is given by `beta(1,1)`.
+
+<pre class="webppl">
+// observed data
+var k_obs = 7 // number of observed heads
+var N = 24    // total number of coin flips
+
+// data-generating process
+var model = function() {
+  
+  // prior
+  var theta = beta({a:1, b:1})
+  
+  // likelihood function
+  var k = binomial({p: theta, n: N})
+  
+  // conditioning (to calculate posterior)
+  condition(k == k_obs)
+  
+  return theta
+}
+
+var posterior = Infer(
+  {model: model, 
+   method: "rejection", 
+   samples: 5000}
+)
+
+viz(posterior)
+</pre>
+
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+(1) Comment out the conditioning statement `condition(k == k_obs)`.
+    What is it that you are visualizing now?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Now you are plotting samples from the prior.
+The true prior for `betat(1,1)` is a straight horizontal line, but for finite samples this will always look ragged, especially towards the end of the intervals.
+
+:::
+
+
+(2) Make changes to the weights of the beta-prior.
+    Visualize the prior, then predict how it will affect the posterior.
+
+(3) Change the data and explore the effects on prior and posterior.
+    For example, use $k=70$ and $N=240$.
+    Again, try to make predictions about what will happen to hone your Bayesian intuitions.
+
+:::
+
+
 
 <script>
 // find all <pre> elements and set up the editor on them
@@ -50,7 +173,4 @@ var preEls = Array.prototype.slice.call(
 preEls.map(function(el) {
     console.log(el);
     editor.setup(el, {language: 'webppl'}); });
-</script> 
-
-
-
+</script>
