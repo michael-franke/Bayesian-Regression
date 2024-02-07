@@ -1,5 +1,5 @@
 ---
-title: "Building Bayesian intuitions: Sampling from models of a data-generating process"
+title: "Building Bayesian intuitions: Sampling from models of the data-generating process"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -28,8 +28,8 @@ include-before-body:
 # The three-card problem
 
 The three-card problem is a well-known probability puzzle.
-It is similar to the [Monty Hall Problem]{https://en.wikipedia.org/wiki/Monty_Hall_problem, but simpler.
-Here is how it goes.
+It is similar to the [Monty Hall Problem](https://en.wikipedia.org/wiki/Monty_Hall_problem), but simpler.
+Here is how it goes. 
 
 There are three cards.
 One is blue on both sides.
@@ -39,7 +39,7 @@ A third is red on both sides.
 ![The three cards in the three-cards problem](../pics/three-card-problem-statement.png){width=80%}
 
 Now, imagine that someone selects one of the three cards at random and then selects a random side of that card for you to see.
-Suppose that you saw a blue side of a card.
+Suppose that you see a blue side of a card.
 What's the probability that the other side of that card is also blue?
 
 Many people tend to answer this question with $0.5$, but the true probability is $\frac{2}{3}$.
@@ -106,9 +106,12 @@ display(posterior_cards)
 
 # Inferring a coin-flip bias
 
+This examples introduces a case where we infer a single latent continuous parameter.
 We flip a coin $N$ times and observed $k$ successes (heads).
 The coin has unknown bias $\theta$.
-We use a [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) to model the prior over $\theta$.
+We want to infer $\theta$ from the data.
+
+We start with a [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) to model the prior over $\theta$.
 A uniform distribution over the unit interval is given by `beta(1,1)`.
 
 <pre class="webppl">
@@ -166,6 +169,88 @@ The true prior for `betat(1,1)` is a straight horizontal line, but for finite sa
 
 
 
+# The Big Bayesian 4
+
+Given a Bayesian model of a data-generating process, and some data which is supposed to explain or predict, there are usually four things that we are interested in:
+
+1. The model's **priors**, i.e., the distribution of the parameters *before* updating with the data.
+2. The model's **prior predictives**, i.e., the predictions about likely data observations the model makes *ex ante*, that is *before* updating with the data.
+3. The model's **posteriors**, i.e., the distribution of the parameters *after* updating with the data.
+4. The model's **posterior predictives**, i.e., the predictions about likely data observations the model makes *ex post*, that is *after* updating with the data.
+
+All of these qualities can be approximated from samples.
+Here is an example that shows the Big Bayesian 4 for the case of uncertainty about a coin's bias.
+
+
+<pre class="webppl">
+// observed data
+var k_obs = 7 // number of observed heads
+var N = 24    // total number of coin flips
+
+// define prior distribution
+var PriorDistribution = Beta({a: 1, b: 1});
+
+// data-generating process
+var model = function() {
+  
+  // prior sample 
+  var theta_prior = sample(PriorDistribution)
+  // prior predictive 
+  var k_prior = binomial({p: theta_prior, n: N})
+  
+  // posterior sample 
+  var theta_posterior = sample(PriorDistribution)
+  // posterior predictive 
+  var k_posterior = binomial({p: theta_posterior, n: N})
+  // conditioning (to calculate posterior)
+  observe(Binomial({p : theta_posterior, n: N}), k_obs)
+  
+  return {
+    prior: theta_prior, 
+    prior_predictive: k_prior,
+    posterior: theta_posterior, 
+    posterior_predictive: k_posterior
+  }
+}
+
+var BigBayesian4Samples = Infer(
+  {model: model, 
+   method: "rejection", 
+   samples: 5000}
+)
+
+viz.marginals(BigBayesian4Samples)
+</pre>
+
+::: {.callout-caution collapse="false"}
+## Exercise 3
+
+Use the code to build intuitions about how the Big Bayesian 4 are related to each other.
+Here are things to explore:
+
+1. Change the prior (by changing the values for `a` and `b` of the Beta distribution).
+
+2. Change the data to condition on (by changing the values of `N` and `k_obs`).
+
+3. Comment out the conditioning statement `observe(Binomial({p : theta_posterior, n: N}), k_obs)`.
+
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 // find all <pre> elements and set up the editor on them
 var preEls = Array.prototype.slice.call(
@@ -174,3 +259,4 @@ preEls.map(function(el) {
     console.log(el);
     editor.setup(el, {language: 'webppl'}); });
 </script>
+
