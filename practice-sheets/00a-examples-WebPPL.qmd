@@ -308,7 +308,7 @@ viz.marginals(Infer({model, method: "MCMC", samples: 10000}))
 Notice that the estimated means are now more inline with the measurements of the last five scientists.
 
 ::: {.callout-caution collapse="false"}
-## Exercise 4
+## Exercise 4a
 
 1. Go back to the previous model.
    Make the `model` function return the inferred standard deviation.
@@ -322,7 +322,74 @@ Notice that the estimated means are now more inline with the measurements of the
 :::
 
 
+## Finite-mixture model
 
+Here is another model to deal with sloppy scientists.
+While the previous model assigned a standard deviation to *each individual* scientist, intuitively, there are really to *kinds of scientists:* sloppy and proper ones.
+We have intuitions about what the difference is (e.g., in terms of a prior on the `sigma` parameter), but we would ideally like to let the data decide who belongs to which category.
+We can do this with a so-called *finite-mixture model* which has a discrete latent parameter for each data observation, assigning it to a type.
+
+<pre class="webppl">
+
+// 7 scientists measure the same quantity; some may better measurers than others
+var data = [-27.020, 3.570, 8.191, 9.898, 9.603, 9.945, 10.056]
+
+var model = function() {
+
+  // prior true measurement
+  var mu = gaussian(0, 30)
+  
+  // prior over sigma for sloppy or proper scientists
+  var sigma_sloppy_science = gamma(5,5)
+  var sigma_proper_science = gamma(2,2)
+  
+  // type of each scientist: sloppy or proper? (prior: unbiased 50/50)
+  var type_of_scientist = repeat(
+    7, 
+    function() {categorical({vs: ["sloppy", "proper"]})} )
+
+  // likelihood function / conditioning
+  mapIndexed(function(i, d){
+    type_of_scientist[i] == 0 ? 
+      observe(Gaussian({mu, sigma: sigma_sloppy_science}), d) :
+      observe(Gaussian({mu, sigma: sigma_proper_science}), d)
+  }, data)
+
+    return {mu, sigma_sloppy_science, sigma_proper_science}
+//   return type_of_scientist
+}
+
+viz.marginals(Infer({model, method: "MCMC", samples: 10000,
+                     callbacks: [editor.MCMCProgress()]}))
+
+</pre>
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 4b
+
+1. Comment out parts of the code to obtain samples from the priors over parameters.
+   Compare this to the plot for the posteriors, just to make sure that something was learned, and that what was learned makes sense.
+    
+2. Bring the code back to its original state and use the other return statement that is currently commented out.
+   What is are these plots telling you? Does it make sense to you?
+ 
+::: {.callout-tip collapse="true"}
+### Solution
+
+You should see seven barplots, one for each scientist, showing the posterior probability that any given scientist is sloppy or proper. 
+ 
+:::
+   
+   
+
+:::
+
+
+
+
+
+<!-- next steps: more standard priors for sigma; latent discrete parameter -->
 
 
 <script>
