@@ -135,12 +135,12 @@ if (rerun_models) {
     save_pars = save_pars(all = TRUE)
   )
   normal_bridge <- bridge_sampler(fit_n_4Bridge, silent = T)
-  write_rds(normal_bridge, "05-normal_bridge.rds")
+  write_rds(normal_bridge, "06-normal_bridge.rds")
   robust_bridge <- bridge_sampler(fit_r_4Bridge, silent = T)  
-  write_rds(robust_bridge, "05-robust_bridge.rds")
+  write_rds(robust_bridge, "06-robust_bridge.rds")
 } else {
-  normal_bridge <- read_rds("05-normal_bridge.rds")  
-  robust_bridge <- read_rds("05-robust_bridge.rds")
+  normal_bridge <- read_rds("06-normal_bridge.rds")  
+  robust_bridge <- read_rds("06-robust_bridge.rds")
 }
 
 bf_bridge <- bridgesampling::bf(robust_bridge, normal_bridge)
@@ -248,14 +248,14 @@ if (rerun_models) {
   )
   
   narrow_bridge <- bridge_sampler(fit_narrow_4Bridge, silent = T)
-  write_rds(narrow_bridge, "05-narrow_bridge.rds")
+  write_rds(narrow_bridge, "06-narrow_bridge.rds")
   
   wide_bridge   <- bridge_sampler(fit_wide_4Bridge, silent = T)
-  write_rds(wide_bridge, "05-wide_bridge.rds")
+  write_rds(wide_bridge, "06-wide_bridge.rds")
   
 } else {
-  narrow_bridge <- read_rds("05-narrow_bridge.rds")  
-  wide_bridge <- read_rds("05-wide_bridge.rds")
+  narrow_bridge <- read_rds("06-narrow_bridge.rds")  
+  wide_bridge <- read_rds("06-wide_bridge.rds")
 }
 
 bridgesampling::bf(narrow_bridge, wide_bridge)

@@ -1,0 +1,105 @@
+---
+title: "Bayesian regression models in WebPPL"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+include-before-body:
+      text: |
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-editor-1.0.9.css">
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-viz-0.7.11.css">
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-editor-1.0.9.js"></script>
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-viz-0.7.11.js"></script>
+        <script src="https://s3-us-west-2.amazonaws.com/cdn.webppl.org/webppl-v0.9.13.js" defer async></script>
+---
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# Simple regression 
+
+Here is an example of a simple Bayesian regression model for R's built-in data set `cars`.
+
+<pre class="webppl">
+// R's 'cars' data set: 50 paired measurements of speed and distance (after breaking)
+var speed = [4, 4, 7, 7, 8, 9, 10, 10, 
+             10, 11, 11, 12, 12, 12, 
+             12, 13, 13, 13, 13, 14, 
+             14, 14, 14, 15, 15, 15, 
+             16, 16, 17, 17, 17, 18, 
+             18, 18, 18, 19, 19, 19, 
+             20, 20, 20, 20, 20, 22, 
+             23, 24, 24, 24, 24, 25]
+var dist = [2, 10, 4, 22, 16, 10, 18, 
+            26, 34, 17, 28, 14, 20, 24, 
+            28, 26, 34, 34, 46, 26, 36, 
+            60, 80, 20, 26, 54, 32, 40, 
+            32, 40, 50, 42, 56, 76, 84, 
+            36, 46, 68, 32, 48, 52, 56, 
+            64, 66, 54, 70, 92, 93, 120, 85]
+
+var model = function() {
+  
+  // parameters & priors
+  var Intercept = gaussian(-18, 5); // data-informed choice (!)
+  var slope = gaussian(0, 10);
+  var sigma = gamma(5, 5);
+
+  // linear predictor value for a given 'x' value
+  var linPred = function(x) {
+    return slope * x + Intercept;
+  };
+
+  map2(
+    function(x, y) {
+      factor(Gaussian({mu: linPred(x), sigma: sigma}).score(y));
+    },
+    speed,
+    dist);
+
+  return {Intercept,slope, sigma};
+}
+
+viz.marginals(Infer({method: 'MCMC', samples: 20000, burn: 10000, lag: 2}, model));
+</pre>
+
+ 
+
+::: {.callout-caution collapse="false"}
+## Exercise 1
+
+1. Try to see the underlying model of the data-generating process behind the code.
+2. Visualize just the priors and compare them with the posteriors.
+3. Why is it (usually!) okay to glimpse at the data to set priors for the `Intercept`?
+    
+::: {.callout-tip collapse="true"}
+### Solution
+
+Usually, it is the slope coefficients that capture the research question of interest.
+We should therefore (usually) be more mindful about setting the priors for the slope coefficients.
+
+:::
+
+:::
+
+
+
+
+<script>
+// find all <pre> elements and set up the editor on them
+var preEls = Array.prototype.slice.call(
+                  document.getElementsByClassName("webppl"));
+preEls.map(function(el) {
+    console.log(el);
+    editor.setup(el, {language: 'webppl'}); });
+</script>
+

@@ -1,5 +1,5 @@
 ---
-title: "Prior and prior predictives"
+title: "Prior and posterior predictives"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html

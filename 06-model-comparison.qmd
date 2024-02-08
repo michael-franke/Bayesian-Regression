@@ -31,6 +31,6 @@ In the practical session, we explore how these different perspectives can give r
 This is not a puzzle or paradox, and maybe not even something to quarrel about.
 It is a natural reflex of comparing the same objects based on a different task, namely making predictions before training, or after.
 
-Here are [slides for this unit](slides/06-model-comparison.pdf).
+<!-- Here are [slides for this unit](slides/06-model-comparison.pdf). -->
 
 

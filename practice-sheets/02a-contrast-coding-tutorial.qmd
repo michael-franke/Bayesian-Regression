@@ -218,7 +218,7 @@ The `faintr` package allows to extract samples from different levels of categori
 
 ```{r}
 # sample for male speakers in polite contexts
-faintr::extract_cell_draws(
+faintr::filter_cell_draws(
   fit = fit_dummy_FE,
   group = gender == "M" & context == "pol"
 ) |> pull(draws) |> 

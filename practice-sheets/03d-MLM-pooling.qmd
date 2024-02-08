@@ -161,8 +161,11 @@ If we average the estimates properly (here using helper functions from the `fain
 
 ```{r}
 # estimated sample mean: 1.381
-meanOmean_estimate <- faintr::extract_cell_draws(fit_FE) |> 
+meanOmean_estimate <- 
+  # obtain samples from the grand mean
+  faintr::filter_cell_draws(fit_FE, colname = "draws") |> 
   pull(draws) |> 
+  # summarize them
   aida::summarize_sample_vector(name = "mean-of-means")
 rbind(sample_mean_estimate, meanOmean_estimate)
 ```

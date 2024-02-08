@@ -1,0 +1,16 @@
+---
+title: "Bayesian Regression: Theory & Practice"
+subtitle: "Basics: Bayesian Data Analysis, Wrangling, Plotting, and Linear Regression"
+author: "Michael Franke"
+---
+
+This chapter covers treatment of categorical predictors in linear regression, using **contrast coding**.
+We learn how to set contrasts, interpret results and use samples to retrieve information on contrasts that we did not encode in the contrast scheme.
+
+<!-- Here are the [slides on regression modeling](slides/01-intro-simpleRegress.pdf). -->
+
+<!-- Follow up [slides on priors and predictives](slides/02-priors-predictives.pdf). -->
+
+There is a theoretical tutorial on the topic, as well as an tutorial with practical exercises.
+
+There is also a sheet with additional exercises (simple linear regression with metric and categorical variables).

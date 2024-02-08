@@ -4,20 +4,16 @@ subtitle: "Basics: Bayesian Data Analysis, Wrangling, Plotting, and Linear Regre
 author: "Michael Franke"
 ---
 
-The first part introduces the basics of BDA and linear regression modeling.
+This chapter introduces the basics of Bayesian linear regression modeling.
 
-Here are the [slides on regression modeling](slides/01-intro-simpleRegress.pdf).
+<!-- Here are the [slides on regression modeling](slides/01-intro-simpleRegress.pdf). -->
 
-Follow up [slides on priors and predictives](slides/02-priors-predictives.pdf).
+<!-- Follow up [slides on priors and predictives](slides/02-priors-predictives.pdf). -->
 
-There are five mostly self-contained tutorials, covering:
+There are four tutorials, covering:
 
-1. basics of data wrangling (in the `tidyverse`) and plotting (with `ggplot2`),
+1. simple linear regression models (with `WebPPL`),
 2. simple linear regression models (with `brms`),
-3. how to specify priors in `brms`,
-4. why and how to inspect a model's predictive distribution(s),
-5. contrast coding of categorical predictor variables.
+3. how to inspect and set priors in `brms`, and
+4. how to obtain prior and predictive samples with `brms`.
 
-There is also a sheet with additional exercises (simple linear regression with metric and categorical variables).
-
-There is also a sort of "cheat sheet" with common operations and functions when working with `brms`.

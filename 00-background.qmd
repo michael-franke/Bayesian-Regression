@@ -4,12 +4,11 @@ subtitle: "Background: Think like a Bayesian - Samples and data-generating proce
 author: "Michael Franke"
 ---
 
-This part revisits basic concepts of Bayesian Data Analysis. 
-It encourages to **think like a computational Bayesian**, which is to think in terms of data-generating models and sampling processes.
+This section provides a quick recap of fundamental concepts of Bayesian Data Analysis and the technical work flow this course uses.
 
+In the first part, we explore how to **think like a computational Bayesian**, which is to think in terms of data-generating models and sampling processes.
 To get more familiar with the mode of being, there are examples using the probabilistic programming language [WebPPL](http://webppl.org/).
 
-Here are the [slides on regression modeling](slides/01-intro-simpleRegress.pdf).
+The second part introduces basics of data wrangling (in the `tidyverse`) and plotting (with `ggplot2`).
 
-Follow up [slides on priors and predictives](slides/02-priors-predictives.pdf).
 

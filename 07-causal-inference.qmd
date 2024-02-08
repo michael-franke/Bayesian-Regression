@@ -11,6 +11,7 @@ We show how to quantify uncertainty of estimates of causal effects, using Bayesi
 
 There is a short [exercise script on stochastic dependence and causal relation](https://michael-franke.github.io/Bayesian-Regression/practice-sheets/06a-stochastic-dependence.html),
 and a [tutorial script on causal inference](https://michael-franke.github.io/Bayesian-Regression/practice-sheets/06b-causal-inference.html). 
-Here are [slides for this unit](slides/07-causal_inference.pdf).
+
+<!-- Here are [slides for this unit](slides/07-causal_inference.pdf). -->
 
 

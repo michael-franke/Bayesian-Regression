@@ -26,80 +26,86 @@ website:
             text: Overview
           - href: practice-sheets/00a-examples-WebPPL.qmd
             text: Thinking Bayesian
+          - href: practice-sheets/00b-wrangling-plotting.qmd
+            text: Wrangling & plotting
       - section: "01: Regression basics"
         contents:
           - href: 01-basics.qmd
             text: Overview
-          - href: practice-sheets/01b-simple-regression.qmd
-            text: Simple linear regression
-          - href: practice-sheets/01e-contrast-coding-tutorial.qmd
-            text: Categorical predictors
+          - href: practice-sheets/01a-regression-WebPPL.qmd
+            text: Simple regression in WebPPL
+          - href: practice-sheets/01b-regression-BRMS.qmd
+            text: Simple regression in BRMS
           - href: practice-sheets/01c-priors.qmd
             text: Priors
           - href: practice-sheets/01d-predictives.qmd
             text: Predictions
-          - href: practice-sheets/01f-catPreds-exercises.qmd
+      - section: "02: Categorical predictors"
+        contents:
+          - href: 02-categorical-predictors.qmd
+            text: Overview
+          - href: practice-sheets/02a-contrast-coding-tutorial.qmd
+            text: Categorical predictors
+          - href: practice-sheets/02b-catPreds-exercises.qmd
             text: "Exercises: Bayesian LMs"
-      - section: "02: Multi-level models"
+      - section: "03: Multi-level models"
         contents:
-          - href: 02-hierarchical-models.qmd
+          - href: 03-hierarchical-models.qmd
             text: Overview
-          - href: practice-sheets/02a-hierarchical-models-tutorial.qmd
+          - href: practice-sheets/03a-hierarchical-models-tutorial.qmd
             text: Hierarchical models (tutorial)
-          - href: practice-sheets/02b-hierarchical-models-exercises.qmd
+          - href: practice-sheets/03b-hierarchical-models-exercises.qmd
             text: Hierarchical models (exercises)
-          - href: practice-sheets/02c-multi-membership.qmd
+          - href: practice-sheets/03c-multi-membership.qmd
             text: Multi-membership
-          - href: practice-sheets/02d-MLM-pooling.qmd
+          - href: practice-sheets/03d-MLM-pooling.qmd
             text: MLMs & pooling
-      - section: "03: GLMs & beyond"
+      - section: "04: GLMs & beyond"
         contents:
-          - href: 03-GLM.qmd
+          - href: 04-GLM.qmd
             text: Overview
-          - href: practice-sheets/03a-GLM-tutorial.qmd
+          - href: practice-sheets/04a-GLM-tutorial.qmd
             text: GLM (tutorial)
-          - href: practice-sheets/03b-GLM-exercises.qmd
+          - href: practice-sheets/04b-GLM-exercises.qmd
             text: GLM (exercises)
-          - href: practice-sheets/03c-distributional-models.qmd
+          - href: practice-sheets/04c-distributional-models.qmd
             text: Distributional models
-          - href: practice-sheets/03d-mixture-models.qmd
+          - href: practice-sheets/04d-mixture-models.qmd
             text: Mixture models
-      - section: "04: MCMC sampling"
+      - section: "05: MCMC sampling"
         contents:
-          - href: 04-MCMC.qmd
+          - href: 05-MCMC.qmd
             text: Overview
-          - href: practice-sheets/04a-MCMC-diagnostics.qmd
+          - href: practice-sheets/05a-MCMC-diagnostics.qmd
             text: MCMC diagnostics
-          - href: practice-sheets/04b-divergences.qmd
+          - href: practice-sheets/05b-divergences.qmd
             text: Divergent transitions
-      - section: "05: Model comparison"
+      - section: "06: Model comparison"
         contents:
-          - href: 05-model-comparison.qmd
+          - href: 06-model-comparison.qmd
             text: Overview
-          - href: practice-sheets/05a-model-comparison.qmd
+          - href: practice-sheets/06a-model-comparison.qmd
             text: Model comparison
-      - section: "06: Causal inference"
+      - section: "07: Causal inference"
         contents:
-          - href: 06-causal-inference.qmd
+          - href: 07-causal-inference.qmd
             text: Overview
-          - href: practice-sheets/06a-stochastic-dependence.qmd
+          - href: practice-sheets/07a-stochastic-dependence.qmd
             text: Stochastic dependence
-          - href: practice-sheets/06b-causal-inference.qmd
+          - href: practice-sheets/07b-causal-inference.qmd
             text: Causal inference
-      - section: "07: Non-linear models"
+      - section: "08: Non-linear models"
         contents:
-          - href: practice-sheets/07a-nonLinear.qmd
+          - href: practice-sheets/08a-nonLinear.qmd
             text: Custom non-linearity
-          - href: practice-sheets/07b-GAMs.qmd
+          - href: practice-sheets/08b-GAMs.qmd
             text: Generalized additive models
-          - href: practice-sheets/07c-Gaussian-processes.qmd
+          - href: practice-sheets/08c-Gaussian-processes.qmd
             text: Gaussian processes regression
-      - section: "08: Practical stuff"
+      - section: "09: Practical stuff"
         contents:
-          - href: practice-sheets/08a-cheat-sheet.qmd
+          - href: practice-sheets/09a-cheat-sheet.qmd
             text: BRMS cheat sheet
-          - href: practice-sheets/08b-wrangling-plotting.qmd
-            text: Wrangling & plotting
 
 format:
   html:

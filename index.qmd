@@ -16,20 +16,24 @@ This course is designed for people who have completed a first, introductory cour
 
 ## Scope
 
-The aim of this course is to increase students overview over topics relevant for intermediate to advanced Bayesian regression modeling. 
+The aim of this course is to increase students' overview over topics relevant for intermediate to advanced Bayesian regression modeling. 
 The course focuses on Bayesian multi-level generalized linear models as implemented in the `brms` package.
 It covers, among other things, the following theoretical and practical aspects:
 
 - prior and posterior model checking
-- generalized linear models (ordered logit, multinomial, Poisson, Beta ...)
 - MCMC methods (HMC diagnostics)
+- generalized linear models (ordered logit, multinomial, Poisson, Beta ...)
 - distributional and non-linear models (GAMs, Gaussian processes)
 - model comparison (Bayes factors, cross-validation)
 
 ## Additional material
 
-An even more basic introduction to data analysis (introducing R, tidyverse, Bayesian and, eventually, also frequentist statistics) is the webbook ["An introduction to Data Analysis"](https://michael-franke.github.io/intro-data-analysis/index.html).
-This course presupposes roughly the content covered in Chapters 2--9 and 12--13. 
+This course contains a short [tutorial on Bayesian modeling](practice-sheets/00a-examples-WebPPL.html), and a brief [tutorial on wrangling and plotting in the tidyverse](practice-sheets/00b-wrangling-plotting.html).
+
+For more background, a companion to this course, is the introductory webbook["An introduction to Data Analysis"](https://michael-franke.github.io/intro-data-analysis/index.html), which  covers R, tidyverse, Bayesian and, eventually, also frequentist statistics.
+This course presupposes roughly the content covered in Chapters 2--9 and 12--13.
+
+There is also a [cheat sheet on BRMS](practice-sheets/09a-cheat-sheet.html) for reference.
 
 ## Acknowledgements
 

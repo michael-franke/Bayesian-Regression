@@ -21,4 +21,4 @@ This unit covers:
 
 We also take a peak at the Stan programming language.
 
-Here are the [slides for this session](slides/05-MCMC.html)
+<!-- Here are the [slides for this session](slides/05-MCMC.html) -->
