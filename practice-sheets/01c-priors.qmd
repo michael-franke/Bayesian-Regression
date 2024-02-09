@@ -1,5 +1,5 @@
 ---
-title: "Priors in `brms`: inspecting, setting & sampling"
+title: "Priors and predictivs in `brms`"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
@@ -15,14 +15,15 @@ editor:
 ---
 
 This tutorial covers how to inspect, set and sample priors in Bayesian regression models with `brms`.
-The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution.
-How to obtain samples from the prior predictive distribution is covered in a separate chapter.
+We also look at how to sample from the prior and posterior distribution. 
+The main conceptual take-home message of this tutorial is: **The choice of prior should be informed by their effect on the prior (and possibly also the posterior) predictive distribution.**
+This emphasises the role of *model criticism* (prior and posterior) which a later tutorial will enlarge on.
 
 # Preamble
 
 {{< include 00-preamble.qmd >}}
 
-# Set up example
+# Inspect & set priors
 
 We work with the mouse-tracking data from the `aida` package.
 As a running example, we look at the linear relation between (aggregates of) area-under-the-curve `AUC` and `MAD`.
@@ -46,6 +47,8 @@ ggplot(aes(x = MAD, y = AUC)) +
   
 ```
 
+Let's fit a simple Bayesian regression model:
+
 ```{r}
 #| results: hide
 
@@ -55,7 +58,6 @@ model1 = brm(
   data = dolphin_agg)
 ```
 
-# Inspect & change priors
 
 We can inspect the priors used in in a model fit like so:
 
@@ -154,14 +156,33 @@ Instead, model 2 compensates with a much higher intercept estimate.
 
 The important upshot of this exercise is that **since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters** (who have to "go out of their way" to compensate for what the other parameter can or cannot do, so to speak).
 
-This raises the question of how to determine "good priors".
-This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)).
+This raises the important, and controversial question of how to determine "good priors".
+A simple, evasive but plainly true answer is: it depends on what you want to *do* with your model.
+Things you might want to do with your model include:
+
+- explore or monkey-around, 
+- make serious predictions about the future (e.g., disease spread, market development), 
+- or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)).
+
 In almost all cases, however, it is good advice to remember this: **priors should be evaluated in the context of the (prior) predictions they entail**.
-That's the topic we attend to in the next section.
+In other words, we need to think of priors as having a dual role:
+
+1. priors encode assumptions about likely parameter values, and 
+2. priors inform the prior predictive distribution, and
+3. priors may also bias our posterior estimates. 
+
+For complex models, with myriads of (hierarchically nested) parameters it may not be feasible to have, express or defend particular ideas about what plausible sets of parameter values are. 
+In it, however, often much more feasible to have intuitions about the *implications* of particular choices of priors for the *predictions* that the model makes, e.g, about the data that would be likely to observe from an *a prior* point of view.
+Finally, the choice of priors can matter for parameter estimation.
+For one, complex models may require choices of adequate priors in order for us to be able to fit them with whatever technique we are using.
+So, we might consider a form of **regularizing prior** simply in order to make the model "well-behaved", while at the same time making sure that we are not sneaking in unwarranted assumptions (back again to checking the prior predictive distribution).
+Moreover, the choice of priors might be biasing in ways that we did not intend. 
+For these reasons, it may also be prudent to inspect the impact of the choice of priors on the posterior distribution.
+In the following, we therefore first look at how to take samples from the priors as such, and then how to obtain samples from the prior and posterior distribution.
 
 # Sample from prior
 
-Before going there, here is how we can obtain samples from the prior distribution over parameters of a model.
+Here is how we can obtain samples from the prior distribution over parameters of a model.
 Sampling from the prior only works if priors are not the improper (flat) default priors.
 Firstly, we can use the option `sample_prior = "only"` to obtain only samples from the prior.
 (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)
@@ -215,3 +236,384 @@ model2_priorUpdate <- stats::update(model2, sample_prior = "only")
 ```{r}
 model2_priorUpdate |> tidybayes::summarise_draws() |> select(1:6)
 ```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+Run a linear regression model on R's `cars` data set, setting the priors exactly as we did for the WebPPL model a previous tutorial in this chapter, i.e., a normal prior (mean -18, standard deviation 5) for the intercept, a normal prior (mean 0, standard 10) for the slope, and a gamma prior (parameters 5 and 5) for the standard deviation.
+Then rerun the model to obtain *only* samples from the priors (using `stats::update`).
+Plot the fits both with `bayesplot::mcmc_dens`.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+#| results: hide
+
+fit_cars <- brms::brm(
+  data = cars, 
+  formula = dist ~ speed,
+  prior = c(
+    brms::prior("normal(-18,5)", class = "Intercept"),
+    brms::prior("normal(0,10)", class = "b"),
+    brms::prior("gamma(5,5)", class = "sigma")
+  )
+)
+```
+
+```{r}
+bayesplot::mcmc_dens(fit_cars)
+```
+
+
+```{r}
+#| results: hide
+
+fit_cars_priors <- stats::update(fit_cars, sample_prior = "only")
+```
+
+```{r}
+bayesplot::mcmc_dens(fit_cars_priors)
+```
+
+:::
+:::
+
+# Samples from the predictive distributions
+
+For a simple Bayesian linear regression model, there are different predictive functions we need to distinguish.
+First, we distinguish the *prior* and the *posterior* perspective, of course.
+Second, we may interested in different *kinds* or *locations* of predictions.
+Concretely, here we look at **predictions of central tendency** (i.e., predictions of best fitting linear regression lines) and **predictions of observations** (i.e., data points around the predicted linear regression lines).
+Notice that the latter also takes the standard deviation into account, the former does not.
+
+Let's look at a data set of average world temperatures from the middle of the 18th century to the early 21st century.
+Here is a plot of our data points.
+
+```{r }
+#| code-fold: true
+  ggplot() + 
+    geom_point(data = aida::data_WorldTemp, 
+               aes(x = year, y = avg_temp),
+               color = project_colors[2],
+               size = 1,
+               alpha = 0.8) +
+    ylab("average temperature")
+```
+
+To obtain samples from predictive distributions from `brms`, we first need a model fit.
+So, let's obtain a posterior fit and then use `sample_prior = "only"` to get a similarly structured model fit object with samples from the prior.
+
+
+```{r }
+#| results: hide
+
+prior_baseline <- c(prior("normal(0, 0.02)", class = "b"),
+                    prior("student_t(3, 8, 5)", class = "Intercept"))
+
+# get the posterior fit
+fit <- brm(
+  avg_temp ~ year,
+  prior = prior_baseline,
+  data = aida::data_WorldTemp,
+  silent = TRUE,
+  refresh = 0
+)
+
+# retrieve prior samples from the posterior fit
+fit_prior_only <- update(
+  fit,
+  silent = TRUE,
+  refresh = 0,
+  sample_prior = "only"
+)
+
+```
+
+### Samples of linear predictor values
+
+We can obtain samples for values of the linear predictor using the function `tidybayes::add_linpred_draws`.
+Below we supply:
+
+- the fitted object (posterior or prior), 
+- the $x$-values for which we want the predictions (here we use the $x$-values in the data set),
+- a number of samples
+- the name of the column that contains the samples in the returned data frame.
+
+```{r }
+
+postPred_linPredictor <- tidybayes::add_linpred_draws(
+  fit, 
+  newdata = tibble(year = aida::data_WorldTemp$year),
+  ndraws = 2000,
+  value = 'avg_tmp'
+) |> 
+  ungroup() |> 
+  select(year, .draw, avg_tmp)
+
+postPred_linPredictor
+
+```
+
+Similarly, for samples from the prior predictive:
+
+
+```{r }
+
+priorPred_linPredictor <- tidybayes::add_linpred_draws(
+  fit_prior_only, 
+  newdata = tibble(year = aida::data_WorldTemp$year),
+  ndraws = 2000,
+  value = 'avg_tmp'
+) |> 
+  ungroup() |> 
+  select(year, .draw, avg_tmp)
+
+priorPred_linPredictor
+
+```
+
+The following plot shows each sample from the linear predictors as a thin grey line, and the actual data as red points.
+We see that the prior model makes a very wide range of predictions for regression lines, arguably quite implausibly so.
+The shape of the data points is hardly recognizable for the case of the prior because of that (see also the values on the $y$-axes).
+The second plot, for the posterior, shows that *a posteriori* credible regression lines are much more confined.
+
+
+```{r}
+
+priorPred_linPredictor |> mutate(type = "prior") |> 
+  rbind(postPred_linPredictor |> mutate(type = "posterior")) |> 
+  mutate(type = factor(type, levels = c("prior", "posterior"))) |> 
+  ggplot() + 
+  facet_grid(type ~ ., scales = "free") +
+  geom_line(aes(x = year, y = avg_tmp, group = .draw), 
+            color = "gray", alpha = 0.3) +
+  geom_point(data = aida::data_WorldTemp, 
+             aes(x = year, y = avg_temp), color = project_colors[2], size = 1, alpha = 0.8) +
+  ylab("average temperature")
+
+```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 3
+
+Let's use prior / posterior predictives to investigate the plausibility of different priors for our regression model.
+We can use the following function `plot_predictPriPost` to conveniently visualize the predictives for different priors:
+
+```{r}
+#| code-fold: true
+
+plot_predictPriPost <- function(prior_spec, ndraws = 1000) {
+  
+  # get the posterior fit
+  fit <- brm(
+    avg_temp ~ year,
+    prior = prior_spec,
+    data = aida::data_WorldTemp,
+    silent = TRUE,
+    refresh = 0
+  )
+  
+  # retrieve prior samples from the posterior fit
+  fit_prior_only <- update(
+    fit,
+    silent = TRUE,
+    refresh = 0,
+    sample_prior = "only"
+  )
+  
+  get_predictions <- function(fit_object, type = "prior prediction") {
+    
+    tidybayes::add_linpred_draws(
+      fit_object, 
+      newdata = tibble(year = aida::data_WorldTemp$year),
+      ndraws = ndraws,
+      value = 'avg_tmp'
+    ) |> 
+      ungroup() |> 
+      select(year, .draw, avg_tmp) |> 
+      mutate(type = type)
+    
+  }
+  
+  get_predictions(fit, "posterior prediction") |> 
+    rbind(get_predictions(fit_prior_only, "prior prediction")) |> 
+    mutate(type = factor(type, levels = c("prior prediction", "posterior prediction"))) |> 
+    ggplot() + 
+    facet_grid(type ~ ., scales = "free") +
+    geom_line(aes(x = year, y = avg_tmp, group = .draw), 
+              color = "gray", alpha = 0.3) +
+    geom_point(data = aida::data_WorldTemp, 
+               aes(x = year, y = avg_temp), color = project_colors[2], size = 1, alpha = 0.8) +
+    ylab("average temperature")
+}
+```
+
+1. Inspect, interpret and evaluate the impact of the following "opinionated prior".
+
+```{r}
+#| results: hide
+
+prior_opinionated <- c(prior("normal(0.2, 0.05)", class = "b"),
+                       prior("student_t(3, 8, 5)", class = "Intercept"))
+plot_predictPriPost(prior_opinionated)
+```
+
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+These priors put stronger constraints on *a priori* plausible regression lines than the previous.
+This is still rather unconstrained, though, so it has little (visual) effect on the posterior.
+
+:::
+
+2. Inspect, interpret and evaluate the impact of the following "crazy prior".
+
+```{r}
+#| results: hide
+
+prior_crazy <- c(prior("normal(-1, 0.005)", class = "b"),
+                 prior("student_t(3, 8, 5)", class = "Intercept"))
+plot_predictPriPost(prior_crazy)
+
+```
+
+
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+These priors are very strong and make *a priori* plausible regression lines that predict a strongly decreasing world temperature over time.
+These priors are so strong that the data is not able to overturn the strong bias in these priors.
+This is a case where inspecting the *posterior* to evaluate the *prior* might also be useful.
+While this case is simple and transparent, sometimes the strength of prior assumptions shows clearly in the posterior fit.
+However, strongly biased priors may be used for a reason (e.g., the actually test this assumption, e.g., with Bayesian $p$-values).
+
+:::
+
+:::
+
+
+### Samples from the data-predictive distribution
+
+We can also obtain samples of predicted hypothetical data $y$ for a given set of values $x$, either from the prior or posterior perspective.
+We use the function `tidybayes::add_predicted_draws` for that, like so:
+
+
+```{r}
+postPred_linPredictor <- tidybayes::add_predicted_draws(
+  fit, 
+  newdata = tibble(year = aida::data_WorldTemp$year),
+  ndraws = 1, # we only want 1 sample of y for each x-values
+  value = 'avg_tmp'
+) |> 
+  ungroup() |> 
+  select(year, .draw, avg_tmp)
+
+postPred_linPredictor
+```
+
+This gives us one sample of a hypothetical average temperature for each year ($x$-value) in the data set.
+Here is a visualization, where the bigger blue points are predicted values (from the posterior), and the red points are the actually observed data points.
+
+
+```{r}
+#| code-fold: true
+ggplot() + 
+  geom_point(data = postPred_linPredictor, 
+             aes(x = year, y = avg_tmp), 
+             color = project_colors[1], size = 2, alpha = 0.9) +
+  geom_point(data = aida::data_WorldTemp, 
+             aes(x = year, y = avg_temp), 
+             color = project_colors[2], size = 1, alpha = 0.8)
+
+```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 4
+
+Below is another convenience function `plot_predictPriPost_data` to visualize the data-predictives for different priors.
+
+```{r}
+#| code-fold: true
+
+plot_predictPriPost_data <- function(prior_spec) {
+  
+  # get the posterior fit
+  fit <- brm(
+    avg_temp ~ year,
+    prior = prior_spec,
+    data = aida::data_WorldTemp,
+    silent = TRUE,
+    refresh = 0
+  )
+  
+  # retrieve prior samples from the posterior fit
+  fit_prior_only <- update(
+    fit,
+    silent = TRUE,
+    refresh = 0,
+    sample_prior = "only"
+  )
+  
+  get_predictions_data <- function(fit_object, type = "prior prediction") {
+    
+    tidybayes::add_predicted_draws(
+      fit_object, 
+      newdata = tibble(year = aida::data_WorldTemp$year),
+      ndraws = 1,
+      value = 'avg_tmp'
+    ) |> 
+      ungroup() |> 
+      select(year, .draw, avg_tmp) |> 
+      mutate(type = type)
+    
+  }
+  
+  get_predictions_data(fit, "posterior prediction") |> 
+    rbind(get_predictions_data(fit_prior_only, "prior prediction")) |> 
+    mutate(type = factor(type, levels = c("prior prediction", "posterior prediction"))) |> 
+    ggplot() + 
+    facet_grid(type ~ ., scales = "free") +
+    geom_point(aes(x = year, y = avg_tmp), color = project_colors[1], size = 2, alpha = 0.9) +
+    geom_point(data = aida::data_WorldTemp, 
+               aes(x = year, y = avg_temp), color = project_colors[2], size = 1, alpha = 0.8) +
+    ylab("average temperature")
+}
+```
+
+
+Inspect, interpret and evaluate the impact of the following piors.
+
+```{r}
+prior_baseline <- c(prior("normal(0, 0.02)", class = "b"),
+                    prior("student_t(3, 8, 5)", class = "Intercept"))
+plot_predictPriPost_data(prior_baseline)
+```
+
+
+```{r}
+
+prior_opinionated <- c(prior("normal(0.2, 0.05)", class = "b"),
+                       prior("student_t(3, 8, 5)", class = "Intercept"))
+plot_predictPriPost_data(prior_opinionated)
+```
+
+
+
+```{r}
+prior_crazy <- c(prior("normal(-1, 0.005)", class = "b"),
+                 prior("student_t(3, 8, 5)", class = "Intercept"))
+plot_predictPriPost_data(prior_crazy)
+```
+
+
+
+
+:::
+

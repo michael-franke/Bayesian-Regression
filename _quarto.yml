@@ -33,11 +33,11 @@ website:
           - href: 01-basics.qmd
             text: Overview
           - href: practice-sheets/01a-regression-WebPPL.qmd
-            text: Simple regression in WebPPL
+            text: "Simple regr. in WebPPL"
           - href: practice-sheets/01b-regression-BRMS.qmd
-            text: Simple regression in BRMS
+            text: "Simple regr. in BRMS"
           - href: practice-sheets/01c-priors.qmd
-            text: Priors
+            text: "Priors & predicitives"
           - href: practice-sheets/01d-predictives.qmd
             text: Predictions
       - section: "02: Categorical predictors"
