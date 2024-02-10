@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.340">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michael Franke">
+
+<title>Bayesian Regression: Theory &amp; Practice - Model criticism: predictive checks &amp; Bayesian \(p\)-values</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../practice-sheets/07a-model-criticism.html">07: Model criticism</a></li><li class="breadcrumb-item"><a href="../practice-sheets/07a-model-criticism.html">Model criticism</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Regression: Theory &amp; Practice</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">00: Background</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00-background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/00a-examples-WebPPL.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Thinking Bayesian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/00b-wrangling-plotting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Wrangling &amp; plotting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">01: Regression basics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01a-regression-WebPPL.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simple regr. in WebPPL</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01b-regression-BRMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simple regr. in BRMS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Priors &amp; predicitives</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">02: Categorical predictors</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02-categorical-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02a-contrast-coding-tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Categorical predictors</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/02b-catPreds-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exercises: Bayesian LMs</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">03: Multi-level models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03-hierarchical-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03a-hierarchical-models-tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical models (tutorial)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03b-hierarchical-models-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical models (exercises)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03c-multi-membership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multi-membership</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/03d-MLM-pooling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MLMs &amp; pooling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">04: GLMs &amp; beyond</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04-GLM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04a-GLM-tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GLM (tutorial)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04b-GLM-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GLM (exercises)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04c-GLM-predictives.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Predictions from GLMs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04d-distributional-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributional models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04e-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixture models</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">05: MCMC sampling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05-MCMC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/05a-MCMC-diagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MCMC diagnostics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/05b-divergences.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Divergent transitions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">06: Model comparison</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../06-model-comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/06a-model-comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model comparison</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">07: Model criticism</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/07a-model-criticism.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Model criticism</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text">08: Causal inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../08-causal-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/08a-stochastic-dependence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stochastic dependence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/08b-causal-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Causal inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">09: Non-linear models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/09a-nonLinear.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Custom non-linearity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/09b-GAMs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalized additive models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/09c-Gaussian-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Gaussian processes regression</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">10: Practical stuff</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/10a-cheat-sheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BRMS cheat sheet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a>
+  <ul class="collapse">
+  <li><a href="#visual-predictive-checks" id="toc-visual-predictive-checks" class="nav-link" data-scroll-target="#visual-predictive-checks">Visual predictive checks</a></li>
+  <li><a href="#bayesian-p-values" id="toc-bayesian-p-values" class="nav-link" data-scroll-target="#bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/07a-model-criticism.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Model criticism: predictive checks &amp; Bayesian <span class="math inline">\(p\)</span>-values</h1>
+<p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Michael Franke </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Model criticism is an integral part of a rigid Bayesian workflow. In a previous tutorial, we already looked at obtained samples from a model’s predictive distributions, e.g., in order to assess whether the model’s prior assumptions are sound. That is part of model criticism. In general, model criticism asks: <strong>is my model adequate?</strong> Many aspects can influence what makes a model adequate. Prior assumptions and what they entail are one aspect. The other is whether a given model is compatible with some observed aspect of the data. In this tutorial we focus on this latter aspect. We look particularly at two concepts to criticize (check for adequacy) a model <span class="math inline">\(M\)</span> given some observed data <span class="math inline">\(D\)</span>:</p>
+<ol type="1">
+<li>visual predictive checks, and</li>
+<li>Bayesian (posterior) predictive <span class="math inline">\(p\)</span>-values.</li>
+</ol>
+<p>We begin by reviewing the notion of function.</p>
+<section id="preamble" class="level1">
+<h1>Preamble</h1>
+<p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-1_98fe76dcb47967bad342aeb4ccd965bd">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages from CRAN (unless installed)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pckgs_needed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"brms"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstan"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rstanarm"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"remotes"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidybayes"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bridgesampling"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shinystan"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mgcv"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pckgs_installed <span class="ot">&lt;-</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pckgs_2_install <span class="ot">&lt;-</span> pckgs_needed[<span class="sc">!</span>(pckgs_needed <span class="sc">%in%</span> pckgs_installed)]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(pckgs_2_install)) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pckgs_2_install)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># install additional packages from GitHub (unless installed)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"aida"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/aida-package"</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"faintr"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"michael-franke/faintr"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"cspplot"</span> <span class="sc">%in%</span> pckgs_installed) {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CogSciPrag/cspplot"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pckgs_needed, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aida)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faintr)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cspplot)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># these options help Stan run faster</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># use the CSP-theme for plotting</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_csp</span>())</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># global color scheme from CSP</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>project_colors <span class="ot">=</span> cspplot<span class="sc">::</span><span class="fu">list_colors</span>() <span class="sc">|&gt;</span> <span class="fu">pull</span>(hex)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># names(project_colors) &lt;- cspplot::list_colors() |&gt; pull(name)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># setting theme colors globally</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>scale_colour_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>scale_fill_discrete <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(..., <span class="at">values =</span> project_colors)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="visual-predictive-checks" class="level2">
+<h2 class="anchored" data-anchor-id="visual-predictive-checks">Visual predictive checks</h2>
+<p>Let’s have a closer look at prior and posterior predictives, and the functions that we can use to explore them. Here, we fit a regression model with “opinionated priors” (also used in a previous tutorial), obtaining both posterior and prior samples for it.</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-2_721408badfad6ad6e28c0ee850291c05">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define "opinionated" priors</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>prior_opinionated <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(0.2, 0.05)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model to data (i.e., obtain samples from the posterior)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fit_posterior <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    avg_temp <span class="sc">~</span> year,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> prior_opinionated,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain samples from the prior</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>fit_prior <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">update</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    fit_posterior,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>bayesplot</code> package has a number of visual predictive check functions nested inside the function <code>pp_check</code>. Here are examples.</p>
+<p>Without additional argument <code>pp_check</code> compares the overall observed distribution of the response variable to the prior/posterior predictive distribution. Check the observed distribution (marginal of <span class="math inline">\(y\)</span>) first:</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-3_b44e0d3d4da2815174c271515cfd9c87">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> avg_temp)) <span class="sc">+</span> <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The prior predictive check shows that this prior is way less “opinionated” or biased than its name may suggest:</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-4_ab29843b25975eedf8fe04b74fe0bb82">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">pp_check</span>(fit_prior, <span class="at">ndraws =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The posterior predictive check can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-5_7de45c947e19d4906adc0647cee9236a">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">pp_check</span>(fit_posterior, <span class="at">ndraws =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>There are number of different plots <code>pp_check</code> is able to produce. For fine-grained plotting and exploring, the <code>bayesplot</code> package offers flexible plotting tools. These come in pairs: <em>predicitve distributions</em> only show the predictions, while <em>predictive checks</em> also show the data. See <code>help("PPC-overview")</code> and <code>help("PPD-overview")</code> for more information.</p>
+<p>The general workflow is that you first extract samples from the relevant predictive distribution (in matrix form), like so:</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-6_b5ed75794eaa1042b212a2eabfbe803c">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>predictive_samples <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">posterior_predict</span>(fit_posterior, <span class="at">ndraws =</span> <span class="dv">1000</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>predictive_samples[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]     [,2]     [,3]     [,4]     [,5]
+[1,] 7.049063 7.740668 7.532810 7.269842 6.670946
+[2,] 7.140035 7.275541 7.538826 7.590586 8.158434
+[3,] 6.931586 7.242583 7.429644 7.388534 8.073946
+[4,] 7.154032 7.877168 7.046624 7.482067 7.912254
+[5,] 7.809531 7.428493 8.469088 7.633410 7.150208</code></pre>
+</div>
+</div>
+<p>And then you can, for example, compare the distribution of some test statistic (here: the standard deviation), using a function like <code>ppc_stat</code>:</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-7_60897b8c68ab24a36aa802356e2321a6">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>avg_temp, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Interpret this plot.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The light blue histogram indicates the distribution of the values of the test statistics under the predictive distribution (here: posterior). The darker blue line indicates the value of the test statistic for the observed data.</p>
+<p>In this case, the observed test value is rather central in the posterior predictive distribution, thus suggesting that, as far as the standard deviation is concerned, the model cannot be criticized for its posterior predictions.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Try a similar <code>ppc_stat</code> plot for the prior predictive. Can you find a test statistic for which the model looks adequate?</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Looking at the prior predicted mean is not too bad (at least visually).</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-8_29c902e32eee950e3b320426df5097d7">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>predictive_samples <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">posterior_predict</span>(fit_prior, <span class="at">ndraws =</span> <span class="dv">1000</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>avg_temp, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>That is because the predictions are very wide. There is nothing wrong about that! But, of course, another criterion that the prior predictive distribution blatantly fails is to predict the deviation in the data adequately (again this is, arguably, how it should be if we want to learn from the data):</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-9_6a3d9d8cb81ac78c339a96b669071a5e">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_stat</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y    =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>avg_temp, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yrep =</span> predictive_samples,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="bayesian-p-values" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</h2>
+<p>Using model predictions, we can also compute Bayesian <span class="math inline">\(p\)</span>-values as handy summary statistics for visual predictive checks. A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).</p>
+<p>Let’s focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for the data observation up to 1800.</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-10_47e194ec16a5a48ba239ca024869d31b">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>postPred_y <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">object  =</span> fit_posterior,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">select</span>(year) <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">value   =</span> <span class="st">"avg_temp"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws  =</span> <span class="dv">4000</span>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw,year, avg_temp)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>sd_postPred <span class="ot">&lt;-</span> postPred_y <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sd_post_pred =</span> <span class="fu">sd</span>(avg_temp)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(sd_post_pred)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>sd_data <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(avg_temp) <span class="sc">|&gt;</span> <span class="fu">sd</span>()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&gt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3: Predictive <span class="math inline">\(p\)</span>-values w/ SD as test statistic
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Make sure you understand how the code in the last code block works. Interpret the numerical result.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We see an estimated <span class="math inline">\(p\)</span>-value of close to one, which is really bad (for the chosen test statistic). It means that the model never predicts data with a value of the test statistic that is that extreme. Notice that “extremeness” here means “very high or very low”. So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 4: [ambitious] Likelihood as test statistic
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. Note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
+<p>Interpret the result you get (also in relation to the results from the previous exercise).</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-11_630b622c13d187fd9fcdf3d5d0db60f0">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.83</code></pre>
+</div>
+</div>
+<p><span style="color:darkgreen">try yourself; solution will follow</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ## Snippets -->
+<!-- Here is the mouse-tracking data set we used previously for simple linear regression. -->
+<!-- ```{r} -->
+<!-- dolphin <- aida::data_MT -->
+<!-- # aggregate -->
+<!-- dolphin_agg <- dolphin |>  -->
+<!--   filter(correct == 1) |>  -->
+<!--   group_by(subject_id) |>  -->
+<!--   dplyr::summarize( -->
+<!--             AUC = median(AUC, na.rm = TRUE), -->
+<!--             MAD = median(MAD, na.rm = TRUE))  -->
+<!-- ``` -->
+<!-- Here is a plot to remind ourselves. -->
+<!-- ```{r} -->
+<!-- # plot temperature data -->
+<!-- dolphin_agg |>  -->
+<!--   ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(color = project_colors[2]) -->
+<!-- ``` -->
+<!-- ::: callout-caution -->
+<!-- **Exercise 3a** -->
+<!-- Obtain a model fit for `AUC ~ MAD` with a prior for the slope coefficient as a Student-t distribution with 1 degree of freedom, mean 0 and standard deviation 500. -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| eval: true -->
+<!-- #| code-fold: true -->
+<!-- #| code-summary: "Show solution" -->
+<!-- fit_dolphin_agg <- brm( -->
+<!--   AUC ~ MAD,  -->
+<!--   data = dolphin_agg, -->
+<!--   prior = prior(student_t(1,0,500), class = "b") -->
+<!--   ) -->
+<!-- ``` -->
+<!-- Here is how we can extract and plot three samples from the posterior predictive distribution. So, these are three "fake" data sets of the same size and for the same `MAD` values as in the original data. -->
+<!-- ```{r} -->
+<!-- # extract & plot posterior predictives -->
+<!-- post_pred <- tidybayes::predicted_draws( -->
+<!--   object = fit_dolphin_agg, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_point() +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- ``` -->
+<!-- ::: callout-caution -->
+<!-- **Exercise 3b** -->
+<!-- Change the input to the parameter `newdata` so that we get three samples for `MAD` values 400, 500 and 600. -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- #| code-fold: true -->
+<!-- #| code-summary: "Show solution" -->
+<!-- # extract & plot posterior predictives -->
+<!-- post_pred2 <- tidybayes::predicted_draws( -->
+<!--   object = fit_dolphin_agg, -->
+<!--   newdata = tibble(MAD = c(400, 500, 600)), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_point() +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- ``` -->
+<!-- We can also extract predictions for the linear predictor values like so: -->
+<!-- ```{r} -->
+<!-- # extract & plot posterior linear predictors -->
+<!-- post_lin_pred <- tidybayes::linpred_draws( -->
+<!--   object = fit_dolphin_agg, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_lin_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_line() +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- ``` -->
+<!-- ::: callout-caution -->
+<!-- **Exercise 3c** -->
+<!-- Extract 30 samples of linear predictor lines and plot them all in one plot. Make the line plots gray and use a low `alpha` value (slight transparency). -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- #| code-fold: true -->
+<!-- #| code-summary: "Show solution" -->
+<!-- post_lin_pred2 <- tidybayes::linpred_draws( -->
+<!--   object = fit_dolphin_agg, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 30 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_lin_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_line(aes(group = run), color = "gray", alpha = 0.2) -->
+<!-- ``` -->
+<!-- Finally, let's look at a posterior predictive check, based on the distribution of actual / predicted `AUC` values: -->
+<!-- ```{r} -->
+<!-- pp_check(fit_dolphin_agg, ndraws = 20) -->
+<!-- ``` -->
+<!-- ::: callout-caution -->
+<!-- **Exercise 3d** -->
+<!-- Repeat all the steps from the prior predictive point of view for model `fit_dolphin_agg`, -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- #| code-fold: true -->
+<!-- #| code-summary: "Show solution" -->
+<!-- fit_dolphin_agg_prior <- stats::update(fit_dolphin_agg, sample_prior = 'only') -->
+<!-- post_pred <- tidybayes::predicted_draws( -->
+<!--   object = fit_dolphin_agg_prior, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_point(alpha = 0.5) +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- # extract & plot posterior predictives -->
+<!-- post_pred2 <- tidybayes::predicted_draws( -->
+<!--   object = fit_dolphin_agg_prior, -->
+<!--   newdata = tibble(MAD = c(400, 500, 600)), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_point(alpha = 0.8) +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- # extract & plot posterior linear predictors -->
+<!-- post_lin_pred <- tidybayes::linpred_draws( -->
+<!--   object = fit_dolphin_agg_prior, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 3 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_lin_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_line() +  -->
+<!--   facet_grid(. ~ run) -->
+<!-- post_lin_pred2 <- tidybayes::linpred_draws( -->
+<!--   object = fit_dolphin_agg_prior, -->
+<!--   newdata = dolphin_agg |> select(MAD), -->
+<!--   value = "AUC", -->
+<!--   ndraws = 30 -->
+<!-- ) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+<!--   select(run, MAD, AUC)  -->
+<!-- post_lin_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+<!--   geom_line(aes(group = run), color = "gray", alpha = 0.2) -->
+<!-- ``` -->
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

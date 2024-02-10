@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - Priors in brms: inspecting, setting &amp; sampling</title>
+<title>Bayesian Regression: Theory &amp; Practice - Priors and predictivs in brms</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -109,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../01-basics.html">01: Regression basics</a></li><li class="breadcrumb-item"><a href="../practice-sheets/01c-priors.html">Priors</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../01-basics.html">01: Regression basics</a></li><li class="breadcrumb-item"><a href="../practice-sheets/01c-priors.html">Priors &amp; predicitives</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -187,25 +187,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../practice-sheets/01a-regression-WebPPL.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simple regression in WebPPL</span></a>
+ <span class="menu-text">Simple regr. in WebPPL</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../practice-sheets/01b-regression-BRMS.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simple regression in BRMS</span></a>
+ <span class="menu-text">Simple regr. in BRMS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../practice-sheets/01c-priors.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Priors</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/01d-predictives.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Predictions</span></a>
+ <span class="menu-text">Priors &amp; predicitives</span></a>
   </div>
 </li>
       </ul>
@@ -309,13 +303,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/04c-distributional-models.html" class="sidebar-item-text sidebar-link">
+  <a href="../practice-sheets/04c-GLM-predictives.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Predictions from GLMs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/04d-distributional-models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributional models</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/04d-mixture-models.html" class="sidebar-item-text sidebar-link">
+  <a href="../practice-sheets/04e-mixture-models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Mixture models</span></a>
   </div>
 </li>
@@ -376,7 +376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
- <span class="menu-text">07: Causal inference</span></a>
+ <span class="menu-text">07: Model criticism</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -384,20 +384,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../07-causal-inference.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/07a-stochastic-dependence.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Stochastic dependence</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/07b-causal-inference.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Causal inference</span></a>
+  <a href="../practice-sheets/07a-model-criticism.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model criticism</span></a>
   </div>
 </li>
       </ul>
@@ -405,7 +393,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
- <span class="menu-text">08: Non-linear models</span></a>
+ <span class="menu-text">08: Causal inference</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -413,20 +401,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/08a-nonLinear.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Custom non-linearity</span></a>
+  <a href="../08-causal-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/08b-GAMs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Generalized additive models</span></a>
+  <a href="../practice-sheets/08a-stochastic-dependence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stochastic dependence</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/08c-Gaussian-processes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Gaussian processes regression</span></a>
+  <a href="../practice-sheets/08b-causal-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Causal inference</span></a>
   </div>
 </li>
       </ul>
@@ -434,7 +422,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
- <span class="menu-text">09: Practical stuff</span></a>
+ <span class="menu-text">09: Non-linear models</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -442,7 +430,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../practice-sheets/09a-cheat-sheet.html" class="sidebar-item-text sidebar-link">
+  <a href="../practice-sheets/09a-nonLinear.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Custom non-linearity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/09b-GAMs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalized additive models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/09c-Gaussian-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Gaussian processes regression</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">10: Practical stuff</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../practice-sheets/10a-cheat-sheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">BRMS cheat sheet</span></a>
   </div>
 </li>
@@ -459,9 +476,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
-  <li><a href="#set-up-example" id="toc-set-up-example" class="nav-link" data-scroll-target="#set-up-example">Set up example</a></li>
-  <li><a href="#inspect-change-priors" id="toc-inspect-change-priors" class="nav-link" data-scroll-target="#inspect-change-priors">Inspect &amp; change priors</a></li>
+  <li><a href="#inspect-set-priors" id="toc-inspect-set-priors" class="nav-link" data-scroll-target="#inspect-set-priors">Inspect &amp; set priors</a></li>
   <li><a href="#sample-from-prior" id="toc-sample-from-prior" class="nav-link" data-scroll-target="#sample-from-prior">Sample from prior</a></li>
+  <li><a href="#samples-from-the-predictive-distributions" id="toc-samples-from-the-predictive-distributions" class="nav-link" data-scroll-target="#samples-from-the-predictive-distributions">Samples from the predictive distributions</a>
+  <ul class="collapse">
+  <li><a href="#samples-of-linear-predictor-values" id="toc-samples-of-linear-predictor-values" class="nav-link" data-scroll-target="#samples-of-linear-predictor-values">Samples of linear predictor values</a></li>
+  <li><a href="#samples-from-the-data-predictive-distribution" id="toc-samples-from-the-data-predictive-distribution" class="nav-link" data-scroll-target="#samples-from-the-data-predictive-distribution">Samples from the data-predictive distribution</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/01c-priors.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -470,7 +491,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Priors in <code>brms</code>: inspecting, setting &amp; sampling</h1>
+<h1 class="title">Priors and predictivs in <code>brms</code></h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -492,7 +513,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>This tutorial covers how to inspect, set and sample priors in Bayesian regression models with <code>brms</code>. The main conceptual take-home message is: The choice of prior should be informed by their effect on the prior predictive distribution. How to obtain samples from the prior predictive distribution is covered in a separate chapter.</p>
+<p>This tutorial covers how to inspect, set and sample priors in Bayesian regression models with <code>brms</code>. We also look at how to sample from the prior and posterior distribution. The main conceptual take-home message of this tutorial is: <strong>The choice of prior should be informed by their effect on the prior (and possibly also the posterior) predictive distribution.</strong> This emphasises the role of <em>model criticism</em> (prior and posterior) which a later tutorial will enlarge on.</p>
 <section id="preamble" class="level1">
 <h1>Preamble</h1>
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
@@ -554,8 +575,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="set-up-example" class="level1">
-<h1>Set up example</h1>
+<section id="inspect-set-priors" class="level1">
+<h1>Inspect &amp; set priors</h1>
 <p>We work with the mouse-tracking data from the <code>aida</code> package. As a running example, we look at the linear relation between (aggregates of) area-under-the-curve <code>AUC</code> and <code>MAD</code>. Here is the relevant data plot:</p>
 <div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-2_b09eaec87cf47178f24dc3a804aacba3">
 <details open="">
@@ -579,6 +600,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="01c-priors_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Let’s fit a simple Bayesian regression model:</p>
 <div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-3_8d2cb0b98e06a52e008f34faf421dcc4">
 <details open="">
 <summary>Toggle code</summary>
@@ -588,9 +610,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section>
-<section id="inspect-change-priors" class="level1">
-<h1>Inspect &amp; change priors</h1>
 <p>We can inspect the priors used in in a model fit like so:</p>
 <div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-4_6961ed1b1c4bec0efa43b0bae1d7ee15">
 <details open="">
@@ -747,11 +766,23 @@ Solution
 </div>
 </div>
 <p>The important upshot of this exercise is that <strong>since all parameters jointly condition the likelihood function, it can happen that changing the priors for just one parameter will also affect the posterior inferences for other parameters</strong> (who have to “go out of their way” to compensate for what the other parameter can or cannot do, so to speak).</p>
-<p>This raises the question of how to determine “good priors”. This is a chapter of its own, and a controversial one, and definitely a matter that depends on what you want to do with your model (explore or monkey-around, make serious predictions about the future (e.g., disease spread, market development), or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)). In almost all cases, however, it is good advice to remember this: <strong>priors should be evaluated in the context of the (prior) predictions they entail</strong>. That’s the topic we attend to in the next section.</p>
+<p>This raises the important, and controversial question of how to determine “good priors”. A simple, evasive but plainly true answer is: it depends on what you want to <em>do</em> with your model. Things you might want to do with your model include:</p>
+<ul>
+<li>explore or monkey-around,</li>
+<li>make serious predictions about the future (e.g., disease spread, market development),</li>
+<li>or draw theoretical conclusions from data (e.g., which theory of reading-times in garden-path sentences is supported better by some data)).</li>
+</ul>
+<p>In almost all cases, however, it is good advice to remember this: <strong>priors should be evaluated in the context of the (prior) predictions they entail</strong>. In other words, we need to think of priors as having a dual role:</p>
+<ol type="1">
+<li>priors encode assumptions about likely parameter values, and</li>
+<li>priors inform the prior predictive distribution, and</li>
+<li>priors may also bias our posterior estimates.</li>
+</ol>
+<p>For complex models, with myriads of (hierarchically nested) parameters it may not be feasible to have, express or defend particular ideas about what plausible sets of parameter values are. In it, however, often much more feasible to have intuitions about the <em>implications</em> of particular choices of priors for the <em>predictions</em> that the model makes, e.g, about the data that would be likely to observe from an <em>a prior</em> point of view. Finally, the choice of priors can matter for parameter estimation. For one, complex models may require choices of adequate priors in order for us to be able to fit them with whatever technique we are using. So, we might consider a form of <strong>regularizing prior</strong> simply in order to make the model “well-behaved”, while at the same time making sure that we are not sneaking in unwarranted assumptions (back again to checking the prior predictive distribution). Moreover, the choice of priors might be biasing in ways that we did not intend. For these reasons, it may also be prudent to inspect the impact of the choice of priors on the posterior distribution. In the following, we therefore first look at how to take samples from the priors as such, and then how to obtain samples from the prior and posterior distribution.</p>
 </section>
 <section id="sample-from-prior" class="level1">
 <h1>Sample from prior</h1>
-<p>Before going there, here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option <code>sample_prior = "only"</code> to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)</p>
+<p>Here is how we can obtain samples from the prior distribution over parameters of a model. Sampling from the prior only works if priors are not the improper (flat) default priors. Firstly, we can use the option <code>sample_prior = "only"</code> to obtain only samples from the prior. (NB: we still need to supply the data because it is used for the setting up the model; e.g., specifying the prior for the intercept.)</p>
 <div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-9_46f9ae33fccec6f490875db30e390ce7">
 <details open="">
 <summary>Toggle code</summary>
@@ -850,8 +881,488 @@ Solution
 5 lp__          -17.5     -17.1       1.67     1.32    -20.7</code></pre>
 </div>
 </div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Run a linear regression model on R’s <code>cars</code> data set, setting the priors exactly as we did for the WebPPL model a previous tutorial in this chapter, i.e., a normal prior (mean -18, standard deviation 5) for the intercept, a normal prior (mean 0, standard 10) for the slope, and a gamma prior (parameters 5 and 5) for the standard deviation. Then rerun the model to obtain <em>only</em> samples from the priors (using <code>stats::update</code>). Plot the fits both with <code>bayesplot::mcmc_dens</code>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-15_c048d207436f114ac73fb64af8669413">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fit_cars <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cars, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> dist <span class="sc">~</span> speed,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(-18,5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,10)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"gamma(5,5)"</span>, <span class="at">class =</span> <span class="st">"sigma"</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-16_15615b6d755b87e7e3fb0429e5201e58">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">mcmc_dens</span>(fit_cars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-17_980b1e39aa642acf8603bfda1051955e">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_cars_priors <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">update</span>(fit_cars, <span class="at">sample_prior =</span> <span class="st">"only"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-18_7659437f46ea6e83875ee3c3db21a7e7">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bayesplot<span class="sc">::</span><span class="fu">mcmc_dens</span>(fit_cars_priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="samples-from-the-predictive-distributions" class="level1">
+<h1>Samples from the predictive distributions</h1>
+<p>For a simple Bayesian linear regression model, there are different predictive functions we need to distinguish. First, we distinguish the <em>prior</em> and the <em>posterior</em> perspective, of course. Second, we may interested in different <em>kinds</em> or <em>locations</em> of predictions. Concretely, here we look at <strong>predictions of central tendency</strong> (i.e., predictions of best fitting linear regression lines) and <strong>predictions of observations</strong> (i.e., data points around the predicted linear regression lines). Notice that the latter also takes the standard deviation into account, the former does not.</p>
+<p>Let’s look at a data set of average world temperatures from the middle of the 18th century to the early 21st century. Here is a plot of our data points.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-19_37c46f9b1360fc8312ec23b8a1005436">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_temp),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> project_colors[<span class="dv">2</span>],</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"average temperature"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To obtain samples from predictive distributions from <code>brms</code>, we first need a model fit. So, let’s obtain a posterior fit and then use <code>sample_prior = "only"</code> to get a similarly structured model fit object with samples from the prior.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-20_e49de1ffc3e367bded5010f14da86250">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>prior_baseline <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(0, 0.02)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get the posterior fit</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  avg_temp <span class="sc">~</span> year,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> prior_baseline,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieve prior samples from the posterior fit</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>fit_prior_only <span class="ot">&lt;-</span> <span class="fu">update</span>(</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  fit,</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="samples-of-linear-predictor-values" class="level3">
+<h3 class="anchored" data-anchor-id="samples-of-linear-predictor-values">Samples of linear predictor values</h3>
+<p>We can obtain samples for values of the linear predictor using the function <code>tidybayes::add_linpred_draws</code>. Below we supply:</p>
+<ul>
+<li>the fitted object (posterior or prior),</li>
+<li>the <span class="math inline">\(x\)</span>-values for which we want the predictions (here we use the <span class="math inline">\(x\)</span>-values in the data set),</li>
+<li>a number of samples</li>
+<li>the name of the column that contains the samples in the returned data frame.</li>
+</ul>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-21_cef36c4f0a904331f80d13eeb478fa72">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>postPred_linPredictor <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  fit, </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws =</span> <span class="dv">2000</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">'avg_tmp'</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, .draw, avg_tmp)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>postPred_linPredictor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 538,000 × 3
+    year .draw avg_tmp
+   &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+ 1  1750     1    7.55
+ 2  1750     2    7.52
+ 3  1750     3    7.44
+ 4  1750     4    7.42
+ 5  1750     5    7.47
+ 6  1750     6    7.44
+ 7  1750     7    7.48
+ 8  1750     8    7.51
+ 9  1750     9    7.40
+10  1750    10    7.38
+# ℹ 537,990 more rows</code></pre>
+</div>
+</div>
+<p>Similarly, for samples from the prior predictive:</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-22_70adb1713d05a1cead699a8a0f08af23">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>priorPred_linPredictor <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  fit_prior_only, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws =</span> <span class="dv">2000</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">'avg_tmp'</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, .draw, avg_tmp)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>priorPred_linPredictor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 538,000 × 3
+    year .draw avg_tmp
+   &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+ 1  1750     1   7.68 
+ 2  1750     2   2.92 
+ 3  1750     3   5.08 
+ 4  1750     4   8.84 
+ 5  1750     5   8.67 
+ 6  1750     6  -1.94 
+ 7  1750     7   4.73 
+ 8  1750     8   0.878
+ 9  1750     9  12.2  
+10  1750    10  12.6  
+# ℹ 537,990 more rows</code></pre>
+</div>
+</div>
+<p>The following plot shows each sample from the linear predictors as a thin grey line, and the actual data as red points. We see that the prior model makes a very wide range of predictions for regression lines, arguably quite implausibly so. The shape of the data points is hardly recognizable for the case of the prior because of that (see also the values on the <span class="math inline">\(y\)</span>-axes). The second plot, for the posterior, shows that <em>a posteriori</em> credible regression lines are much more confined.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-23_ba9478116dfb3e0d4bb4742541b0acb3">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>priorPred_linPredictor <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">type =</span> <span class="st">"prior"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(postPred_linPredictor <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">type =</span> <span class="st">"posterior"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">factor</span>(type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"prior"</span>, <span class="st">"posterior"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(type <span class="sc">~</span> ., <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_tmp, <span class="at">group =</span> .draw), </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"gray"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp, </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_temp), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"average temperature"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Let’s use prior / posterior predictives to investigate the plausibility of different priors for our regression model. We can use the following function <code>plot_predictPriPost</code> to conveniently visualize the predictives for different priors:</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-24_2a190ac4fec4ee2fcfac8eef5b1c3282">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>plot_predictPriPost <span class="ot">&lt;-</span> <span class="cf">function</span>(prior_spec, <span class="at">ndraws =</span> <span class="dv">1000</span>) {</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the posterior fit</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    avg_temp <span class="sc">~</span> year,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> prior_spec,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># retrieve prior samples from the posterior fit</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  fit_prior_only <span class="ot">&lt;-</span> <span class="fu">update</span>(</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    fit,</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  get_predictions <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_object, <span class="at">type =</span> <span class="st">"prior prediction"</span>) {</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    tidybayes<span class="sc">::</span><span class="fu">add_linpred_draws</span>(</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>      fit_object, </span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">ndraws =</span> ndraws,</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">value =</span> <span class="st">'avg_tmp'</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(year, .draw, avg_tmp) <span class="sc">|&gt;</span> </span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">type =</span> type)</span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_predictions</span>(fit, <span class="st">"posterior prediction"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(<span class="fu">get_predictions</span>(fit_prior_only, <span class="st">"prior prediction"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">factor</span>(type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"prior prediction"</span>, <span class="st">"posterior prediction"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(type <span class="sc">~</span> ., <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_tmp, <span class="at">group =</span> .draw), </span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">"gray"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp, </span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_temp), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"average temperature"</span>)</span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<ol type="1">
+<li>Inspect, interpret and evaluate the impact of the following “opinionated prior”.</li>
+</ol>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-25_be2aaf67ce5ccd34806f626bff7c61e2">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>prior_opinionated <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(0.2, 0.05)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_predictPriPost</span>(prior_opinionated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>These priors put stronger constraints on <em>a priori</em> plausible regression lines than the previous. This is still rather unconstrained, though, so it has little (visual) effect on the posterior.</p>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Inspect, interpret and evaluate the impact of the following “crazy prior”.</li>
+</ol>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-26_a2ee78c1caad444d327f94377fe19aef">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>prior_crazy <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(-1, 0.005)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_predictPriPost</span>(prior_crazy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>These priors are very strong and make <em>a priori</em> plausible regression lines that predict a strongly decreasing world temperature over time. These priors are so strong that the data is not able to overturn the strong bias in these priors. This is a case where inspecting the <em>posterior</em> to evaluate the <em>prior</em> might also be useful. While this case is simple and transparent, sometimes the strength of prior assumptions shows clearly in the posterior fit. However, strongly biased priors may be used for a reason (e.g., the actually test this assumption, e.g., with Bayesian <span class="math inline">\(p\)</span>-values).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="samples-from-the-data-predictive-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="samples-from-the-data-predictive-distribution">Samples from the data-predictive distribution</h3>
+<p>We can also obtain samples of predicted hypothetical data <span class="math inline">\(y\)</span> for a given set of values <span class="math inline">\(x\)</span>, either from the prior or posterior perspective. We use the function <code>tidybayes::add_predicted_draws</code> for that, like so:</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-27_e6e83abbdf02800126710d3048ea8686">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>postPred_linPredictor <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">add_predicted_draws</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  fit, </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndraws =</span> <span class="dv">1</span>, <span class="co"># we only want 1 sample of y for each x-values</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">'avg_tmp'</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, .draw, avg_tmp)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>postPred_linPredictor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 269 × 3
+    year .draw avg_tmp
+   &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+ 1  1750     1    7.53
+ 2  1751     1    7.83
+ 3  1753     1    7.88
+ 4  1754     1    7.12
+ 5  1755     1    7.08
+ 6  1756     1    7.81
+ 7  1757     1    6.74
+ 8  1758     1    7.02
+ 9  1759     1    7.73
+10  1760     1    7.62
+# ℹ 259 more rows</code></pre>
+</div>
+</div>
+<p>This gives us one sample of a hypothetical average temperature for each year (<span class="math inline">\(x\)</span>-value) in the data set. Here is a visualization, where the bigger blue points are predicted values (from the posterior), and the red points are the actually observed data points.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-28_2480d720075d92f498a33196b9b13d27">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> postPred_linPredictor, </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_tmp), </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> project_colors[<span class="dv">1</span>], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp, </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_temp), </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Below is another convenience function <code>plot_predictPriPost_data</code> to visualize the data-predictives for different priors.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-29_bbf91d4d8e0d5662566203e249765df6">
+<details>
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>plot_predictPriPost_data <span class="ot">&lt;-</span> <span class="cf">function</span>(prior_spec) {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the posterior fit</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    avg_temp <span class="sc">~</span> year,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> prior_spec,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># retrieve prior samples from the posterior fit</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  fit_prior_only <span class="ot">&lt;-</span> <span class="fu">update</span>(</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    fit,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">sample_prior =</span> <span class="st">"only"</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  get_predictions_data <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_object, <span class="at">type =</span> <span class="st">"prior prediction"</span>) {</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>    tidybayes<span class="sc">::</span><span class="fu">add_predicted_draws</span>(</span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>      fit_object, </span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">ndraws =</span> <span class="dv">1</span>,</span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">value =</span> <span class="st">'avg_tmp'</span></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(year, .draw, avg_tmp) <span class="sc">|&gt;</span> </span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">type =</span> type)</span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_predictions_data</span>(fit, <span class="st">"posterior prediction"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(<span class="fu">get_predictions_data</span>(fit_prior_only, <span class="st">"prior prediction"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">factor</span>(type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"prior prediction"</span>, <span class="st">"posterior prediction"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(type <span class="sc">~</span> ., <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_tmp), <span class="at">color =</span> project_colors[<span class="dv">1</span>], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> aida<span class="sc">::</span>data_WorldTemp, </span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> avg_temp), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"average temperature"</span>)</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Inspect, interpret and evaluate the impact of the following piors.</p>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-30_a94fd97824196d792ccd02f67ff35ab2">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>prior_baseline <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(0, 0.02)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_predictPriPost_data</span>(prior_baseline)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-31_c266761fec7b24173792fd63988008a3">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>prior_opinionated <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(0.2, 0.05)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_predictPriPost_data</span>(prior_opinionated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="01c-priors_cache/html/unnamed-chunk-32_459d90c482a82113bc3adbf9ef68e4bd">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>prior_crazy <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="st">"normal(-1, 0.005)"</span>, <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">prior</span>(<span class="st">"student_t(3, 8, 5)"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_predictPriPost_data</span>(prior_crazy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01c-priors_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
