@@ -38,8 +38,6 @@ website:
             text: "Simple regr. in BRMS"
           - href: practice-sheets/01c-priors.qmd
             text: "Priors & predicitives"
-          - href: practice-sheets/01d-predictives.qmd
-            text: Predictions
       - section: "02: Categorical predictors"
         contents:
           - href: 02-categorical-predictors.qmd
@@ -68,9 +66,11 @@ website:
             text: GLM (tutorial)
           - href: practice-sheets/04b-GLM-exercises.qmd
             text: GLM (exercises)
-          - href: practice-sheets/04c-distributional-models.qmd
+          - href: practice-sheets/04c-GLM-predictives.qmd
+            text: Predictions from GLMs
+          - href: practice-sheets/04d-distributional-models.qmd
             text: Distributional models
-          - href: practice-sheets/04d-mixture-models.qmd
+          - href: practice-sheets/04e-mixture-models.qmd
             text: Mixture models
       - section: "05: MCMC sampling"
         contents:
@@ -86,25 +86,29 @@ website:
             text: Overview
           - href: practice-sheets/06a-model-comparison.qmd
             text: Model comparison
-      - section: "07: Causal inference"
+      - section: "07: Model criticism"
         contents:
-          - href: 07-causal-inference.qmd
+          - href: practice-sheets/07a-model-criticism.qmd
+            text: Model criticism
+      - section: "08: Causal inference"
+        contents:
+          - href: 08-causal-inference.qmd
             text: Overview
-          - href: practice-sheets/07a-stochastic-dependence.qmd
+          - href: practice-sheets/08a-stochastic-dependence.qmd
             text: Stochastic dependence
-          - href: practice-sheets/07b-causal-inference.qmd
+          - href: practice-sheets/08b-causal-inference.qmd
             text: Causal inference
-      - section: "08: Non-linear models"
+      - section: "09: Non-linear models"
         contents:
-          - href: practice-sheets/08a-nonLinear.qmd
+          - href: practice-sheets/09a-nonLinear.qmd
             text: Custom non-linearity
-          - href: practice-sheets/08b-GAMs.qmd
+          - href: practice-sheets/09b-GAMs.qmd
             text: Generalized additive models
-          - href: practice-sheets/08c-Gaussian-processes.qmd
+          - href: practice-sheets/09c-Gaussian-processes.qmd
             text: Gaussian processes regression
-      - section: "09: Practical stuff"
+      - section: "10: Practical stuff"
         contents:
-          - href: practice-sheets/09a-cheat-sheet.qmd
+          - href: practice-sheets/10a-cheat-sheet.qmd
             text: BRMS cheat sheet
 
 format:

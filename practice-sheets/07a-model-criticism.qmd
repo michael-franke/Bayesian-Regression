@@ -1,0 +1,593 @@
+---
+title: "Model criticism: predictive checks & Bayesian $p$-values"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+---
+
+Model criticism is an integral part of a rigid Bayesian workflow.
+In a previous tutorial, we already looked at obtained samples from a model's predictive distributions, e.g., in order to assess whether the model's prior assumptions are sound.
+That is part of model criticism.
+In general, model criticism asks: **is my model adequate?** Many aspects can influence what makes a model adequate.
+Prior assumptions and what they entail are one aspect.
+The other is whether a given model is compatible with some observed aspect of the data.
+In this tutorial we focus on this latter aspect.
+We look particularly at two concepts to criticize (check for adequacy) a model $M$ given some observed data $D$:
+
+1.  visual predictive checks, and
+2.  Bayesian (posterior) predictive $p$-values.
+
+We begin by reviewing the notion of function.
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+## Visual predictive checks
+
+Let's have a closer look at prior and posterior predictives, and the functions that we can use to explore them.
+Here, we fit a regression model with "opinionated priors" (also used in a previous tutorial), obtaining both posterior and prior samples for it.
+
+```{r}
+#| results: hide
+
+# define "opinionated" priors
+prior_opinionated <- c(prior("normal(0.2, 0.05)", class = "b"),
+                       prior("student_t(3, 8, 5)", class = "Intercept"))
+
+# fit model to data (i.e., obtain samples from the posterior)
+fit_posterior <- brm(
+    avg_temp ~ year,
+    prior = prior_opinionated,
+    data = aida::data_WorldTemp
+  )
+
+# obtain samples from the prior
+fit_prior <- stats::update(
+    fit_posterior,
+    sample_prior = "only"
+  )
+
+```
+
+The `bayesplot` package has a number of visual predictive check functions nested inside the function `pp_check`.
+Here are examples.
+
+Without additional argument `pp_check` compares the overall observed distribution of the response variable to the prior/posterior predictive distribution.
+Check the observed distribution (marginal of $y$) first:
+
+```{r}
+aida::data_WorldTemp |> 
+  ggplot(aes(x = avg_temp)) + geom_density()
+```
+
+The prior predictive check shows that this prior is way less "opinionated" or biased than its name may suggest:
+
+```{r}
+brms::pp_check(fit_prior, ndraws = 50)
+```
+
+The posterior predictive check can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.
+
+```{r}
+brms::pp_check(fit_posterior, ndraws = 50)
+```
+
+There are number of different plots `pp_check` is able to produce.
+For fine-grained plotting and exploring, the `bayesplot` package offers flexible plotting tools.
+These come in pairs: *predicitve distributions* only show the predictions, while *predictive checks* also show the data.
+See `help("PPC-overview")` and `help("PPD-overview")` for more information.
+
+The general workflow is that you first extract samples from the relevant predictive distribution (in matrix form), like so:
+
+```{r}
+predictive_samples <- brms::posterior_predict(fit_posterior, ndraws = 1000)
+predictive_samples[1:5, 1:5] 
+```
+
+And then you can, for example, compare the distribution of some test statistic (here: the standard deviation), using a function like `ppc_stat`:
+
+```{r}
+bayesplot::ppc_stat(
+  y    = aida::data_WorldTemp$avg_temp, 
+  yrep = predictive_samples,
+  stat = sd)
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 1
+
+Interpret this plot.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+The light blue histogram indicates the distribution of the values of the test statistics under the predictive distribution (here: posterior).
+The darker blue line indicates the value of the test statistic for the observed data.
+
+In this case, the observed test value is rather central in the posterior predictive distribution, thus suggesting that, as far as the standard deviation is concerned, the model cannot be criticized for its posterior predictions.
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+Try a similar `ppc_stat` plot for the prior predictive.
+Can you find a test statistic for which the model looks adequate?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Looking at the prior predicted mean is not too bad (at least visually).
+
+```{r}
+predictive_samples <- brms::posterior_predict(fit_prior, ndraws = 1000)
+bayesplot::ppc_stat(
+  y    = aida::data_WorldTemp$avg_temp, 
+  yrep = predictive_samples,
+  stat = mean)
+```
+
+That is because the predictions are very wide.
+There is nothing wrong about that!
+But, of course, another criterion that the prior predictive distribution blatantly fails is to predict the deviation in the data adequately (again this is, arguably, how it should be if we want to learn from the data):
+
+```{r}
+bayesplot::ppc_stat(
+  y    = aida::data_WorldTemp$avg_temp, 
+  yrep = predictive_samples,
+  stat = sd)
+```
+:::
+:::
+
+## Bayesian $p$-values
+
+Using model predictions, we can also compute Bayesian $p$-values as handy summary statistics for visual predictive checks.
+A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).
+
+Let's focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for the data observation up to 1800.
+
+```{r}
+postPred_y <- 
+  tidybayes::predicted_draws(
+    object  = fit_posterior,
+    newdata = aida::data_WorldTemp |> select(year) |> filter(year <= 1800),
+    value   = "avg_temp",
+    ndraws  = 4000) |> ungroup() |> 
+  select(.draw,year, avg_temp)
+
+sd_postPred <- postPred_y |> 
+  group_by(.draw) |> 
+  summarize(sd_post_pred = sd(avg_temp)) |> 
+  pull(sd_post_pred)
+
+sd_data <- aida::data_WorldTemp |> filter(year <= 1800) |> pull(avg_temp) |> sd()
+
+mean(sd_data > sd_postPred)
+```
+
+::: {.callout-caution collapse="false"}
+## Exercise 3: Predictive $p$-values w/ SD as test statistic
+
+Make sure you understand how the code in the last code block works. Interpret the numerical result.
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+We see an estimated $p$-value of close to one, which is really bad (for the chosen test statistic).
+It means that the model never predicts data with a value of the test statistic that is that extreme.
+Notice that "extremeness" here means "very high or very low".
+So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.
+:::
+:::
+
+::: {.callout-caution collapse="false"}
+## Exercise 4: \[ambitious\] Likelihood as test statistic
+
+Use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
+Note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
+
+Interpret the result you get (also in relation to the results from the previous exercise).
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+```{r}
+#| echo: false
+
+get_LH <- function(avg_temp, ndraws = 1000) {
+  LH_ys <- brms::log_lik(
+    object  = fit_posterior,
+    newdata = tibble(avg_temp = avg_temp, 
+                     year = aida::data_WorldTemp$year),
+    ndraws  = ndraws)
+  mean(matrixStats::rowLogSumExps(LH_ys) - log(dim(LH_ys)[2]))
+}
+
+postPred_y <- 
+  tidybayes::predicted_draws(
+    object  = fit_posterior,
+    newdata = aida::data_WorldTemp |> select(year),
+    value   = "avg_temp",
+    ndraws  = 100) |> ungroup() |> 
+  select(.draw, year, avg_temp)
+
+LH_postPred <- postPred_y |> 
+  group_by(.draw) |> 
+  summarize(LH_post_pred = get_LH(avg_temp)) |> 
+  pull(LH_post_pred)
+
+LH_data <- get_LH(aida::data_WorldTemp$avg_temp, ndraws = 1000)
+
+mean(LH_data > LH_postPred)
+```
+
+[try yourself; solution will follow]{style="color:darkgreen"}
+:::
+:::
+
+<!-- ## Snippets -->
+
+<!-- Here is the mouse-tracking data set we used previously for simple linear regression. -->
+
+<!-- ```{r} -->
+
+<!-- dolphin <- aida::data_MT -->
+
+<!-- # aggregate -->
+
+<!-- dolphin_agg <- dolphin |>  -->
+
+<!--   filter(correct == 1) |>  -->
+
+<!--   group_by(subject_id) |>  -->
+
+<!--   dplyr::summarize( -->
+
+<!--             AUC = median(AUC, na.rm = TRUE), -->
+
+<!--             MAD = median(MAD, na.rm = TRUE))  -->
+
+<!-- ``` -->
+
+<!-- Here is a plot to remind ourselves. -->
+
+<!-- ```{r} -->
+
+<!-- # plot temperature data -->
+
+<!-- dolphin_agg |>  -->
+
+<!--   ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(color = project_colors[2]) -->
+
+<!-- ``` -->
+
+<!-- ::: callout-caution -->
+
+<!-- **Exercise 3a** -->
+
+<!-- Obtain a model fit for `AUC ~ MAD` with a prior for the slope coefficient as a Student-t distribution with 1 degree of freedom, mean 0 and standard deviation 500. -->
+
+<!-- ::: -->
+
+<!-- ```{r} -->
+
+<!-- #| eval: true -->
+
+<!-- #| code-fold: true -->
+
+<!-- #| code-summary: "Show solution" -->
+
+<!-- fit_dolphin_agg <- brm( -->
+
+<!--   AUC ~ MAD,  -->
+
+<!--   data = dolphin_agg, -->
+
+<!--   prior = prior(student_t(1,0,500), class = "b") -->
+
+<!--   ) -->
+
+<!-- ``` -->
+
+<!-- Here is how we can extract and plot three samples from the posterior predictive distribution. So, these are three "fake" data sets of the same size and for the same `MAD` values as in the original data. -->
+
+<!-- ```{r} -->
+
+<!-- # extract & plot posterior predictives -->
+
+<!-- post_pred <- tidybayes::predicted_draws( -->
+
+<!--   object = fit_dolphin_agg, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_point() +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- ``` -->
+
+<!-- ::: callout-caution -->
+
+<!-- **Exercise 3b** -->
+
+<!-- Change the input to the parameter `newdata` so that we get three samples for `MAD` values 400, 500 and 600. -->
+
+<!-- ::: -->
+
+<!-- ```{r} -->
+
+<!-- #| eval: false -->
+
+<!-- #| code-fold: true -->
+
+<!-- #| code-summary: "Show solution" -->
+
+<!-- # extract & plot posterior predictives -->
+
+<!-- post_pred2 <- tidybayes::predicted_draws( -->
+
+<!--   object = fit_dolphin_agg, -->
+
+<!--   newdata = tibble(MAD = c(400, 500, 600)), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_point() +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- ``` -->
+
+<!-- We can also extract predictions for the linear predictor values like so: -->
+
+<!-- ```{r} -->
+
+<!-- # extract & plot posterior linear predictors -->
+
+<!-- post_lin_pred <- tidybayes::linpred_draws( -->
+
+<!--   object = fit_dolphin_agg, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_lin_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_line() +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- ``` -->
+
+<!-- ::: callout-caution -->
+
+<!-- **Exercise 3c** -->
+
+<!-- Extract 30 samples of linear predictor lines and plot them all in one plot. Make the line plots gray and use a low `alpha` value (slight transparency). -->
+
+<!-- ::: -->
+
+<!-- ```{r} -->
+
+<!-- #| eval: false -->
+
+<!-- #| code-fold: true -->
+
+<!-- #| code-summary: "Show solution" -->
+
+<!-- post_lin_pred2 <- tidybayes::linpred_draws( -->
+
+<!--   object = fit_dolphin_agg, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 30 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_lin_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_line(aes(group = run), color = "gray", alpha = 0.2) -->
+
+<!-- ``` -->
+
+<!-- Finally, let's look at a posterior predictive check, based on the distribution of actual / predicted `AUC` values: -->
+
+<!-- ```{r} -->
+
+<!-- pp_check(fit_dolphin_agg, ndraws = 20) -->
+
+<!-- ``` -->
+
+<!-- ::: callout-caution -->
+
+<!-- **Exercise 3d** -->
+
+<!-- Repeat all the steps from the prior predictive point of view for model `fit_dolphin_agg`, -->
+
+<!-- ::: -->
+
+<!-- ```{r} -->
+
+<!-- #| eval: false -->
+
+<!-- #| code-fold: true -->
+
+<!-- #| code-summary: "Show solution" -->
+
+<!-- fit_dolphin_agg_prior <- stats::update(fit_dolphin_agg, sample_prior = 'only') -->
+
+<!-- post_pred <- tidybayes::predicted_draws( -->
+
+<!--   object = fit_dolphin_agg_prior, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_point(alpha = 0.5) +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- # extract & plot posterior predictives -->
+
+<!-- post_pred2 <- tidybayes::predicted_draws( -->
+
+<!--   object = fit_dolphin_agg_prior, -->
+
+<!--   newdata = tibble(MAD = c(400, 500, 600)), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_point(alpha = 0.8) +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- # extract & plot posterior linear predictors -->
+
+<!-- post_lin_pred <- tidybayes::linpred_draws( -->
+
+<!--   object = fit_dolphin_agg_prior, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 3 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_lin_pred |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_line() +  -->
+
+<!--   facet_grid(. ~ run) -->
+
+<!-- post_lin_pred2 <- tidybayes::linpred_draws( -->
+
+<!--   object = fit_dolphin_agg_prior, -->
+
+<!--   newdata = dolphin_agg |> select(MAD), -->
+
+<!--   value = "AUC", -->
+
+<!--   ndraws = 30 -->
+
+<!-- ) |>  -->
+
+<!--   ungroup() |>  -->
+
+<!--   mutate(run = str_c("sample ", factor(.draw))) |>  -->
+
+<!--   select(run, MAD, AUC)  -->
+
+<!-- post_lin_pred2 |> ggplot(aes(x = MAD, y = AUC)) + -->
+
+<!--   geom_point(data = dolphin_agg, color = project_colors[2], alpha = 0.3) + -->
+
+<!--   geom_line(aes(group = run), color = "gray", alpha = 0.2) -->
+
+<!-- ``` -->
