@@ -103,6 +103,63 @@ We should therefore (usually) be more mindful about setting the priors for the s
 :::
 
 
+# Linear regression for A/B testing
+
+Here is an example in WebPPL of an application of a linear regression model to a case of A/B-testing, i.e., investigating whether there is a difference between two sets of measurements.
+If we encode the difference between groups as a slope coefficient, we can use the linear regression format to, essentially, mimick a kind of t-test (with unpaired measurements and equal variance).
+
+<pre class="webppl">
+
+var y_A = [127, 130, 106, 129, 114, 125, 119, 128]
+var y_B = [131, 119, 115, 109, 110, 105, 118, 112]
+
+// define likelihood function
+var LH_fun = function(mu, sigma, y_obs) {
+  map(
+    function(y) {var LH = Gaussian({mu: mu, sigma: sigma}).score(y);
+                 factor(LH);},
+    y_obs );
+}
+
+var model = function() {
+  // model parameters
+  var beta_0 = gaussian(120,50);
+  var beta_1 = gaussian(0,30);
+  var sigma  = gamma(1,1);
+
+  // linear predictor (= predictor of central tendency)
+  var mu_A = beta_0
+  var mu_B = beta_0 + beta_1
+
+  // apply likelihood function
+  LH_fun(mu_A, sigma, y_A);
+  LH_fun(mu_B, sigma, y_B);
+
+  // samples from the posterior predictive distribution
+//   var y_A_pred = gaussian(mu_A, sigma)
+//   var y_B_pred = gaussian(mu_B, sigma)
+
+  return {beta_0, beta_1, sigma};
+//   return {y_A_pred , y_B_pred}
+  
+}
+
+viz.marginals(Infer({method: 'MCMC', samples: 15000, lag: 2, burn: 5000}, model));
+
+</pre>
+
+::: {.callout-caution collapse="false"}
+## Exercise 2
+
+1. Try to see the underlying model of the data-generating process behind the code.
+2. Visualize just the priors and compare them with the posteriors.
+3. Use the commented-out code to draw samples from the posterior predictive distribution.
+4. Now draw samples from the prior predictive distribution.
+5. If you wanted to mimick a t-test with unequal variance instead, could you change the code to do that?
+   (NB: we only have very few data points, so your posteriors will likely be quite "ragged".)
+
+:::
+
 
 <script>
 // find all <pre> elements and set up the editor on them
