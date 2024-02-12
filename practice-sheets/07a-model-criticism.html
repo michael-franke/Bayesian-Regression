@@ -475,10 +475,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
+  <li><a href="#visual-predictive-checks" id="toc-visual-predictive-checks" class="nav-link" data-scroll-target="#visual-predictive-checks">Visual predictive checks</a>
   <ul class="collapse">
-  <li><a href="#visual-predictive-checks" id="toc-visual-predictive-checks" class="nav-link" data-scroll-target="#visual-predictive-checks">Visual predictive checks</a></li>
-  <li><a href="#bayesian-p-values" id="toc-bayesian-p-values" class="nav-link" data-scroll-target="#bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</a></li>
+  <li><a href="#basic-vpcs" id="toc-basic-vpcs" class="nav-link" data-scroll-target="#basic-vpcs">Basic VPCs</a></li>
+  <li><a href="#more-specific-vpcs" id="toc-more-specific-vpcs" class="nav-link" data-scroll-target="#more-specific-vpcs">More specific VPCs</a></li>
+  </ul></li>
+  <li><a href="#bayesian-p-values" id="toc-bayesian-p-values" class="nav-link" data-scroll-target="#bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</a>
+  <ul class="collapse">
+  <li><a href="#standard-deviation-as-test-statistics" id="toc-standard-deviation-as-test-statistics" class="nav-link" data-scroll-target="#standard-deviation-as-test-statistics">Standard deviation as test statistics</a></li>
+  <li><a href="#likelihood-as-a-test-statistics" id="toc-likelihood-as-a-test-statistics" class="nav-link" data-scroll-target="#likelihood-as-a-test-statistics">Likelihood as a test statistics</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/07a-model-criticism.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -510,12 +516,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>Model criticism is an integral part of a rigid Bayesian workflow. In a previous tutorial, we already looked at obtained samples from a model’s predictive distributions, e.g., in order to assess whether the model’s prior assumptions are sound. That is part of model criticism. In general, model criticism asks: <strong>is my model adequate?</strong> Many aspects can influence what makes a model adequate. Prior assumptions and what they entail are one aspect. The other is whether a given model is compatible with some observed aspect of the data. In this tutorial we focus on this latter aspect. We look particularly at two concepts to criticize (check for adequacy) a model <span class="math inline">\(M\)</span> given some observed data <span class="math inline">\(D\)</span>:</p>
+<p>Model criticism is an integral part of a rigid Bayesian workflow. In a previous tutorial, we already looked at how to obtain samples from a model’s predictive distributions, e.g., in order to assess whether the model’s prior assumptions are sound. That is part of model criticism. In general, model criticism asks: <strong>is my model adequate?</strong> Many aspects can influence what makes a model adequate. Prior assumptions and what they entail are one aspect. The other is whether a given model is compatible with some observed aspect of the data. In this tutorial we focus on this latter aspect. We look particularly at two concepts to criticize (check for adequacy) a model given some observed data:</p>
 <ol type="1">
 <li>visual predictive checks, and</li>
 <li>Bayesian (posterior) predictive <span class="math inline">\(p\)</span>-values.</li>
 </ol>
-<p>We begin by reviewing the notion of function.</p>
 <section id="preamble" class="level1">
 <h1>Preamble</h1>
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
@@ -576,8 +581,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<section id="visual-predictive-checks" class="level2">
-<h2 class="anchored" data-anchor-id="visual-predictive-checks">Visual predictive checks</h2>
+</section>
+<section id="visual-predictive-checks" class="level1">
+<h1>Visual predictive checks</h1>
 <p>Let’s have a closer look at prior and posterior predictives, and the functions that we can use to explore them. Here, we fit a regression model with “opinionated priors” (also used in a previous tutorial), obtaining both posterior and prior samples for it.</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-2_721408badfad6ad6e28c0ee850291c05">
 <details open="">
@@ -600,7 +606,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>A <strong>visual predictive check</strong> is a method to visually assess whether a model’s predictions (either prior or posterior) are compatible with some aspect of the observed data. This means that there is not just <em>one</em> visual predictive check, but as many as there are aspects in which a model’s predictions can fail to capture the actual data.</p>
 <p>The <code>bayesplot</code> package has a number of visual predictive check functions nested inside the function <code>pp_check</code>. Here are examples.</p>
+<section id="basic-vpcs" class="level2">
+<h2 class="anchored" data-anchor-id="basic-vpcs">Basic VPCs</h2>
 <p>Without additional argument <code>pp_check</code> compares the overall observed distribution of the response variable to the prior/posterior predictive distribution. Check the observed distribution (marginal of <span class="math inline">\(y\)</span>) first:</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-3_b44e0d3d4da2815174c271515cfd9c87">
 <details open="">
@@ -612,7 +621,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The prior predictive check shows that this prior is way less “opinionated” or biased than its name may suggest:</p>
+<p>The following code produces 50 samples from the prior predictive distribution of our model, and plots the marginal distribution of predicted <span class="math inline">\(y\)</span> values for each (in blue) together with that of the observed data:</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-4_ab29843b25975eedf8fe04b74fe0bb82">
 <details open="">
 <summary>Toggle code</summary>
@@ -622,7 +631,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The posterior predictive check can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.</p>
+<p>This plot shows that this prior is way less “opinionated” or biased than its name may suggest, at least when it comes to data-point predictions. The range of <em>a priori</em> plausible <span class="math inline">\(y\)</span>-values is very broad, compared to the range that we actually observe.</p>
+<p>Let’s now turn to the posterior predictive check, which can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-5_7de45c947e19d4906adc0647cee9236a">
 <details open="">
 <summary>Toggle code</summary>
@@ -632,7 +642,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="07a-model-criticism_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>There are number of different plots <code>pp_check</code> is able to produce. For fine-grained plotting and exploring, the <code>bayesplot</code> package offers flexible plotting tools. These come in pairs: <em>predicitve distributions</em> only show the predictions, while <em>predictive checks</em> also show the data. See <code>help("PPC-overview")</code> and <code>help("PPD-overview")</code> for more information.</p>
+</section>
+<section id="more-specific-vpcs" class="level2">
+<h2 class="anchored" data-anchor-id="more-specific-vpcs">More specific VPCs</h2>
+<p>There are number of different plots <code>pp_check</code> is able to produce. For fine-grained plotting and exploring, the <code>bayesplot</code> package offers flexible plotting tools. These come in pairs: <em>predicitve distributions</em> only show the predictions, while <em>predictive checks</em> also show the data. See <code>help("PPD-overview")</code> and <code>help("PPC-overview")</code> for more information.</p>
 <p>The general workflow is that you first extract samples from the relevant predictive distribution (in matrix form), like so:</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-6_b5ed75794eaa1042b212a2eabfbe803c">
 <details open="">
@@ -754,32 +767,44 @@ Solution
 </div>
 </div>
 </section>
-<section id="bayesian-p-values" class="level2">
-<h2 class="anchored" data-anchor-id="bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</h2>
+</section>
+<section id="bayesian-p-values" class="level1">
+<h1>Bayesian <span class="math inline">\(p\)</span>-values</h1>
 <p>Using model predictions, we can also compute Bayesian <span class="math inline">\(p\)</span>-values as handy summary statistics for visual predictive checks. A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).</p>
-<p>Let’s focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for the data observation up to 1800.</p>
-<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-10_47e194ec16a5a48ba239ca024869d31b">
+<p><strong>Caution:</strong> While Bayesian <span class="math inline">\(p\)</span>-values follow the same logic as frequentist <span class="math inline">\(p\)</span>-values, they are not necessarily “calibrated” for long-term Type-I error control, as frequentist <span class="math inline">\(p\)</span>-values are.</p>
+<section id="standard-deviation-as-test-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="standard-deviation-as-test-statistics">Standard deviation as test statistics</h2>
+<p>Let’s focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for all data recorded up to 1800.</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-10_c8e10839bce31fe669bccba7911bfadd">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>postPred_y <span class="ot">&lt;-</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">object  =</span> fit_posterior,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">select</span>(year) <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>),</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">value   =</span> <span class="st">"avg_temp"</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws  =</span> <span class="dv">4000</span>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw,year, avg_temp)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>sd_postPred <span class="ot">&lt;-</span> postPred_y <span class="sc">|&gt;</span> </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sd_post_pred =</span> <span class="fu">sd</span>(avg_temp)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(sd_post_pred)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>sd_data <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(avg_temp) <span class="sc">|&gt;</span> <span class="fu">sd</span>()</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&gt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get 4000 sets of posterior predictive samples;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   one set for all data points up to 1800</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>postPred_y <span class="ot">&lt;-</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">object  =</span> fit_posterior,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">select</span>(year) <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">value   =</span> <span class="st">"avg_temp"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws  =</span> <span class="dv">4000</span>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw,year, avg_temp)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the standard deviation for each set of samples</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>sd_postPred <span class="ot">&lt;-</span> postPred_y <span class="sc">|&gt;</span> </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sd_post_pred =</span> <span class="fu">sd</span>(avg_temp)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(sd_post_pred)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the SD of the $y$-measurements in</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   the data (up to 1800)</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>sd_data <span class="ot">&lt;-</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1800</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(avg_temp) <span class="sc">|&gt;</span> <span class="fu">sd</span>()</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co"># approx. p-value &lt;- proportion of samples that have</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   value of the test statistic that is more extreme</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   than that of the data</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&lt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
+<pre><code>[1] 0</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
@@ -807,11 +832,48 @@ Solution
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We see an estimated <span class="math inline">\(p\)</span>-value of close to one, which is really bad (for the chosen test statistic). It means that the model never predicts data with a value of the test statistic that is that extreme. Notice that “extremeness” here means “very high or very low”. So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.</p>
+<p>We see an estimated <span class="math inline">\(p\)</span>-value of (close to) zero, which is really bad (for the chosen test statistic). It means that the model never predicts data with a value of the test statistic that is that extreme. Notice that “extremeness” here means “very high or very low”. So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.</p>
 </div>
 </div>
 </div>
 </div>
+</div>
+</div>
+</section>
+<section id="likelihood-as-a-test-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="likelihood-as-a-test-statistics">Likelihood as a test statistics</h2>
+<p>With some more effort, we can use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. Note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
+<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-11_c67f6fe6fe6f641c8163e2b40e8ebc8c">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>get_LH <span class="ot">&lt;-</span> <span class="cf">function</span>(avg_temp, <span class="at">ndraws =</span> <span class="dv">1000</span>) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  LH_ys <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">log_lik</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">object  =</span> fit_posterior,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">avg_temp =</span> avg_temp, </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">year =</span> aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>year),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws  =</span> ndraws)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(matrixStats<span class="sc">::</span><span class="fu">rowLogSumExps</span>(LH_ys) <span class="sc">-</span> <span class="fu">log</span>(<span class="fu">dim</span>(LH_ys)[<span class="dv">2</span>]))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>postPred_y <span class="ot">&lt;-</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">predicted_draws</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">object  =</span> fit_posterior,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> aida<span class="sc">::</span>data_WorldTemp <span class="sc">|&gt;</span> <span class="fu">select</span>(year),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">value   =</span> <span class="st">"avg_temp"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndraws  =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, year, avg_temp)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>LH_postPred <span class="ot">&lt;-</span> postPred_y <span class="sc">|&gt;</span> </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">LH_post_pred =</span> <span class="fu">get_LH</span>(avg_temp)) <span class="sc">|&gt;</span> </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(LH_post_pred)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>LH_data <span class="ot">&lt;-</span> <span class="fu">get_LH</span>(aida<span class="sc">::</span>data_WorldTemp<span class="sc">$</span>avg_temp)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(LH_data <span class="sc">&gt;</span> LH_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.83</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
@@ -820,13 +882,12 @@ Solution
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 4: [ambitious] Likelihood as test statistic
+Exercise 4: Predictive <span class="math inline">\(p\)</span>-values w/ SD as test statistic
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. Note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
 <p>Interpret the result you get (also in relation to the results from the previous exercise).</p>
 <div class="callout callout-style-simple callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
@@ -840,12 +901,7 @@ Solution
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-11_630b622c13d187fd9fcdf3d5d0db60f0">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.83</code></pre>
-</div>
-</div>
-<p><span style="color:darkgreen">try yourself; solution will follow</span></p>
+<p>The Bayesian posterior predictive <span class="math inline">\(p\)</span> value for likelihood as a test statistic is around 0.8. We should <em>not</em> interpret in the same binary style as in the frequentist domain: we are <em>not</em> looking for a hard cut-off at which to reject the model / assumption. In this case, a value of about 0.8 is not concerning. It means that in about 80% of the samples, the likelihood of data samples was lower than that of the data itself (from the point of view of the posterior model). Predicting data which is frequently less likely is actually good: it means that the data iself lies in a high-likelihood region of the model’s posterior predictive.</p>
 </div>
 </div>
 </div>
