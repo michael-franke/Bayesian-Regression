@@ -15,24 +15,23 @@ editor:
 ---
 
 Model criticism is an integral part of a rigid Bayesian workflow.
-In a previous tutorial, we already looked at obtained samples from a model's predictive distributions, e.g., in order to assess whether the model's prior assumptions are sound.
+In a previous tutorial, we already looked at how to obtain samples from a model's predictive distributions, e.g., in order to assess whether the model's prior assumptions are sound.
 That is part of model criticism.
 In general, model criticism asks: **is my model adequate?** Many aspects can influence what makes a model adequate.
 Prior assumptions and what they entail are one aspect.
 The other is whether a given model is compatible with some observed aspect of the data.
 In this tutorial we focus on this latter aspect.
-We look particularly at two concepts to criticize (check for adequacy) a model $M$ given some observed data $D$:
+We look particularly at two concepts to criticize (check for adequacy) a model given some observed data:
 
 1.  visual predictive checks, and
 2.  Bayesian (posterior) predictive $p$-values.
 
-We begin by reviewing the notion of function.
 
 # Preamble
 
 {{< include 00-preamble.qmd >}}
 
-## Visual predictive checks
+# Visual predictive checks
 
 Let's have a closer look at prior and posterior predictives, and the functions that we can use to explore them.
 Here, we fit a regression model with "opinionated priors" (also used in a previous tutorial), obtaining both posterior and prior samples for it.
@@ -59,8 +58,13 @@ fit_prior <- stats::update(
 
 ```
 
+A **visual predictive check** is a method to visually assess whether a model's predictions (either prior or posterior) are compatible with some aspect of the observed data.
+This means that there is not just *one* visual predictive check, but as many as there are aspects in which a model's predictions can fail to capture the actual data.
+
 The `bayesplot` package has a number of visual predictive check functions nested inside the function `pp_check`.
 Here are examples.
+
+## Basic VPCs
 
 Without additional argument `pp_check` compares the overall observed distribution of the response variable to the prior/posterior predictive distribution.
 Check the observed distribution (marginal of $y$) first:
@@ -70,22 +74,28 @@ aida::data_WorldTemp |>
   ggplot(aes(x = avg_temp)) + geom_density()
 ```
 
-The prior predictive check shows that this prior is way less "opinionated" or biased than its name may suggest:
+The following code produces 50 samples from the prior predictive distribution of our model, and plots the marginal distribution of predicted $y$ values for each (in blue) together with that of the observed data:
 
 ```{r}
 brms::pp_check(fit_prior, ndraws = 50)
 ```
 
-The posterior predictive check can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.
+This plot shows that this prior is way less "opinionated" or biased than its name may suggest, at least when it comes to data-point predictions.
+The range of *a priori* plausible $y$-values is very broad, compared to the range that we actually observe.
+
+Let's now turn to the posterior predictive check, which can reveal systematic problems with the model, such as here: an inability to capture the bimodal-ish shape of the data.
+
 
 ```{r}
 brms::pp_check(fit_posterior, ndraws = 50)
 ```
 
+## More specific VPCs
+
 There are number of different plots `pp_check` is able to produce.
 For fine-grained plotting and exploring, the `bayesplot` package offers flexible plotting tools.
 These come in pairs: *predicitve distributions* only show the predictions, while *predictive checks* also show the data.
-See `help("PPC-overview")` and `help("PPD-overview")` for more information.
+See `help("PPD-overview")` and `help("PPC-overview")` for more information.
 
 The general workflow is that you first extract samples from the relevant predictive distribution (in matrix form), like so:
 
@@ -150,14 +160,20 @@ bayesplot::ppc_stat(
 :::
 :::
 
-## Bayesian $p$-values
+# Bayesian $p$-values
 
 Using model predictions, we can also compute Bayesian $p$-values as handy summary statistics for visual predictive checks.
 A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).
 
-Let's focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for the data observation up to 1800.
+**Caution:** While Bayesian $p$-values follow the same logic as frequentist $p$-values, they are not necessarily "calibrated" for long-term Type-I error control, as frequentist $p$-values are.
+
+## Standard deviation as test statistics
+
+Let's focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for all data recorded up to 1800.
 
 ```{r}
+# get 4000 sets of posterior predictive samples;
+#   one set for all data points up to 1800
 postPred_y <- 
   tidybayes::predicted_draws(
     object  = fit_posterior,
@@ -166,14 +182,20 @@ postPred_y <-
     ndraws  = 4000) |> ungroup() |> 
   select(.draw,year, avg_temp)
 
+# calculate the standard deviation for each set of samples
 sd_postPred <- postPred_y |> 
   group_by(.draw) |> 
   summarize(sd_post_pred = sd(avg_temp)) |> 
   pull(sd_post_pred)
 
+# calculate the SD of the $y$-measurements in
+#   the data (up to 1800)
 sd_data <- aida::data_WorldTemp |> filter(year <= 1800) |> pull(avg_temp) |> sd()
 
-mean(sd_data > sd_postPred)
+# approx. p-value <- proportion of samples that have
+#   value of the test statistic that is more extreme
+#   than that of the data
+mean(sd_data < sd_postPred)
 ```
 
 ::: {.callout-caution collapse="false"}
@@ -184,26 +206,21 @@ Make sure you understand how the code in the last code block works. Interpret th
 ::: {.callout-tip collapse="true"}
 ### Solution
 
-We see an estimated $p$-value of close to one, which is really bad (for the chosen test statistic).
+We see an estimated $p$-value of (close to) zero, which is really bad (for the chosen test statistic).
 It means that the model never predicts data with a value of the test statistic that is that extreme.
 Notice that "extremeness" here means "very high or very low".
 So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.
 :::
 :::
 
-::: {.callout-caution collapse="false"}
-## Exercise 4: \[ambitious\] Likelihood as test statistic
+## Likelihood as a test statistics
 
-Use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
+With some more effort, we can use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
 Note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
 
-Interpret the result you get (also in relation to the results from the previous exercise).
-
-::: {.callout-tip collapse="true"}
-### Solution
 
 ```{r}
-#| echo: false
+#| echo: true
 
 get_LH <- function(avg_temp, ndraws = 1000) {
   LH_ys <- brms::log_lik(
@@ -227,14 +244,29 @@ LH_postPred <- postPred_y |>
   summarize(LH_post_pred = get_LH(avg_temp)) |> 
   pull(LH_post_pred)
 
-LH_data <- get_LH(aida::data_WorldTemp$avg_temp, ndraws = 1000)
+LH_data <- get_LH(aida::data_WorldTemp$avg_temp)
 
 mean(LH_data > LH_postPred)
 ```
 
-[try yourself; solution will follow]{style="color:darkgreen"}
+
+::: {.callout-caution collapse="false"}
+## Exercise 4: Predictive $p$-values w/ SD as test statistic
+
+Interpret the result you get (also in relation to the results from the previous exercise).
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+The Bayesian posterior predictive $p$ value for likelihood as a test statistic is around 0.8.
+We should *not* interpret in the same binary style as in the frequentist domain: we are *not* looking for a hard cut-off at which to reject the model / assumption.
+In this case, a value of about 0.8 is not concerning.
+It means that in about 80% of the samples, the likelihood of data samples was lower than that of the data itself (from the point of view of the posterior model).
+Predicting data which is frequently less likely is actually good: it means that the data iself lies in a high-likelihood region of the model's posterior predictive.
+
 :::
 :::
+
 
 <!-- ## Snippets -->
 
