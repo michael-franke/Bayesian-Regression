@@ -32,12 +32,14 @@ dolphin <- aida::data_MT
 Let's start by asking: **how is the area-under-the-curve (AUC) related to the maximum absolute deviation (MAD)?** We could hypothesize that they are strongly related, right?
 The more the cursor strives toward the competitor, the larger is the overall area under the curve.
 
+## Data wrangling
+
 First, we will massage the data a little bit.
 We only want to look at those rows in which the participant selected the correct response.
 And instead of looking at all the data, we will only deal with the median values for each participant.
 In this way, we get a more robust signal (but really we do this here for more practical purposes (faster fitting, less clutter)).
+We will also scale both variables of interest, making the interpretation of slope coefficients easier (as otherwise the numbers are very large and possibly more confusing).
 
-## Data wrangling
 
 ```{r wrangle-data}
 
@@ -46,8 +48,13 @@ dolphin_agg <- dolphin |>
   filter(correct == 1) |> 
   group_by(subject_id) |> 
   dplyr::summarize(
-            AUC = median(AUC, na.rm = TRUE),
-            MAD = median(MAD, na.rm = TRUE)) 
+    AUC = median(AUC, na.rm = TRUE),
+    MAD = median(MAD, na.rm = TRUE)) |> 
+  ungroup() |> 
+  mutate(
+    AUC = scale(AUC),
+    MAD = scale(MAD)
+  )
   
 # let's have a look
 head(dolphin_agg)
@@ -87,7 +94,8 @@ The `brms` package allows us to run Bayesian regression models, both simple and 
 It uses a sampling method, so its output will be vectors of (correlated) samples from the posterior distribution of the model's parameters.
 
 So, to quantify evidence and uncertainty with posterior samples, let's run a simple linear regression model using `brms`.
-We use the R's standard notation at first (though `brms` extends this syntax substantially for more complex models) to specify a formula in which AUC is predicted by MAD.
+We use R's standard notation to specify a formula in which AUC is predicted by MAD.
+(NB: `brms` extends this syntax substantially for more complex models beyond R's standard formula syntax).
 
 `AUC ~ MAD`
 
@@ -131,7 +139,7 @@ tidybayes::summarise_draws(model1)
 The model output suggests that the posterior mean of the Intercept is around 500.
 The coefficient for MAD is estimated to be about 450.
 
-To see how good a fit this is, we should manually draw this line into the graph from above.
+To see how good a fit this is, we could manually draw this line into the graph from above.
 
 ```{r plot-model-fit}
 
@@ -219,8 +227,7 @@ ggplot(data = dolphin_agg,
   geom_abline(data = posteriors2,
               aes(intercept = b_Intercept, slope = b_MAD), 
               color = project_colors[2], size  = 0.1, alpha = 0.4) +
-  geom_point(size = 3, alpha = 0.3, color = project_colors[1]) +
-  theme_aida()
+  geom_point(size = 3, alpha = 0.3, color = project_colors[1])
   
 ```
 
@@ -280,7 +287,7 @@ posteriors1 |>
     xlab("") +
     ylab("") +
     # adjust the x-axis 
-    scale_x_continuous(limits = c(-100,600)) +
+    scale_x_continuous(limits = c(-0.25,1.5)) +
     # add line for the value zero
     geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf,
                  lty = "dashed") +
@@ -302,25 +309,26 @@ Thus, if we believe in the data and the model, we can be very certain that this 
 In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that 'no relationship' is not a very plausible scenario).
 
 The `brms` package allows us to quickly evaluate how many posterior samples fall into a certain value range.
-Just for fun, let's calculate the amount of posterior samples that are larger than 450.
+Just for fun, let's calculate the amount of posterior samples that are larger than 1.
 The following code chunk does this for us:
 
 ```{r posterior_probability}
 
-hypothesis(model1, 'MAD > 450')
+hypothesis(model1, 'MAD > 1')
 
 ```
 
-The results tell us that more than 60% of all posterior samples are larger than 450.
-It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here 'MAD \> 450).
+The results tell us that fewer than 5% of all posterior samples are larger than 1.
+It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here 'MAD \> 1').
 
 # Exercises
 
 ::: {.callout-caution collapse="false"}
 ## Exercise 1
 
-Massage the data and create a new dataset that contains only correct responses and only the mean values of the RT and the AUC measurement for each participant (`subject_id`).
-Print out the `head` of the dataset.
+Massage the data and create a new datas et that contains only correct responses and only the mean values of the RT and the AUC measurement for each participant (`subject_id`).
+Standardize both measurements.
+Print out the `head` of the data set.
 
 ::: {.callout-tip collapse="true"}
 ### Solution
@@ -331,9 +339,15 @@ Print out the `head` of the dataset.
 dolphin_agg <- dolphin |> 
   filter(correct == 1) |> 
   group_by(subject_id) |> 
-  dplyr::summarize(AUC = mean(AUC, na.rm = TRUE),
-            RT = mean(RT, na.rm = TRUE))
-  
+  dplyr::summarize(
+    AUC = mean(AUC, na.rm = TRUE),
+    RT = mean(RT, na.rm = TRUE)) |> 
+  ungroup() |> 
+  mutate(
+    AUC = scale(AUC),
+    RT  = scale(RT)
+  )
+
 # let's have a look
 head(dolphin_agg)
 ```

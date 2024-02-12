@@ -27,7 +27,18 @@ include-before-body:
 
 # Simple regression 
 
-Here is an example of a simple Bayesian regression model for R's built-in data set `cars`.
+Let's loot at R's built-in data set `cars` for simple example of two paired metric measurements.
+Here, we have the speed a car was traveling and the distance before coming to a halt (from the 1920s):
+
+```{r }
+cars |> 
+  ggplot(aes(x = speed, y = dist)) +
+  geom_point(alpha = 0.8) +
+  geom_smooth(method = "lm")
+```
+
+
+Here is an example of a simple Bayesian regression model for this data set in WebPPL.
 
 <pre class="webppl">
 // R's 'cars' data set: 50 paired measurements of speed and distance (after breaking)
@@ -90,7 +101,6 @@ We should therefore (usually) be more mindful about setting the priors for the s
 :::
 
 :::
-
 
 
 
