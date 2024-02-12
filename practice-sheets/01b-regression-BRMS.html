@@ -584,10 +584,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>Let’s start by asking: <strong>how is the area-under-the-curve (AUC) related to the maximum absolute deviation (MAD)?</strong> We could hypothesize that they are strongly related, right? The more the cursor strives toward the competitor, the larger is the overall area under the curve.</p>
-<p>First, we will massage the data a little bit. We only want to look at those rows in which the participant selected the correct response. And instead of looking at all the data, we will only deal with the median values for each participant. In this way, we get a more robust signal (but really we do this here for more practical purposes (faster fitting, less clutter)).</p>
 <section id="data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="data-wrangling">Data wrangling</h2>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/wrangle-data_0c08ce7cfaec8e219ed4ce7a4e834c38">
+<p>First, we will massage the data a little bit. We only want to look at those rows in which the participant selected the correct response. And instead of looking at all the data, we will only deal with the median values for each participant. In this way, we get a more robust signal (but really we do this here for more practical purposes (faster fitting, less clutter)). We will also scale both variables of interest, making the interpretation of slope coefficients easier (as otherwise the numbers are very large and possibly more confusing).</p>
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/wrangle-data_9394e089f53b0e88b97ff4c108d5e28d">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate</span></span>
@@ -595,22 +595,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(correct <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subject_id) <span class="sc">|&gt;</span> </span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">AUC =</span> <span class="fu">median</span>(AUC, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">MAD =</span> <span class="fu">median</span>(MAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">median</span>(AUC, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAD =</span> <span class="fu">median</span>(MAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">scale</span>(AUC),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAD =</span> <span class="fu">scale</span>(MAD)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
-  subject_id     AUC    MAD
-       &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1       1001  55200. 111.  
-2       1002  59596.  87.9 
-3       1003 -17772  -34.1 
-4       1004  -3600.  -3.83
-5       1005  54054   95.0 
-6       1006  60396. 155.  </code></pre>
+  subject_id AUC[,1] MAD[,1]
+       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1       1001   0.643   0.593
+2       1002   0.732   0.367
+3       1003  -0.839  -0.833
+4       1004  -0.551  -0.535
+5       1005   0.619   0.436
+6       1006   0.748   1.02 </code></pre>
 </div>
 </div>
 </section>
@@ -636,7 +641,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="bayesian-linear-regression-with-brms" class="level2">
 <h2 class="anchored" data-anchor-id="bayesian-linear-regression-with-brms">Bayesian linear regression with <code>brms</code></h2>
 <p>The <code>brms</code> package allows us to run Bayesian regression models, both simple and rather complex. It uses a sampling method, so its output will be vectors of (correlated) samples from the posterior distribution of the model’s parameters.</p>
-<p>So, to quantify evidence and uncertainty with posterior samples, let’s run a simple linear regression model using <code>brms</code>. We use the R’s standard notation at first (though <code>brms</code> extends this syntax substantially for more complex models) to specify a formula in which AUC is predicted by MAD.</p>
+<p>So, to quantify evidence and uncertainty with posterior samples, let’s run a simple linear regression model using <code>brms</code>. We use R’s standard notation to specify a formula in which AUC is predicted by MAD. (NB: <code>brms</code> extends this syntax substantially for more complex models beyond R’s standard formula syntax).</p>
 <p><code>AUC ~ MAD</code></p>
 <p>When you run this code, the <code>brms</code> package generates Stan code and runs the Stan program in the background. Stan code is executed in C++, and the model will be ‘compiled’ (you get information about this in the console output). You we will want to learn later what this compilation does (spoiler: it computes gradients for all stochastic nodes in the model). The only thing that is relevant for you at the moment is this: This compilation can take quite a while (especially for complex models) before anything happens.</p>
 <div class="cell" data-hash="01b-regression-BRMS_cache/html/fit-model_1a6a7d936530580f1f5c7b19639dcfa8">
@@ -698,7 +703,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
 <p>The model output suggests that the posterior mean of the Intercept is around 500. The coefficient for MAD is estimated to be about 450.</p>
-<p>To see how good a fit this is, we should manually draw this line into the graph from above.</p>
+<p>To see how good a fit this is, we could manually draw this line into the graph from above.</p>
 <div class="cell" data-hash="01b-regression-BRMS_cache/html/plot-model-fit_befe2eb58338ffa8284edc5931fef8f4">
 <details open="">
 <summary>Toggle code</summary>
@@ -779,7 +784,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
 <p>Now that we know how to extract posterior samples, let’s actually take a bunch of these samples and plot them as lines into our scatter plot from above. In this code chunk we generate a subsample of 100 parameter pairs. (There are methods to directly sample from the posterior values of the linear predictor, which is what you want to use for complex models, but here we go full hands-on.)</p>
-<div class="cell" data-layout-align="center" data-hash="01b-regression-BRMS_cache/html/regressionLines_28c16c68fa8e1dba6c5b669df5e2a63e">
+<div class="cell" data-layout-align="center" data-hash="01b-regression-BRMS_cache/html/regressionLines_698b9900afb1e428ce33921de208c903">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># wrangle data frame</span></span>
@@ -795,8 +800,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">data =</span> posteriors2,</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">intercept =</span> b_Intercept, <span class="at">slope =</span> b_MAD), </span>
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size  =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>]) <span class="sc">+</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_aida</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -857,7 +861,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
 <p>Now we use this newly created data frame to plot the posterior distributions of all population-level coefficients. Again, we use our new best friend, the <code>tidybayes</code> package which offers some sweet extensions to <code>ggplot</code>’s <code>geom_</code> family of functions. We also add a reference point to compare the posteriors against. A common and reasonable reference point is 0. Remember a slope coefficient of zero would correspond to a flat regression line.</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/unnamed-chunk-4_3d03dce8dceb58d3fa1890ce03bd2c6d">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/unnamed-chunk-4_dd63ab4f18ffd3b1b8cef450881d4415">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the regression coefficients</span></span>
@@ -870,7 +874,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adjust the x-axis </span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>,<span class="dv">600</span>)) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>,<span class="fl">1.5</span>)) <span class="sc">+</span></span>
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add line for the value zero</span></span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">yend =</span> <span class="sc">-</span><span class="cn">Inf</span>,</span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lty =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
@@ -892,18 +896,16 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 423.77 and about 489.1 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
 <p>That’s helpful because we can relate this distribution to relevant values, for example the value 0 (dashed line). If you look at the coefficient, you can see that the posterior distribution does not include the value zero or any small-ish “Region of Practical Equivalence” around it. In fact, the posterior is really far away from zero. Thus, if we believe in the data and the model, we can be very certain that this coefficient is not zero. In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that ‘no relationship’ is not a very plausible scenario).</p>
-<p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s calculate the amount of posterior samples that are larger than 450. The following code chunk does this for us:</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/posterior_probability_d12f8fd18096e110aed5b3f48999c149">
+<p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s calculate the amount of posterior samples that are larger than 1. The following code chunk does this for us:</p>
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/posterior_probability_eea750ea56d840b40e76bbcff0522923">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hypothesis</span>(model1, <span class="st">'MAD &gt; 450'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hypothesis</span>(model1, <span class="st">'MAD &gt; 1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
-       Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob
-1 (MAD)-(450) &gt; 0     5.14     16.52   -22.36    32.44        1.7      0.63
-  Star
-1     
+     Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob Star
+1 (MAD)-(1) &gt; 0   454.14     16.52   426.64   481.44        Inf         1    *
 ---
 'CI': 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
 '*': For one-sided hypotheses, the posterior probability exceeds 95%;
@@ -911,7 +913,7 @@ for two-sided hypotheses, the value tested against lies outside the 95%-CI.
 Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
 </div>
 </div>
-<p>The results tell us that more than 60% of all posterior samples are larger than 450. It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here ’MAD &gt; 450).</p>
+<p>The results tell us that fewer than 5% of all posterior samples are larger than 1. It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here ‘MAD &gt; 1’).</p>
 </section>
 </section>
 <section id="exercises" class="level1">
@@ -928,7 +930,7 @@ Exercise 1
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Massage the data and create a new dataset that contains only correct responses and only the mean values of the RT and the AUC measurement for each participant (<code>subject_id</code>). Print out the <code>head</code> of the dataset.</p>
+<p>Massage the data and create a new datas et that contains only correct responses and only the mean values of the RT and the AUC measurement for each participant (<code>subject_id</code>). Standardize both measurements. Print out the <code>head</code> of the data set.</p>
 <div class="callout callout-style-simple callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -941,29 +943,35 @@ Solution
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/unnamed-chunk-5_1bf17de09134d3b787415c8638644e7f">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/unnamed-chunk-5_c2945db067d397cc7519b762d4be9432">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>dolphin_agg <span class="ot">&lt;-</span> dolphin <span class="sc">|&gt;</span> </span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(correct <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subject_id) <span class="sc">|&gt;</span> </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">AUC =</span> <span class="fu">mean</span>(AUC, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">RT =</span> <span class="fu">mean</span>(RT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">mean</span>(AUC, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">RT =</span> <span class="fu">mean</span>(RT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">scale</span>(AUC),</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">RT  =</span> <span class="fu">scale</span>(RT)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
-  subject_id     AUC    RT
-       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
-1       1001 101423.  930.
-2       1002  94808. 1581.
-3       1003  12970. 3552.
-4       1004  44911. 1580.
-5       1005  62362. 1328.
-6       1006  88386. 1375.</code></pre>
+  subject_id AUC[,1] RT[,1]
+       &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+1       1001  0.759  -1.24 
+2       1002  0.646  -0.320
+3       1003 -0.755   2.46 
+4       1004 -0.208  -0.322
+5       1005  0.0906 -0.677
+6       1006  0.536  -0.611</code></pre>
 </div>
 </div>
 </div>

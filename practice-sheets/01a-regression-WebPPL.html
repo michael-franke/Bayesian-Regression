@@ -475,6 +475,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble">Preamble</a></li>
   <li><a href="#simple-regression" id="toc-simple-regression" class="nav-link" data-scroll-target="#simple-regression">Simple regression</a></li>
+  <li><a href="#linear-regression-for-ab-testing" id="toc-linear-regression-for-ab-testing" class="nav-link" data-scroll-target="#linear-regression-for-ab-testing">Linear regression for A/B testing</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/01a-regression-WebPPL.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -573,7 +574,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="simple-regression" class="level1">
 <h1>Simple regression</h1>
-<p>Here is an example of a simple Bayesian regression model for R’s built-in data set <code>cars</code>.</p>
+<p>Let’s loot at R’s built-in data set <code>cars</code> for simple example of two paired metric measurements. Here, we have the speed a car was traveling and the distance before coming to a halt (from the 1920s):</p>
+<div class="cell" data-hash="01a-regression-WebPPL_cache/html/unnamed-chunk-2_5ff8acf6876e9e3f1c814cd756725905">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cars <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> speed, <span class="at">y =</span> dist)) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="01a-regression-WebPPL_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here is an example of a simple Bayesian regression model for this data set in WebPPL.</p>
 <pre class="webppl">// R's 'cars' data set: 50 paired measurements of speed and distance (after breaking)
 var speed = [4, 4, 7, 7, 8, 9, 10, 10, 
              10, 11, 11, 12, 12, 12, 
@@ -648,6 +662,70 @@ Solution
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+</section>
+<section id="linear-regression-for-ab-testing" class="level1">
+<h1>Linear regression for A/B testing</h1>
+<p>Here is an example in WebPPL of an application of a linear regression model to a case of A/B-testing, i.e., investigating whether there is a difference between two sets of measurements. If we encode the difference between groups as a slope coefficient, we can use the linear regression format to, essentially, mimick a kind of t-test (with unpaired measurements and equal variance).</p>
+<pre class="webppl">
+var y_A = [127, 130, 106, 129, 114, 125, 119, 128]
+var y_B = [131, 119, 115, 109, 110, 105, 118, 112]
+
+// define likelihood function
+var LH_fun = function(mu, sigma, y_obs) {
+  map(
+    function(y) {var LH = Gaussian({mu: mu, sigma: sigma}).score(y);
+                 factor(LH);},
+    y_obs );
+}
+
+var model = function() {
+  // model parameters
+  var beta_0 = gaussian(120,50);
+  var beta_1 = gaussian(0,30);
+  var sigma  = gamma(1,1);
+
+  // linear predictor (= predictor of central tendency)
+  var mu_A = beta_0
+  var mu_B = beta_0 + beta_1
+
+  // apply likelihood function
+  LH_fun(mu_A, sigma, y_A);
+  LH_fun(mu_B, sigma, y_B);
+
+  // samples from the posterior predictive distribution
+//   var y_A_pred = gaussian(mu_A, sigma)
+//   var y_B_pred = gaussian(mu_B, sigma)
+
+  return {beta_0, beta_1, sigma};
+//   return {y_A_pred , y_B_pred}
+  
+}
+
+viz.marginals(Infer({method: 'MCMC', samples: 15000, lag: 2, burn: 5000}, model));
+
+</pre>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Try to see the underlying model of the data-generating process behind the code.</li>
+<li>Visualize just the priors and compare them with the posteriors.</li>
+<li>Use the commented-out code to draw samples from the posterior predictive distribution.</li>
+<li>Now draw samples from the prior predictive distribution.</li>
+<li>If you wanted to mimick a t-test with unequal variance instead, could you change the code to do that? (NB: we only have very few data points, so your posteriors will likely be quite “ragged”.)</li>
+</ol>
 </div>
 </div>
 </div>
