@@ -1,0 +1,96 @@
+---
+title: "Predictions from generalized linear models"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+editor: visual
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+---
+
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# Model predictions
+
+Usually, when we think about what predictions a model makes, we think about the predictions it makes about the data, e.g., which data points $y'$ is deems likely after having been conditioned on some data $y$. These are the types of predictions that usually matter. They address the question: what will the future be like?
+
+But complex models, with various latent variables, not only make predictions about data $y$ but also about all computational steps from parameters $\theta$ to data $y$, so to speak.
+
+A vanilla linear model (whether before or after being conditioned on some data), makes two kinds of predictions, namely:
+
+1.  the shape of the (hypothetical) data $y'$ for $x$, and
+2.  the central tendency of data $y$ for some predictor $x$.
+
+Generalized linear models often also disassociate a prediction of central tendency (point 2 above), from the linear predictor that is used to compute that prediction of central tendency. So, *all* linear models also predict:
+
+3.  a linear predictor value given values of $x$,
+
+but for some linear models (with the identity function as a link function), there is no difference between 1 and 3.
+
+When we speak of the \*posterior predictive distribution\* we usually mean predictions about data $y'$, but the term can be (leniently) also applied to the latter two types of predictions.
+
+# Predictive samples
+
+Samples for all of the three types of posterior predictive distributions can be obtained from a fitted model, e.g., with different functions from the `tidyverse` package. Here, it does not matter whether the model was fitted to data or it is a "prior model", so to speak, fit with the flag `sample_prior = "only"`. We look at the posterior case first, then at the prior predicitives.
+
+## Posterior predictives
+
+Here is an example for a logistic regression model (where all the three measures clearly show their conceptual difference). Fit the model to some data first (here: predicting accuracy for two categorical factors with two levels each):
+
+```{r}
+#| results: hide
+fit_MT_logistic <- 
+  brms::brm(
+    formula = correct ~ group * condition,
+    data    = aida::data_MT,
+    family  = brms::bernoulli()
+  )
+```
+
+The posterior predictive (in the most general sense) makes predictions about the to-be-expected data, here a Boolean value of whether a response was correct.
+
+```{r}
+# 2 samples from the predictive distribution (data samples)
+data_MT |> 
+  select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_predicted_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+```
+
+A predicted central tendency for this logistic model is a probability of giving a correct answer.
+
+```{r}
+
+# 2 samples from the predicted central tendency
+data_MT |> 
+  select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_epred_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+```
+
+Predictions at the linear predictor level are sometimes not so easy to interpret. The interpretation depends on the kind of link function used (more on this under the topic of "generalized linear models"). For a logistic regression, this number is a log-odds ratio (which determines the predicted correctness-probability).
+
+```{r}
+# 2 samples for the linear predictor
+data_MT |> 
+  select(group, condition) |> 
+  unique() |> 
+  tidybayes::add_linpred_draws(
+    fit_MT_logistic,
+    ndraws = 2
+    )
+```
+
