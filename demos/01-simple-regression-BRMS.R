@@ -68,7 +68,12 @@ dolphin_agg <- dolphin |>
   group_by(subject_id) |> 
   dplyr::summarize(
     AUC = median(AUC, na.rm = TRUE),
-    MAD = median(MAD, na.rm = TRUE)) 
+    MAD = median(MAD, na.rm = TRUE)) |> 
+  ungroup() |> 
+  mutate(
+    AUC = scale(AUC),
+    MAD = scale(MAD)
+  )
 
 ##################################################
 ## plotting
@@ -102,7 +107,6 @@ tidybayes::tidy_draws(fit_dolphin) |>
   summarize(
     aida::summarize_sample_vector(value)[-1]
     )
-
 
 tidybayes::tidy_draws(fit_dolphin) |> 
   select(b_Intercept, b_MAD, sigma) 
