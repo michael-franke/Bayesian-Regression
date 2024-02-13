@@ -70,9 +70,10 @@ dolphin_agg <- dolphin |>
     AUC = median(AUC, na.rm = TRUE),
     MAD = median(MAD, na.rm = TRUE)) |> 
   ungroup() |> 
+  # standardizing measures
   mutate(
-    AUC = scale(AUC),
-    MAD = scale(MAD)
+    AUC = (AUC - mean(AUC)) / sd(AUC),
+    MAD = (MAD - mean(MAD)) / sd(MAD)
   )
 
 ##################################################
@@ -88,10 +89,12 @@ dolphin_agg |>
 ## fitting a model
 ##################################################
 
+
 fit_dolphin <- 
   brms::brm(
     formula = AUC ~ MAD,
-    data    = dolphin_agg
+    data    = dolphin_agg,
+    # prior   = brms::prior(prior = "normal(0,10)", class = "b"),
   )
 
 summary(fit_dolphin)
@@ -100,13 +103,22 @@ summary(fit_dolphin)
 ## inspect the fit
 ##################################################
 
+# extract samples for regression coefficients 
+# and compute Bayesian summary stats
 tidybayes::tidy_draws(fit_dolphin) |> 
-  select(b_Intercept, b_MAD, sigma) |> 
+  select(starts_with("b_")) |> 
   pivot_longer(cols = everything()) |> 
   group_by(name) |> 
   summarize(
     aida::summarize_sample_vector(value)[-1]
-  )
+    )
+
+#extracting the samples
+tidybayes::tidy_draws(fit_dolphin) |> 
+  select(b_Intercept, b_MAD, sigma) 
+
+# explore via shinystan
+shinystan::launch_shinystan(fit_dolphin)
 
 ##################################################
 ## plotting w/ package 'bayesplot'
@@ -118,10 +130,13 @@ bayesplot::mcmc_intervals(
   fit_dolphin, 
   pars = c("b_Intercept", "b_MAD", "sigma"))
 
+# pairs plot
+bayesplot::mcmc_pairs(fit_dolphin,
+                      pars = c("b_Intercept", "b_MAD", "sigma"))
+
 ##################################################
 ## plotting w/ package 'tidybayes'
 ##################################################
-
 
 fit_dolphin |> 
   tidybayes::tidy_draws() |> 
@@ -141,7 +156,54 @@ fit_dolphin |>
                lty = "dashed") +
   theme(legend.position="none")
 
+##################################################
+## samples from the posterior predictive
+##################################################
 
+# we use the original x-values to generate predictions for
+data_to_predict <- tibble(
+  MAD = dolphin_agg$MAD
+)
+
+# samples from the linear predictor
+tidybayes::linpred_draws(
+  object  = fit_dolphin,
+  newdata = data_to_predict,
+  ndraws  = 1
+)
+
+# samples of predicted data points
+tidybayes::predicted_draws(
+  object  = fit_dolphin,
+  newdata = data_to_predict,
+  ndraws  = 1
+)  
+
+
+##################################################
+## samples from the prior predictive
+##################################################
+
+fit_dolphin_prior <- 
+  stats::update(fit_dolphin, sample_prior = "only")
+
+tidybayes::predicted_draws(
+  object  = fit_dolphin_prior,
+  newdata = data_to_predict,
+  ndraws  = 1
+)  
+
+tidybayes::linpred_draws(
+  object  = fit_dolphin_prior,
+  newdata = data_to_predict,
+  ndraws  = 1
+)
+
+tidybayes::epred_draws(
+  object  = fit_dolphin_prior,
+  newdata = data_to_predict,
+  ndraws  = 1
+)
 
 
 
