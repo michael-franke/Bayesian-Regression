@@ -125,7 +125,7 @@ var model = function() {
   // model parameters
   var beta_0 = gaussian(120,50);
   var beta_1 = gaussian(0,30);
-  var sigma  = gamma(1,1);
+  var sigma  = gamma(5,5);
 
   // linear predictor (= predictor of central tendency)
   var mu_A = beta_0
