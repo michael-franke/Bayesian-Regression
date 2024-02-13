@@ -350,7 +350,7 @@ var model = function() {
 
   // likelihood function / conditioning
   mapIndexed(function(i, d){
-    type_of_scientist[i] == 0 ? 
+    type_of_scientist[i] == "sloppy" ? 
       observe(Gaussian({mu, sigma: sigma_sloppy_science}), d) :
       observe(Gaussian({mu, sigma: sigma_proper_science}), d)
   }, data)
