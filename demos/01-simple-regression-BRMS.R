@@ -101,19 +101,45 @@ summary(fit_dolphin)
 ##################################################
 
 tidybayes::tidy_draws(fit_dolphin) |> 
-  select(starts_with("b_")) |> 
+  select(b_Intercept, b_MAD, sigma) |> 
   pivot_longer(cols = everything()) |> 
   group_by(name) |> 
   summarize(
     aida::summarize_sample_vector(value)[-1]
-    )
+  )
 
-tidybayes::tidy_draws(fit_dolphin) |> 
-  select(b_Intercept, b_MAD, sigma) 
+##################################################
+## plotting w/ package 'bayesplot'
+##################################################
+
+plot(fit_dolphin)
+
+bayesplot::mcmc_intervals(
+  fit_dolphin, 
+  pars = c("b_Intercept", "b_MAD", "sigma"))
+
+##################################################
+## plotting w/ package 'tidybayes'
+##################################################
 
 
-
-
+fit_dolphin |> 
+  tidybayes::tidy_draws() |> 
+  select(b_Intercept, b_MAD, sigma) |> 
+  pivot_longer(cols = everything(),
+               names_to = "parameter", values_to = "posterior") |> 
+  ggplot(aes(x = posterior, y = parameter, fill = parameter)) + 
+  # plot density w/ 91.2345% credible interval
+  tidybayes::stat_halfeye(.width = 0.912345) +
+  # add axes titles
+  xlab("") +
+  ylab("") +
+  # adjust the x-axis 
+  scale_x_continuous(limits = c(-0.25,1.5)) +
+  # add line for the value zero
+  geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf,
+               lty = "dashed") +
+  theme(legend.position="none")
 
 
 
