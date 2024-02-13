@@ -199,7 +199,7 @@ mean(sd_data < sd_postPred)
 ```
 
 ::: {.callout-caution collapse="false"}
-## Exercise 3: Predictive $p$-values w/ SD as test statistic
+## Exercise 3:
 
 Make sure you understand how the code in the last code block works. Interpret the numerical result.
 
@@ -251,7 +251,7 @@ mean(LH_data > LH_postPred)
 
 
 ::: {.callout-caution collapse="false"}
-## Exercise 4: Predictive $p$-values w/ SD as test statistic
+## Exercise 4:
 
 Interpret the result you get (also in relation to the results from the previous exercise).
 
