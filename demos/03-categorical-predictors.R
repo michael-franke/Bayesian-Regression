@@ -110,11 +110,16 @@ fit_polite <-
   )
 
 ##################################################
-## inspect the fit
+## quick plot of conditional effects
 ##################################################
 
-conditional_effects(fit_polite)
+# quick-plot for conditional (= "marginal") effects
+brms::conditional_effects(fit_polite)
+brms::conditional_effects(fit_polite, method = "posterior_predict")
 
+##################################################
+## extract and construct by hand
+##################################################
 
 tidybayes::tidy_draws(fit_polite) |> 
   select(starts_with("b_")) |> 
@@ -130,11 +135,19 @@ tidybayes::tidy_draws(fit_polite) |>
   ggplot(aes(x = value, y = name)) +
   tidybayes::stat_halfeye()
 
+##################################################
+## use 'faintr' package
+##    CAVEATs: 
+##      - does not work for all GLMs
+##      - only targets the linear predictor (!)
+##################################################
+
+# get samples of linear predictor for all cells
 faintr::extract_cell_draws(
-  fit = fit_polite,
-  group = gender == "M" & context == "pol"
+  fit = fit_polite
 )
 
+# compare cells or groups of cells
 faintr::compare_groups(
   fit = fit_polite,
   higher = gender == "F" & context == "inf",
