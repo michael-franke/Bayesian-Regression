@@ -1,0 +1,342 @@
+---
+title: "Hypothesis testing"
+subtitle: "Bayesian regression: theory & practice"
+author: "Michael Franke"
+format: html
+execute:
+  error: false
+  warning: false
+  message: false
+  cache: true
+callout-appearance: simple
+editor:
+  markdown:
+    wrap: sentence
+---
+
+
+1. Testing with frequentist $p$-values
+2. Testing with Bayesian $p$-values
+
+
+# Preamble
+
+{{< include 00-preamble.qmd >}}
+
+# Estimation-based testing
+
+## Credible Intervals
+
+```{r}
+
+hdi = HDInterval::hdi(qbeta , shape1 = 8 , shape2 = 18 )
+hdiData <- tibble(
+  theta = rep(hdi, each = 2),
+  post = c(0,dbeta(hdi, 8, 18), 0)
+)
+expData <- tibble(
+  theta = c(8/26,8/26),
+  post = c(0,dbeta(8/26, 8, 18 ))
+)
+
+tibble(
+  theta = seq(0.01,1, by = 0.01),
+  posterior = dbeta(seq(0.01,1, by = 0.01), 8, 18 )
+) %>% 
+  ggplot(aes(x = theta, y = posterior)) + 
+  xlim(0,1) + 
+  labs(
+    x = latex2exp::TeX("Bias $\\theta$"),
+    y = latex2exp::TeX("Posterior probability $P_{M}(\\theta \\, | \\, D)$"),
+    title = "Posterior"
+  ) +
+  geom_line(data = hdiData, aes(x = theta, y = post), color = project_colors[2], size = 1.5) +
+  geom_label(x = 0.7, y = 0.5, label = "Cred.Int.: 0.14 - 0.48", color = project_colors[2], size = 5) +
+  geom_line(data = expData, aes(x = theta, y = post), color = project_colors[1], size = 1.5) +
+  geom_label(x = 0.52, y = dbeta(8/26, 8, 18 ), label = "expectation: 0.308", color = project_colors[1], size = 5) +
+  geom_line(color = "black", size = 2)
+```
+
+
+## Posterior probability
+
+```{r}
+k <- 7
+N <- 24
+
+ROPE <- c(0.49,0.51)
+
+postProb_ROPE <- pbeta(ROPE[2],8,18) - pbeta(ROPE[1],8,18)
+
+# TODO: add picture with colored ROPE
+
+
+plotData <- tibble(
+  theta = seq(0,1, length.out = 200),
+  posterior = dbeta(theta, 8, 18)
+)
+
+plotData |> 
+  ggplot(aes(x = theta, y = posterior)) + 
+  geom_ribbon(aes(ymin=0, ymax=posterior), 
+              fill=project_colors[2],
+              alpha=0.8, 
+              data=subset(plotData, theta >= 0.485 & theta <= 0.515)) +
+  geom_line(size = 2) +
+  xlim(0,1) + 
+  geom_label(x = 0.75, y = 0.5, 
+             label = str_c("Post. prob. ROPE: ", round(postProb_ROPE, 3)), 
+             color = project_colors[2], size = 3) +
+  labs(
+    x = latex2exp::TeX("Bias $\\theta$"),
+    y = latex2exp::TeX("Posterior probability $P_{M}(\\theta \\, | \\, D)$"),
+    title = "Posterior"
+  ) 
+
+ggsave("../pics/24-7-posterior-prob.pdf", width = 6, height = 4)
+
+```
+
+
+# Prediction-based testing
+
+This is not a common approach (in fact, I have never seen this used in practive at all), but, in principle, we can use Bayesian $p$-values for hypothesis testing.
+Of course, if we consider a degenerate model with $\theta = \theta^*$, this is frequentist testing.
+Let's therefore explore a different route here and instead consider a Bayesian logistic regression model with a very strong prior assumption that $\theta$ is sampled randomly from our ROPE (thus implementing a "distributional hypothesis", but with a stupid, flat distribution over an interval) and then ask whether this model would be "surprised" by the 24/7 data.
+
+First, we need to set up and obtain the model, from the prior point of view.
+
+```{r}
+#| results: hide
+
+# data in a long format
+data_24_7 <- tibble(
+  outcome = c(rep(1, 7), rep(0, 17))
+)
+
+# run logistic intercept-only regression model 
+#    with very narrow prior, taking only samples from the prior
+fit_logistic_prior <- brms::brm(
+  formula = outcome ~ 1, 
+  data = data_24_7,
+  family = brms::bernoulli(link = "logit"),
+  # this is an extremely stupid "unBayesian prior" !!!
+  #   but it's the hypothesis we are interested in
+  prior = brms::prior("uniform(0.49,0.51)", 
+                      class = "Intercept", 
+                      ub = 0.51, lb = 0.49),
+  sample_prior = "only",
+  iter = 50000,
+  warmup = 1000
+)
+```
+
+We then collect samples from the prior predictive, obtain the likelihood for all of these and compare these to the likelihood of the data.
+
+```{r}
+# collect samples from the prior-predictive distribution
+priorPred_samples <- tidybayes::add_predicted_draws(
+  fit_logistic_prior,
+  newdata = data_24_7,
+  ndraws = 500,
+  value = "prediction"
+) 
+
+# extract likelihood for observations (actual or repeat)
+get_LH <- function(observation, ndraws = 1000) {
+  LH_ys <- brms::log_lik(
+    object  = fit_logistic_prior,
+    newdata = tibble(outcome = observation),
+    ndraws  = ndraws)
+  mean(matrixStats::rowLogSumExps(LH_ys) - log(dim(LH_ys)[2]))
+}
+
+# get likelihood 
+LH_postPred <- priorPred_samples |> 
+  group_by(.draw) |> 
+  summarize(LH_post_pred = get_LH(prediction)) |> 
+  pull(LH_post_pred)
+
+LH_data <- get_LH(data_24_7$outcome)
+
+# # plot the results
+# dens <- density(LH_postPred)
+# dens_df <- tibble(x = dens$x, y = dens$y)
+# 
+# dens_df |> 
+#   ggplot(aes(x = x, y = y)) + 
+#   geom_ribbon(aes(ymin=0, ymax=y, fill=x < LH_data), alpha=0.3) + # Shade below LH_data
+#   scale_fill_manual(values=c("TRUE"=project_colors[2], "FALSE"="transparent")) + # Color the shading
+#   geom_line()
+  
+print(mean(LH_data < LH_postPred))
+
+```
+
+We find that, indeed, this model would be surprised by the data. 
+Most of the data that the model predicts, is more likely than the data (from the point of view of the model).
+This can be interpreted as generalization of a $p$-value to an interval-based hypothesis, approximate by Monte Carlo sampling.
+
+# Comparison-based testing
+
+While the previous approaches all just used one model, the logic of comparison-based testing is to compare two models: one model that expresses the relevant hypothesis, and another model that expresses a relevant alternative model.
+The choice of alternative is not innocuous, as we will see.
+
+## Bayes factors
+
+First, we will explore comparison with Bayes Factors, in particular using the [(generalized) Savage-Dickey method](https://michael-franke.github.io/intro-data-analysis/ch-03-05-Bayesian-testing-comparison.html).
+Following this approach, we consider an *encompassing model* $M_e$ which contains the (interval-based) null hypothesis $I_0$ and its alternative $I_1$ (in the sense that it puts positive probability on both).
+We can then compute the Bayes factor in favor of hypothesis $I_0$ as:
+
+$$
+BF_{01} = \frac{\text{posterior odds of $I_0$ in $M_e$}}{\text{prior odds of $I_0$ in $M_e$}}
+$$
+
+Here is how we can calculate this for the 24/7 data using the Beta-binomial model:
+
+```{r Bayes-factor-beta-binomial}
+# set the scene
+k <- 7
+N <- 24
+theta_null <- 0.5
+epsilon <- 0.01                 # epsilon margin for ROPE
+upper <- theta_null + epsilon   # upper bound of ROPE
+lower <- theta_null - epsilon   # lower bound of ROPE
+alpha <- 1                      # prior beta parameter
+beta  <- 1                      # prior beta parameter
+# calculate prior odds of the ROPE-d hypothesis
+prior_of_hypothesis <- pbeta(upper, alpha, beta) - pbeta(lower, alpha, beta)
+prior_odds <- prior_of_hypothesis / (1 - prior_of_hypothesis)
+# calculate posterior odds of the ROPE-d hypothesis
+posterior_of_hypothesis <- pbeta(upper, alpha + k, beta + (N-k)) - pbeta(lower, alpha + k, beta + (N-k))
+posterior_odds <- posterior_of_hypothesis / (1 - posterior_of_hypothesis)
+# calculate Bayes factor
+bf_ROPEd_hypothesis <- posterior_odds / prior_odds
+bf_ROPEd_hypothesis
+```
+
+And here is how this can be calculated using a logistic regression instead.
+We first set up the model and fit it to the data.
+We use a normal prior for the Intercept, with values that very roughly induces a uniform distribution on the a priori predicted central tendency (= coin bias).
+(NB: the prior predictive of central tendency in this model is a [logit-normal distribution](https://en.wikipedia.org/wiki/Logit-normal_distribution).)
+We use a lot of samples to achieve better accuracy of our estimates.
+
+```{r Bayes-factor-logistic-posterior}
+#| results: hide
+
+fit_logistic_posterior <- brms::brm(
+  formula = outcome ~ 1, 
+  data = data_24_7,
+  family = brms::bernoulli(link = "logit"),
+  prior = brms::prior("normal(0,1.8)", 
+                      class = "Intercept"),
+  iter = 50000,
+  warmup = 1000
+)
+
+```
+
+
+We then collect samples from the prior over parameters as well:
+
+```{r Bayes-factor-logistic-prior}
+#| results: hide
+fit_logistic_prior <- stats::update(
+  fit_logistic_posterior, 
+  sample_prior = "only",
+  iter = 50000,
+  warmup = 1000)
+```
+
+We then approximate the probability of $I_0$ and $I_1$ from both the prior and posterior samples:
+
+```{r Bayes-factor-logistic-extract-compute}
+
+prior_samples_Intercept <- fit_logistic_prior |> 
+  tidybayes::tidy_draws()
+
+posterior_samples_Intercept <- fit_logistic_posterior |> 
+  tidybayes::tidy_draws()
+
+P_I0_prior <- mean(prior_samples_Intercept >= lower & prior_samples_Intercept <= upper )
+P_I1_prior <- 1 - P_I0_prior
+
+P_I0_posterior <- mean(posterior_samples_Intercept >= lower & posterior_samples_Intercept <= upper )
+P_I1_posterior <- 1 - P_I0_posterior
+
+# Bayes factor
+
+(P_I0_posterior / P_I1_posterior) / (P_I0_prior / P_I1_prior)
+
+```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 4: Predictive $p$-values w/ SD as test statistic
+
+Repeat these calculations for different priors on the intercept, in particular different standard deviations for the normal distribution. What do you see?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Changing the standard deviation (moderately) affects the numerical value we obtain, but not in a manner that would suggest different qualitative conclusions.
+
+:::
+:::
+
+## LOO
+
+
+```{r}
+#| results: hide
+
+fit_logistic_alternative <- brms::brm(
+  formula = outcome ~ 1, 
+  data = data_24_7,
+  family = brms::bernoulli(link = "logit"),
+  prior = brms::prior("normal(0,1.8)", 
+                      class = "Intercept"),
+  iter = 50000,
+  warmup = 1000
+)
+
+fit_logistic_null <- brms::brm(
+  formula = outcome ~ 1, 
+  data = data_24_7,
+  family = brms::bernoulli(link = "logit"),
+  prior = brms::prior("uniform(0.49,0.51)", 
+                      class = "Intercept",
+                      lb=0.49, ub=0.51),
+  iter = 50000,
+  warmup = 1000
+)
+
+
+```
+
+
+```{r}
+loo_comp <- loo_compare(list(
+  alternative = loo(fit_logistic_alternative), 
+  null = loo(fit_logistic_null)))
+loo_comp
+```
+
+It seems that the alternative model is better.
+
+Checking whether this difference is substantial:
+
+```{r}
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+```
+
+
+
+
+
+
+
+
+
+
+

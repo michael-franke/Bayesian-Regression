@@ -90,25 +90,29 @@ website:
         contents:
           - href: practice-sheets/07a-model-criticism.qmd
             text: Model criticism
-      - section: "08: Causal inference"
+      - section: "08: Hypothesis testing"
         contents:
-          - href: 08-causal-inference.qmd
+          - href: practice-sheets/08-hypothesis-testing.qmd
+            text: Hypothesis testing
+      - section: "09: Causal inference"
+        contents:
+          - href: 09-causal-inference.qmd
             text: Overview
-          - href: practice-sheets/08a-stochastic-dependence.qmd
+          - href: practice-sheets/09a-stochastic-dependence.qmd
             text: Stochastic dependence
-          - href: practice-sheets/08b-causal-inference.qmd
+          - href: practice-sheets/09b-causal-inference.qmd
             text: Causal inference
-      - section: "09: Non-linear models"
+      - section: "10: Non-linear models"
         contents:
-          - href: practice-sheets/09a-nonLinear.qmd
+          - href: practice-sheets/10a-nonLinear.qmd
             text: Custom non-linearity
-          - href: practice-sheets/09b-GAMs.qmd
+          - href: practice-sheets/10b-GAMs.qmd
             text: Generalized additive models
-          - href: practice-sheets/09c-Gaussian-processes.qmd
+          - href: practice-sheets/10c-Gaussian-processes.qmd
             text: Gaussian processes regression
-      - section: "10: Practical stuff"
+      - section: "11: Practical stuff"
         contents:
-          - href: practice-sheets/10a-cheat-sheet.qmd
+          - href: practice-sheets/11a-cheat-sheet.qmd
             text: BRMS cheat sheet
 
 format:
