@@ -38,8 +38,13 @@ library(faintr)
 library(cspplot)
 
 # these options help Stan run faster
-options(mc.cores = parallel::detectCores(),         
-        brms.backend = "cmdstanr")
+
+#BEFORE
+# options(mc.cores = parallel::detectCores(),         
+#         brms.backend = "cmdstanr")
+
+# AFTER
+options(mc.cores = parallel::detectCores())
 
 # use the CSP-theme for plotting
 theme_set(theme_csp())
@@ -107,6 +112,7 @@ fit_dolphin <-
     data    = dolphin_agg,
     prior   = brms::prior(prior = "normal(0,10)", class = "b")
   )
+
 
 ##################################################
 ## sampling parameters from the prior distribution 
