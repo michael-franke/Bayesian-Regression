@@ -58,7 +58,7 @@ emp_mean_of_means
 
 Aha!
 There is a difference between the empirical mean (sample mean; mean of all data points) and the mean-of-means (a.k.a., grand mean).
-This is because there different numbers of observations for each county:
+This is because there are different numbers of observations for each county:
 
 ```{r}
 data_radon |> 

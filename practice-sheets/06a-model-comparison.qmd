@@ -156,7 +156,7 @@ As you can see, this is a very clear result. If we had equal levels of credence 
 
 # Comparing LOO-CV and Bayes factors
 
-LOO-CV and Bayes factor gave similar results in the Walkthrough. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation. In this exercise we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:
+LOO-CV and Bayes factor gave similar results in the previous example. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation. In this exercise we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:
 
 -   LOO-CV compares models from a data-informed, *ex post* point of view based on a (repeatedly computed) **posterior predictive distribution**
 -   Bayes factor model comparison takes a data-blind, *ex ante* point of view based on the **prior predictive distribution**
