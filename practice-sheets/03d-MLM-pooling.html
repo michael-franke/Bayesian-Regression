@@ -597,7 +597,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data_radon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 919 × 4
+<pre><code># A tibble: 919 x 4
    floor county log_radon log_uranium
    &lt;int&gt; &lt;fct&gt;      &lt;dbl&gt;       &lt;dbl&gt;
  1     1 AITKIN    0.833       -0.689
@@ -610,7 +610,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8     0 ANOKA     0.0953      -0.847
  9     0 ANOKA    -0.223       -0.847
 10     0 ANOKA     0.262       -0.847
-# ℹ 909 more rows</code></pre>
+# i 909 more rows</code></pre>
 </div>
 </div>
 <p>Suppose that we are interested in an estimate of the mean log-radon measured. Easy! We can just take the empirical mean of each measurement:</p>
@@ -642,7 +642,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>[1] 1.37991</code></pre>
 </div>
 </div>
-<p>Aha! There is a difference between the empirical mean (sample mean; mean of all data points) and the mean-of-means (a.k.a., grand mean). This is because there different numbers of observations for each county:</p>
+<p>Aha! There is a difference between the empirical mean (sample mean; mean of all data points) and the mean-of-means (a.k.a., grand mean). This is because there are different numbers of observations for each county:</p>
 <div class="cell" data-hash="03d-MLM-pooling_cache/html/unnamed-chunk-5_bc98e79789d2e12cf10d68c92c38c2cf">
 <details open="">
 <summary>Toggle code</summary>
@@ -652,7 +652,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_obs_by_county =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 85 × 3
+<pre><code># A tibble: 85 x 3
    county    mean_by_county n_obs_by_county
    &lt;fct&gt;              &lt;dbl&gt;           &lt;int&gt;
  1 AITKIN             0.715               4
@@ -665,7 +665,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8 BROWN              1.65                4
  9 CARLTON            0.977              10
 10 CARVER             1.22                6
-# ℹ 75 more rows</code></pre>
+# i 75 more rows</code></pre>
 </div>
 </div>
 <p>The sample mean does not distinguish at all which observation came from which county. The mean-of-means, on the other hand, puts “counties first”, so to speak, and does not acknowledge that the number of observations each county contributed might be different. To understand how this can yield a difference, look at this picture:</p>
@@ -745,7 +745,7 @@ Solution
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>sample_mean_estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 4
+<pre><code># A tibble: 1 x 4
   Parameter   `|95%`  mean `95%|`
   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
 1 sample mean   1.21  1.26   1.32</code></pre>
@@ -780,7 +780,7 @@ Solution
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(sample_mean_estimate, meanOmean_estimate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 4
+<pre><code># A tibble: 2 x 4
   Parameter     `|95%`  mean `95%|`
   &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
 1 sample mean     1.21  1.26   1.32
@@ -813,7 +813,7 @@ Solution
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(sample_mean_estimate, meanOmean_estimate, pooled_mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
+<pre><code># A tibble: 3 x 4
   Parameter     `|95%`  mean `95%|`
   &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
 1 sample mean     1.21  1.26   1.32

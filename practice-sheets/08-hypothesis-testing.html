@@ -504,6 +504,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#bayes-factors" id="toc-bayes-factors" class="nav-link" data-scroll-target="#bayes-factors">Bayes factors</a></li>
   <li><a href="#loo" id="toc-loo" class="nav-link" data-scroll-target="#loo">LOO</a></li>
   </ul></li>
+  <li><a href="#the-brmshypothesis-function" id="toc-the-brmshypothesis-function" class="nav-link" data-scroll-target="#the-brmshypothesis-function">The <code>brms::hypothesis</code> function</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/08-hypothesis-testing.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -534,10 +535,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>There are different ways of addressing research hypotheses with Bayesian models. For a more in-depth treatment see <a href="https://michael-franke.github.io/intro-data-analysis/ch-03-07-hypothesis-testing-Bayes.html">here</a>. This unit gives code examples that showcase approaches to hypotheses testing based on the three pillars of BDA:</p>
 <ol type="1">
-<li>Testing with frequentist <span class="math inline">\(p\)</span>-values</li>
-<li>Testing with Bayesian <span class="math inline">\(p\)</span>-values</li>
+<li>estimation,</li>
+<li>model criticism, and</li>
+<li>model comparison.</li>
 </ol>
+<p>The running example is the 24/7 coin flip case (flipping a coin <span class="math inline">\(N=24\)</span> times and observing <span class="math inline">\(k=7\)</span> heads), addressing the research question that the coin is fair (<span class="math inline">\(\theta = 0.5\)</span>).</p>
 <section id="preamble" class="level1">
 <h1>Preamble</h1>
 <p>Here is code to load (and if necessary, install) required packages, and to set some global options (for plotting and efficient fitting of Bayesian models).</p>
@@ -601,10 +605,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="estimation-based-testing" class="level1">
 <h1>Estimation-based testing</h1>
+<p>In estimation-based testing we use a single model <span class="math inline">\(M\)</span>, condition it on the observed data <span class="math inline">\(D\)</span>, and then ask whether the hypothesis is supported or discredited by the posterior. For point-valued hypothesis, like <span class="math inline">\(\theta = 0.5\)</span>, we can use <em>region of practical equivalence</em> (ROPE), following <a href="https://www.sciencedirect.com/book/9780124058880/doing-bayesian-data-analysis">Kruschke</a>. For example, we may consider a ROPE of <span class="math inline">\(0.5 \pm 0.01\)</span>. There are two salient methods:</p>
+<ol type="1">
+<li>comparison against a credible interval, and</li>
+<li>direct inspection of the posterior probability.</li>
+</ol>
 <section id="credible-intervals" class="level2">
 <h2 class="anchored" data-anchor-id="credible-intervals">Credible Intervals</h2>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-2_81500bca47f32ec4946ae84e30b2c103">
-<details open="">
+<p>The first approach compares the ROPE to an <span class="math inline">\(n\)</span>% credible interval of the posterior. The plot below shows the posterior, starting from a flat prior, for our case. it also shows the 95% credible interval.</p>
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-2_b37f29853390fdb6b745f1657f034b68">
+<details>
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hdi <span class="ot">=</span> HDInterval<span class="sc">::</span><span class="fu">hdi</span>(qbeta , <span class="at">shape1 =</span> <span class="dv">8</span> , <span class="at">shape2 =</span> <span class="dv">18</span> )</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>hdiData <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
@@ -640,7 +650,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="posterior-probability" class="level2">
 <h2 class="anchored" data-anchor-id="posterior-probability">Posterior probability</h2>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-3_c02933224377cdd98d9f0d86d7bff905">
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-3_be267a1d7cb8357997a49e2a9ad027dd">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">7</span></span>
@@ -648,39 +658,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ROPE <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.49</span>,<span class="fl">0.51</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>postProb_ROPE <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(ROPE[<span class="dv">2</span>],<span class="dv">8</span>,<span class="dv">18</span>) <span class="sc">-</span> <span class="fu">pbeta</span>(ROPE[<span class="dv">1</span>],<span class="dv">8</span>,<span class="dv">18</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add picture with colored ROPE</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>plotData <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">200</span>),</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">posterior =</span> <span class="fu">dbeta</span>(theta, <span class="dv">8</span>, <span class="dv">18</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plotData <span class="sc">|&gt;</span> </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> posterior)) <span class="sc">+</span> </span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span><span class="dv">0</span>, <span class="at">ymax=</span>posterior), </span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill=</span>project_colors[<span class="dv">2</span>],</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha=</span><span class="fl">0.8</span>, </span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">data=</span><span class="fu">subset</span>(plotData, theta <span class="sc">&gt;=</span> <span class="fl">0.485</span> <span class="sc">&amp;</span> theta <span class="sc">&lt;=</span> <span class="fl">0.515</span>)) <span class="sc">+</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">x =</span> <span class="fl">0.75</span>, <span class="at">y =</span> <span class="fl">0.5</span>, </span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">label =</span> <span class="fu">str_c</span>(<span class="st">"Post. prob. ROPE: "</span>, <span class="fu">round</span>(postProb_ROPE, <span class="dv">3</span>)), </span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"Bias $</span><span class="sc">\\</span><span class="st">theta$"</span>),</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"Posterior probability $P_{M}(</span><span class="sc">\\</span><span class="st">theta </span><span class="sc">\\</span><span class="st">, | </span><span class="sc">\\</span><span class="st">, D)$"</span>),</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Posterior"</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probability of the ROPE</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>postProb_ROPE <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(ROPE[<span class="dv">2</span>],<span class="dv">8</span>,<span class="dv">18</span>) <span class="sc">-</span> <span class="fu">pbeta</span>(ROPE[<span class="dv">1</span>],<span class="dv">8</span>,<span class="dv">18</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>plotData <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">200</span>),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">posterior =</span> <span class="fu">dbeta</span>(theta, <span class="dv">8</span>, <span class="dv">18</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plotData <span class="sc">|&gt;</span> </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> posterior)) <span class="sc">+</span> </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span><span class="dv">0</span>, <span class="at">ymax=</span>posterior), </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill=</span>project_colors[<span class="dv">2</span>],</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha=</span><span class="fl">0.8</span>, </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">data=</span><span class="fu">subset</span>(plotData, theta <span class="sc">&gt;=</span> <span class="fl">0.485</span> <span class="sc">&amp;</span> theta <span class="sc">&lt;=</span> <span class="fl">0.515</span>)) <span class="sc">+</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">x =</span> <span class="fl">0.75</span>, <span class="at">y =</span> <span class="fl">0.5</span>, </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">label =</span> <span class="fu">str_c</span>(<span class="st">"Post. prob. ROPE: "</span>, <span class="fu">round</span>(postProb_ROPE, <span class="dv">3</span>)), </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"Bias $</span><span class="sc">\\</span><span class="st">theta$"</span>),</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> latex2exp<span class="sc">::</span><span class="fu">TeX</span>(<span class="st">"Posterior probability $P_{M}(</span><span class="sc">\\</span><span class="st">theta </span><span class="sc">\\</span><span class="st">, | </span><span class="sc">\\</span><span class="st">, D)$"</span>),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Posterior"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="08-hypothesis-testing_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../pics/24-7-posterior-prob.pdf"</span>, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ggsave("../pics/24-7-posterior-prob.pdf", width = 6, height = 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -715,7 +723,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>We then collect samples from the prior predictive, obtain the likelihood for all of these and compare these to the likelihood of the data.</p>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-5_8a4c488db51b8eef1baf12de6fe52790">
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-5_9501c807433bc5e0f1266cd5b7194c37">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collect samples from the prior-predictive distribution</span></span>
@@ -735,28 +743,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(matrixStats<span class="sc">::</span><span class="fu">rowLogSumExps</span>(LH_ys) <span class="sc">-</span> <span class="fu">log</span>(<span class="fu">dim</span>(LH_ys)[<span class="dv">2</span>]))</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># get likelihood </span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>LH_postPred <span class="ot">&lt;-</span> priorPred_samples <span class="sc">|&gt;</span> </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">LH_post_pred =</span> <span class="fu">get_LH</span>(prediction)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(LH_post_pred)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>LH_data <span class="ot">&lt;-</span> <span class="fu">get_LH</span>(data_24_7<span class="sc">$</span>outcome)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co"># # plot the results</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co"># dens &lt;- density(LH_postPred)</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># dens_df &lt;- tibble(x = dens$x, y = dens$y)</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co"># dens_df |&gt; </span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(aes(x = x, y = y)) + </span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_ribbon(aes(ymin=0, ymax=y, fill=x &lt; LH_data), alpha=0.3) + # Shade below LH_data</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_manual(values=c("TRUE"=project_colors[2], "FALSE"="transparent")) + # Color the shading</span></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line()</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">mean</span>(LH_data <span class="sc">&lt;</span> LH_postPred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># get likelihood of predictive samples</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># (this may take a while!!)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>LH_postPred <span class="ot">&lt;-</span> priorPred_samples <span class="sc">|&gt;</span> </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.draw) <span class="sc">|&gt;</span> </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">LH_post_pred =</span> <span class="fu">get_LH</span>(prediction)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(LH_post_pred)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co"># get likelihood of data</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>LH_data <span class="ot">&lt;-</span> <span class="fu">get_LH</span>(data_24_7<span class="sc">$</span>outcome)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Bayesian $p$-values with LH as test statistic</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">mean</span>(LH_postPred <span class="sc">&lt;</span> LH_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.998</code></pre>
+<pre><code>[1] 0</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the results</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">LH =</span> LH_postPred</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> LH)) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> LH_data), <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-hypothesis-testing_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We find that, indeed, this model would be surprised by the data. Most of the data that the model predicts, is more likely than the data (from the point of view of the model). This can be interpreted as generalization of a <span class="math inline">\(p\)</span>-value to an interval-based hypothesis, approximate by Monte Carlo sampling.</p>
@@ -774,24 +787,24 @@ BF_{01} = \frac{\text{posterior odds of $I_0$ in $M_e$}}{\text{prior odds of $I_
 <div class="cell" data-hash="08-hypothesis-testing_cache/html/Bayes-factor-beta-binomial_b4755ab30b3d5c0fd96ba5aa1bea8a0f">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set the scene</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">7</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">24</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>theta_null <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fl">0.01</span>                 <span class="co"># epsilon margin for ROPE</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> theta_null <span class="sc">+</span> epsilon   <span class="co"># upper bound of ROPE</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> theta_null <span class="sc">-</span> epsilon   <span class="co"># lower bound of ROPE</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="dv">1</span>                      <span class="co"># prior beta parameter</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>beta  <span class="ot">&lt;-</span> <span class="dv">1</span>                      <span class="co"># prior beta parameter</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate prior odds of the ROPE-d hypothesis</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>prior_of_hypothesis <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(upper, alpha, beta) <span class="sc">-</span> <span class="fu">pbeta</span>(lower, alpha, beta)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>prior_odds <span class="ot">&lt;-</span> prior_of_hypothesis <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> prior_of_hypothesis)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate posterior odds of the ROPE-d hypothesis</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>posterior_of_hypothesis <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(upper, alpha <span class="sc">+</span> k, beta <span class="sc">+</span> (N<span class="sc">-</span>k)) <span class="sc">-</span> <span class="fu">pbeta</span>(lower, alpha <span class="sc">+</span> k, beta <span class="sc">+</span> (N<span class="sc">-</span>k))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>posterior_odds <span class="ot">&lt;-</span> posterior_of_hypothesis <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> posterior_of_hypothesis)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Bayes factor</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>bf_ROPEd_hypothesis <span class="ot">&lt;-</span> posterior_odds <span class="sc">/</span> prior_odds</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>bf_ROPEd_hypothesis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set the scene</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">7</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">24</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>theta_null <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fl">0.01</span>                 <span class="co"># epsilon margin for ROPE</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> theta_null <span class="sc">+</span> epsilon   <span class="co"># upper bound of ROPE</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> theta_null <span class="sc">-</span> epsilon   <span class="co"># lower bound of ROPE</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="dv">1</span>                      <span class="co"># prior beta parameter</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>beta  <span class="ot">&lt;-</span> <span class="dv">1</span>                      <span class="co"># prior beta parameter</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate prior odds of the ROPE-d hypothesis</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>prior_of_hypothesis <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(upper, alpha, beta) <span class="sc">-</span> <span class="fu">pbeta</span>(lower, alpha, beta)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>prior_odds <span class="ot">&lt;-</span> prior_of_hypothesis <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> prior_of_hypothesis)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate posterior odds of the ROPE-d hypothesis</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>posterior_of_hypothesis <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(upper, alpha <span class="sc">+</span> k, beta <span class="sc">+</span> (N<span class="sc">-</span>k)) <span class="sc">-</span> <span class="fu">pbeta</span>(lower, alpha <span class="sc">+</span> k, beta <span class="sc">+</span> (N<span class="sc">-</span>k))</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>posterior_odds <span class="ot">&lt;-</span> posterior_of_hypothesis <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> posterior_of_hypothesis)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Bayes factor</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>bf_ROPEd_hypothesis <span class="ot">&lt;-</span> posterior_odds <span class="sc">/</span> prior_odds</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>bf_ROPEd_hypothesis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.5133012</code></pre>
@@ -801,50 +814,64 @@ BF_{01} = \frac{\text{posterior odds of $I_0$ in $M_e$}}{\text{prior odds of $I_
 <div class="cell" data-hash="08-hypothesis-testing_cache/html/Bayes-factor-logistic-posterior_987fccc07dc6a2e4a273a1809c8b340e">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_posterior <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,1.8)"</span>, </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_posterior <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,1.8)"</span>, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We then collect samples from the prior over parameters as well:</p>
 <div class="cell" data-hash="08-hypothesis-testing_cache/html/Bayes-factor-logistic-prior_ab18f8e212cc7838da0a7d3a24591bf8">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_prior <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">update</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic_posterior, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_prior <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">update</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  fit_logistic_posterior, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"only"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+<p>Let’s do a quick sanity check and visualize the prior distribution of the predictor of central tendency (the coin’s bias) implied by our choice of prior on the intercept:</p>
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-6_727040db4faaa912cd7d849aa096b48d">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check: prior distribution of central tendency</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fit_logistic_prior <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">add_epred_draws</span>(<span class="at">newdata =</span> data_24_7) <span class="sc">|&gt;</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> .epred)) <span class="sc">+</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-hypothesis-testing_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 <p>We then approximate the probability of <span class="math inline">\(I_0\)</span> and <span class="math inline">\(I_1\)</span> from both the prior and posterior samples:</p>
 <div class="cell" data-hash="08-hypothesis-testing_cache/html/Bayes-factor-logistic-extract-compute_51b5ec510b16067e7ea80f4cabf14677">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>prior_samples_Intercept <span class="ot">&lt;-</span> fit_logistic_prior <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>()</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>posterior_samples_Intercept <span class="ot">&lt;-</span> fit_logistic_posterior <span class="sc">|&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>()</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>P_I0_prior <span class="ot">&lt;-</span> <span class="fu">mean</span>(prior_samples_Intercept <span class="sc">&gt;=</span> lower <span class="sc">&amp;</span> prior_samples_Intercept <span class="sc">&lt;=</span> upper )</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>P_I1_prior <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> P_I0_prior</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>P_I0_posterior <span class="ot">&lt;-</span> <span class="fu">mean</span>(posterior_samples_Intercept <span class="sc">&gt;=</span> lower <span class="sc">&amp;</span> posterior_samples_Intercept <span class="sc">&lt;=</span> upper )</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>P_I1_posterior <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> P_I0_posterior</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Bayes factor</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>(P_I0_posterior <span class="sc">/</span> P_I1_posterior) <span class="sc">/</span> (P_I0_prior <span class="sc">/</span> P_I1_prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>prior_samples_Intercept <span class="ot">&lt;-</span> fit_logistic_prior <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>posterior_samples_Intercept <span class="ot">&lt;-</span> fit_logistic_posterior <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>P_I0_prior <span class="ot">&lt;-</span> <span class="fu">mean</span>(prior_samples_Intercept <span class="sc">&gt;=</span> lower <span class="sc">&amp;</span> prior_samples_Intercept <span class="sc">&lt;=</span> upper )</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>P_I1_prior <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> P_I0_prior</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>P_I0_posterior <span class="ot">&lt;-</span> <span class="fu">mean</span>(posterior_samples_Intercept <span class="sc">&gt;=</span> lower <span class="sc">&amp;</span> posterior_samples_Intercept <span class="sc">&lt;=</span> upper )</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>P_I1_posterior <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> P_I0_posterior</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Bayes factor</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>(P_I0_posterior <span class="sc">/</span> P_I1_posterior) <span class="sc">/</span> (P_I0_prior <span class="sc">/</span> P_I1_prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4833631</code></pre>
+<pre><code>[1] 0.3651219</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
@@ -882,38 +909,38 @@ Solution
 </section>
 <section id="loo" class="level2">
 <h2 class="anchored" data-anchor-id="loo">LOO</h2>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-6_5800d5564cecfd5252e41c1be22e1e61">
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-7_0d5dd76b6095ec643f70b32a7d4114dd">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_alternative <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,1.8)"</span>, </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>fit_logistic_null <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"uniform(0.49,0.51)"</span>, </span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>,</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lb=</span><span class="fl">0.49</span>, <span class="at">ub=</span><span class="fl">0.51</span>),</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_logistic_alternative <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,1.8)"</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>fit_logistic_null <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"uniform(0.49,0.51)"</span>, </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lb=</span><span class="fl">0.49</span>, <span class="at">ub=</span><span class="fl">0.51</span>),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-7_ef81054f30b1836678af1fdb0388a829">
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-8_db50ff54012d4911ac7d74009f07aadb">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>loo_comp <span class="ot">&lt;-</span> <span class="fu">loo_compare</span>(<span class="fu">list</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">loo</span>(fit_logistic_alternative), </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">null =</span> <span class="fu">loo</span>(fit_logistic_null)))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>loo_comp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>loo_comp <span class="ot">&lt;-</span> <span class="fu">loo_compare</span>(<span class="fu">list</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">loo</span>(fit_logistic_alternative), </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">null =</span> <span class="fu">loo</span>(fit_logistic_null)))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>loo_comp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>            elpd_diff se_diff
@@ -923,18 +950,79 @@ null        -4.4       3.2   </code></pre>
 </div>
 <p>It seems that the alternative model is better.</p>
 <p>Checking whether this difference is substantial:</p>
-<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-8_a1dcc28e2836e492ad0e088512934a10">
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-9_b9b292397b787e79829c10c42b5abae1">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>loo_comp[<span class="dv">2</span>,<span class="dv">1</span>], loo_comp[<span class="dv">2</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>loo_comp[<span class="dv">2</span>,<span class="dv">1</span>], loo_comp[<span class="dv">2</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.1203797</code></pre>
+<pre><code>[1] 0.1192925</code></pre>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="the-brmshypothesis-function" class="level1">
+<h1>The <code>brms::hypothesis</code> function</h1>
+<p>The <code>brms::hypothesis</code> function allows you to test various hypotheses in a seemingly more streamlined and convenient manner. Here is how to use it. We first fit a model which collects prior and posterior samples.</p>
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/hypothesis-function_d8d0ebcec0934282fe970d376ff261b1">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sample BOTH posterior and prior</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fit_logistic_post_and_prior <span class="ot">&lt;-</span> brms<span class="sc">::</span><span class="fu">brm</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> outcome <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_24_7,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> brms<span class="sc">::</span><span class="fu">bernoulli</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> brms<span class="sc">::</span><span class="fu">prior</span>(<span class="st">"normal(0,1.8)"</span>, </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">50000</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_prior =</span> <span class="st">"yes"</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Then we call the function to test a point-valued or an interval-based hypothesis. NB: for interval-based hypotheses, the input has to be an inequality, but a ROPE-based hypothesis is easily translated into an inequality.</p>
+<div class="cell" data-hash="08-hypothesis-testing_cache/html/unnamed-chunk-10_5a7b82011cbd3e11518f794835f20911">
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># point-valued hypothesis test</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>fit_logistic_post_and_prior <span class="sc">|&gt;</span> brms<span class="sc">::</span><span class="fu">hypothesis</span>(<span class="at">hypothesis =</span> <span class="st">"Intercept = 0"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hypothesis Tests for class b:
+       Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob
+1 (Intercept) = 0    -0.87      0.44    -1.77    -0.05         NA        NA
+  Star
+1    *
+---
+'CI': 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
+'*': For one-sided hypotheses, the posterior probability exceeds 95%;
+for two-sided hypotheses, the value tested against lies outside the 95%-CI.
+Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
+</div>
+<details open="">
+<summary>Toggle code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ROPE-valued hypothesis test</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fit_logistic_post_and_prior <span class="sc">|&gt;</span> brms<span class="sc">::</span><span class="fu">hypothesis</span>(<span class="at">hypothesis =</span> <span class="st">"abs(Intercept -0.5) &lt; 0.01"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hypothesis Tests for class b:
+                Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio
+1 (abs(Intercept-0.... &lt; 0     1.36      0.44     0.66     2.11          0
+  Post.Prob Star
+1         0     
+---
+'CI': 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
+'*': For one-sided hypotheses, the posterior probability exceeds 95%;
+for two-sided hypotheses, the value tested against lies outside the 95%-CI.
+Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
+</div>
+</div>
+<p>Sadly, this function is fickle and its output can be misleading. It may be good advice to just stay away from it. Here is why.</p>
+<p>First, if we test a point-valued hypothesis, and supply a model that has samples for <em>both</em> prior and posterior, it computes a Bayes Factor (using Savage-Dickey), which is displayed in the output as “Evidence Ratio”. Unfortunately, this does not work for some parameters, for which BRMS does not provide samples from the prior (when using ‘sample_prior = “yes”’; notice that we did extract prior sample using ‘sample_prior=“only”’ before). This includes our current case of a (naively construed) intercept-only model.</p>
+<p>Second, when testing a directional hypothesis, the output shows the posterior odds in the field “Evidence Ratio” without taking the priors into account. This is misleading terminology and an unfortunate format of presentation.</p>
+<p>Indeed, for our current running example, the function is not useful at all.</p>
+
+
 </section>
 
 </main> <!-- /main -->

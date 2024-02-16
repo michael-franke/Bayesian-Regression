@@ -676,13 +676,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="fu">prep_summary</span>(fit_n, <span class="st">"normal"</span>), <span class="fu">prep_summary</span>(fit_r, <span class="st">"robust"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 5
+<pre><code># A tibble: 4 x 5
   model  variable       q5  mean   q95
   &lt;chr&gt;  &lt;chr&gt;       &lt;num&gt; &lt;num&gt; &lt;num&gt;
-1 normal b_Intercept  2.42  7.66 13.2 
-2 normal b_x          7.47 13.5  19.8 
-3 robust b_Intercept  1.80  2.49  3.24
-4 robust b_x          5.01  6.10  7.27</code></pre>
+1 normal b_Intercept  2.31  7.54 13.0 
+2 normal b_x          7.22 13.4  19.4 
+3 robust b_Intercept  1.81  2.49  3.24
+4 robust b_x          4.98  6.09  7.23</code></pre>
 </div>
 </div>
 <p>Remember that the true intercept is 2 and the true slope is 4. Clearly the robust regression model has recovered the ground-truth parameters much better.</p>
@@ -699,10 +699,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>       elpd_diff se_diff
 robust    0.0       0.0 
-normal -131.3      25.8 </code></pre>
+normal -131.7      26.0 </code></pre>
 </div>
 </div>
-<p>We see that the robust regression model is better by ca. -131 points of expected log predictive density. The table shown above is ordered with the “best” model on top. The column <code>elpd_diff</code> lists the difference in ELPD of every model to the “best” one. In our case, th estimated ELPD difference has a standard error of about 26. Computing a <span class="math inline">\(p\)</span>-value for this using Lambert’s <span class="math inline">\(z\)</span>-score method, we find that this difference is “significant” (for which we will use other terms like “noteworthy” or “substantial” in the following):</p>
+<p>We see that the robust regression model is better by ca. -132 points of expected log predictive density. The table shown above is ordered with the “best” model on top. The column <code>elpd_diff</code> lists the difference in ELPD of every model to the “best” one. In our case, th estimated ELPD difference has a standard error of about 26. Computing a <span class="math inline">\(p\)</span>-value for this using Lambert’s <span class="math inline">\(z\)</span>-score method, we find that this difference is “significant” (for which we will use other terms like “noteworthy” or “substantial” in the following):</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
@@ -760,7 +760,8 @@ normal -131.3      25.8 </code></pre>
 </section>
 <section id="comparing-loo-cv-and-bayes-factors" class="level1">
 <h1>Comparing LOO-CV and Bayes factors</h1>
-<p>LOO-CV and Bayes factor gave similar results in the Walkthrough. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation. In this exercise we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:</p>
+<p>LOO-CV and Bayes factor gave similar results in the previous example. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation.</p>
+<p>In this section we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:</p>
 <ul>
 <li>LOO-CV compares models from a data-informed, <em>ex post</em> point of view based on a (repeatedly computed) <strong>posterior predictive distribution</strong></li>
 <li>Bayes factor model comparison takes a data-blind, <em>ex ante</em> point of view based on the <strong>prior predictive distribution</strong></li>
@@ -867,8 +868,8 @@ Solution
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       elpd_diff se_diff
-wide    0.0       0.0   
-narrow -0.1       0.0   </code></pre>
+narrow  0.0       0.0   
+wide   -0.1       0.0   </code></pre>
 </div>
 </div>
 <p>The models are pretty much incomparable (equally good/bad) based on the LOO-CV.</p>
@@ -1102,19 +1103,19 @@ Formula: MAD ~ condition * group
 
 Population-Level Effects: 
                             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-Intercept                     278.36     16.67   246.01   310.55 1.00     1995
-conditionTypical             -135.95     19.76  -173.22   -97.04 1.00     1991
-grouptouch                   -203.51     22.64  -248.35  -159.41 1.00     1401
-conditionTypical:grouptouch   111.75     26.92    57.53   164.67 1.00     1417
+Intercept                     278.44     15.71   248.29   309.11 1.00     2173
+conditionTypical             -135.99     18.89  -172.86   -99.45 1.00     2006
+grouptouch                   -203.60     21.78  -246.56  -160.87 1.00     1928
+conditionTypical:grouptouch   111.81     25.84    59.77   161.80 1.01     1656
                             Tail_ESS
-Intercept                       2236
-conditionTypical                2489
-grouptouch                      2213
-conditionTypical:grouptouch     1596
+Intercept                       2597
+conditionTypical                2498
+grouptouch                      2326
+conditionTypical:grouptouch     2192
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma   267.18      4.35   259.18   276.13 1.00     3313     2776
+sigma   267.17      4.38   258.91   276.02 1.00     3371     2789
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1165,17 +1166,17 @@ Solution
 <div class="cell-output cell-output-stdout">
 <pre><code>                        elpd_diff se_diff
 model2_interaction_FE    0.0       0.0   
-model1_NOinteraction_FE -7.4       4.7   </code></pre>
+model1_NOinteraction_FE -7.6       4.7   </code></pre>
 </div>
 </div>
-<p>The model <code>model2_NOinteraction_FE</code> is worse by -7.3850413 points of expected log predictive density with a standard error of ca. 4.7070928. This translates into a “significant” difference, leading to the conclusion that the model with interaction term is really better:</p>
+<p>The model <code>model2_NOinteraction_FE</code> is worse by -7.5738543 points of expected log predictive density with a standard error of ca. 4.7383212. This translates into a “significant” difference, leading to the conclusion that the model with interaction term is really better:</p>
 <div class="cell">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>loo_comp[<span class="dv">2</span>,<span class="dv">1</span>], loo_comp[<span class="dv">2</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.003703731</code></pre>
+<pre><code>[1] 0.002287463</code></pre>
 </div>
 </div>
 </div>
@@ -1225,33 +1226,33 @@ Formula: MAD ~ condition * group + (1 + group | exemplar) + (1 | subject_id)
 Group-Level Effects: 
 ~exemplar (Number of levels: 19) 
                           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-sd(Intercept)                37.12     14.52    10.62    68.17 1.00      943
-sd(grouptouch)               26.75     16.28     1.79    62.33 1.00     1320
-cor(Intercept,grouptouch)    -0.70      0.40    -1.00     0.57 1.00     1885
+sd(Intercept)                36.21     14.54     8.84    67.15 1.00      848
+sd(grouptouch)               25.81     16.21     1.29    61.12 1.00     1134
+cor(Intercept,grouptouch)    -0.67      0.42    -0.99     0.66 1.00     1904
                           Tail_ESS
-sd(Intercept)                 1244
-sd(grouptouch)                1657
-cor(Intercept,grouptouch)     2155
+sd(Intercept)                  828
+sd(grouptouch)                1516
+cor(Intercept,grouptouch)     1834
 
 ~subject_id (Number of levels: 108) 
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)    77.93      8.84    61.81    96.71 1.00     1734     2047
+sd(Intercept)    77.09      8.68    60.75    94.60 1.00     1944     3137
 
 Population-Level Effects: 
                             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-Intercept                     279.94     24.55   230.95   327.74 1.00     1791
-conditionTypical             -136.65     26.62  -189.68   -83.86 1.00     1442
-grouptouch                   -202.19     28.43  -259.15  -144.58 1.00     2027
-conditionTypical:grouptouch   110.34     29.29    53.06   169.25 1.00     1989
+Intercept                     279.78     24.37   233.14   329.54 1.00     1902
+conditionTypical             -137.54     26.21  -188.59   -84.53 1.00     1936
+grouptouch                   -201.87     28.84  -259.86  -145.65 1.00     1840
+conditionTypical:grouptouch   110.71     29.68    52.59   170.22 1.00     2269
                             Tail_ESS
-Intercept                       2372
-conditionTypical                1702
-grouptouch                      2265
-conditionTypical:grouptouch     2133
+Intercept                       2391
+conditionTypical                2186
+grouptouch                      2296
+conditionTypical:grouptouch     2421
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma   254.80      4.35   246.50   263.52 1.00     4491     2780
+sigma   254.89      4.30   246.72   263.44 1.00     4880     2815
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1303,14 +1304,14 @@ Solution
 <div class="cell-output cell-output-stdout">
 <pre><code>                              elpd_diff se_diff
 model4_interaction_MaxRE       0.0       0.0   
-model3_interaction_RandSlopes -2.5       3.9   </code></pre>
+model3_interaction_RandSlopes -1.7       3.8   </code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>loo_comp[<span class="dv">2</span>,<span class="dv">1</span>], loo_comp[<span class="dv">2</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9162278</code></pre>
+<pre><code>[1] 0.980104</code></pre>
 </div>
 </div>
 <p>LOO-CV finds no noteworthy difference between these models. In tendency, the smaller model is even better. This is different from the previous case in 3.b/c which might have suggested that if a parameter <span class="math inline">\(\theta\)</span> is credibly different from 0, then we also prefer to have it in the model for predictive accuracy. But this is not the case in the current case (3.d/e) where the smaller model is preferred. An explanation for this could be that not all parameters are equal. The fixed effect terms have more impact on the variability of predictions than random effect terms.</p>
@@ -1358,9 +1359,9 @@ Solution
 <div class="cell-output cell-output-stdout">
 <pre><code>                              elpd_diff se_diff
 model4_interaction_MaxRE        0.0       0.0  
-model3_interaction_RandSlopes  -2.5       3.9  
-model2_interaction_FE         -48.9      13.7  
-model1_NOinteraction_FE       -56.2      14.8  </code></pre>
+model3_interaction_RandSlopes  -1.7       3.8  
+model2_interaction_FE         -47.8      13.6  
+model1_NOinteraction_FE       -55.3      14.7  </code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -1377,7 +1378,7 @@ model1_NOinteraction_FE       -56.2      14.8  </code></pre>
 <span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>loo_comp[<span class="dv">2</span>,<span class="dv">1</span>], loo_comp[<span class="dv">2</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9162278</code></pre>
+<pre><code>[1] 0.980104</code></pre>
 </div>
 </div>
 </div>
