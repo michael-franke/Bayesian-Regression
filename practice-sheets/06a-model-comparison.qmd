@@ -156,12 +156,23 @@ As you can see, this is a very clear result. If we had equal levels of credence 
 
 # Comparing LOO-CV and Bayes factors
 
-LOO-CV and Bayes factor gave similar results in the previous example. The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model. Both methods give quantitative results, too. But here only the Bayes factor results have a clear intuitive interpretation. In this exercise we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:
+LOO-CV and Bayes factor gave similar results in the previous example.
+The results are qualitatively the same: the (true) robust regression model is preferred over the (false) normal regression model.
+Both methods give quantitative results, too.
+But here only the Bayes factor results have a clear intuitive interpretation.
+
+In this section we will explore the main conceptual difference between LOO-CV and Bayes factors, which is:
 
 -   LOO-CV compares models from a data-informed, *ex post* point of view based on a (repeatedly computed) **posterior predictive distribution**
 -   Bayes factor model comparison takes a data-blind, *ex ante* point of view based on the **prior predictive distribution**
 
-What does that mean in practice? -- To see the crucial difference, imagine that you have tons of data, so much that they completely trump your prior. LOO-CV can use this data to emancipate itself from any wrong or too uninformative prior structure. Bayes factor comparison cannot. If a Bayesian model is a likelihood function AND a prior, Bayes factors give the genuine Bayesian comparison, taking the prior into account. That is what you want when your prior structure are really part of your theoretical commitment. If you are looking for prediction based on weak priors AND a ton of data to train on, you should not use Bayes factors.
+What does that mean in practice?
+-- To see the crucial difference, imagine that you have tons of data, so much that they completely trump your prior.
+LOO-CV can use this data to emancipate itself from any wrong or too uninformative prior structure.
+Bayes factor comparison cannot.
+If a Bayesian model is a likelihood function AND a prior, Bayes factors give the genuine Bayesian comparison, taking the prior into account.
+That is what you want when your prior structure are really part of your theoretical commitment.
+If you are looking for prediction based on weak priors AND a ton of data to train on, you should not use Bayes factors.
 
 To see the influence of priors on model comparison, we are going to look at a very simple data set generated from a standard normal distribution.
 

@@ -120,7 +120,9 @@ rbind(prep_summary(fit_n, "normal"), prep_summary(fit_r, "robust"))
 ## compare models w/ LOO
 ##################################################
 
-loo_comp <- loo_compare(list(normal = loo(fit_n), robust = loo(fit_r)))
+loo_comp <- loo_compare(
+  list(normal = loo(fit_n, moment_match = TRUE), 
+       robust = loo(fit_r, moment_match = TRUE)))
 loo_comp
 
 # Lambert's test
@@ -128,7 +130,7 @@ loo_comp
 
 
 ##################################################
-## compare models w/ LOO
+## compare models w/ BF
 ##################################################
 
 # running these takes a long time

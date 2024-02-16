@@ -14,10 +14,15 @@ editor:
     wrap: sentence
 ---
 
+There are different ways of addressing research hypotheses with Bayesian models.
+For a more in-depth treatment see [here](https://michael-franke.github.io/intro-data-analysis/ch-03-07-hypothesis-testing-Bayes.html).
+This unit gives code examples that showcase approaches to hypotheses testing based on the three pillars of BDA: 
 
-1. Testing with frequentist $p$-values
-2. Testing with Bayesian $p$-values
+1. estimation,
+2. model criticism, and
+3. model comparison.
 
+The running example is the 24/7 coin flip case (flipping a coin $N=24$ times and observing $k=7$ heads), addressing the research question that the coin is fair ($\theta = 0.5$).
 
 # Preamble
 
@@ -25,9 +30,23 @@ editor:
 
 # Estimation-based testing
 
+In estimation-based testing we use a single model $M$, condition it on the observed data $D$, and then ask whether the hypothesis is supported or discredited by the posterior.
+For point-valued hypothesis, like $\theta = 0.5$, we can use *region of practical equivalence* (ROPE), following [Kruschke](https://www.sciencedirect.com/book/9780124058880/doing-bayesian-data-analysis).
+For example, we may consider a ROPE of $0.5 \pm 0.01$.
+There are two salient methods: 
+
+1. comparison against a credible interval, and
+2. direct inspection of the posterior probability.
+
+
 ## Credible Intervals
 
+The first approach compares the ROPE to an $n$\% credible interval of the posterior.
+The plot below shows the posterior, starting from a flat prior, for our case.
+it also shows the 95\% credible interval.
+
 ```{r}
+#| code-fold: true
 
 hdi = HDInterval::hdi(qbeta , shape1 = 8 , shape2 = 18 )
 hdiData <- tibble(
@@ -58,6 +77,7 @@ tibble(
 ```
 
 
+
 ## Posterior probability
 
 ```{r}
@@ -66,16 +86,14 @@ N <- 24
 
 ROPE <- c(0.49,0.51)
 
+# posterior probability of the ROPE
 postProb_ROPE <- pbeta(ROPE[2],8,18) - pbeta(ROPE[1],8,18)
 
-# TODO: add picture with colored ROPE
-
-
+# plot
 plotData <- tibble(
   theta = seq(0,1, length.out = 200),
   posterior = dbeta(theta, 8, 18)
 )
-
 plotData |> 
   ggplot(aes(x = theta, y = posterior)) + 
   geom_ribbon(aes(ymin=0, ymax=posterior), 
@@ -93,7 +111,7 @@ plotData |>
     title = "Posterior"
   ) 
 
-ggsave("../pics/24-7-posterior-prob.pdf", width = 6, height = 4)
+## ggsave("../pics/24-7-posterior-prob.pdf", width = 6, height = 4)
 
 ```
 
@@ -151,25 +169,25 @@ get_LH <- function(observation, ndraws = 1000) {
   mean(matrixStats::rowLogSumExps(LH_ys) - log(dim(LH_ys)[2]))
 }
 
-# get likelihood 
+# get likelihood of predictive samples
+# (this may take a while!!)
 LH_postPred <- priorPred_samples |> 
   group_by(.draw) |> 
   summarize(LH_post_pred = get_LH(prediction)) |> 
   pull(LH_post_pred)
 
+# get likelihood of data
 LH_data <- get_LH(data_24_7$outcome)
 
-# # plot the results
-# dens <- density(LH_postPred)
-# dens_df <- tibble(x = dens$x, y = dens$y)
-# 
-# dens_df |> 
-#   ggplot(aes(x = x, y = y)) + 
-#   geom_ribbon(aes(ymin=0, ymax=y, fill=x < LH_data), alpha=0.3) + # Shade below LH_data
-#   scale_fill_manual(values=c("TRUE"=project_colors[2], "FALSE"="transparent")) + # Color the shading
-#   geom_line()
-  
-print(mean(LH_data < LH_postPred))
+# Bayesian $p$-values with LH as test statistic
+print(mean(LH_postPred < LH_data))
+
+# plot the results
+tibble(
+  LH = LH_postPred
+) |> ggplot(aes(x = LH)) +
+  geom_density() +
+  geom_vline(aes(xintercept = LH_data), color = project_colors[2], size = 1.5)
 
 ```
 
@@ -246,6 +264,16 @@ fit_logistic_prior <- stats::update(
   sample_prior = "only",
   iter = 50000,
   warmup = 1000)
+```
+
+Let's do a quick sanity check and visualize the prior distribution of the predictor of central tendency (the coin's bias) implied by our choice of prior on the intercept:
+
+```{r }
+# sanity check: prior distribution of central tendency
+fit_logistic_prior |> 
+  tidybayes::add_epred_draws(newdata = data_24_7) |> 
+  ggplot(aes(x = .epred)) + 
+  geom_density()
 ```
 
 We then approximate the probability of $I_0$ and $I_1$ from both the prior and posterior samples:
@@ -330,6 +358,53 @@ Checking whether this difference is substantial:
 1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
 ```
 
+# The `brms::hypothesis` function
+
+The `brms::hypothesis` function allows you to test various hypotheses in a seemingly more streamlined and convenient manner.
+Here is how to use it.
+We first fit a model which collects prior and posterior samples.
+
+```{r hypothesis-function}
+#| results: hide
+
+# sample BOTH posterior and prior
+fit_logistic_post_and_prior <- brms::brm(
+  formula = outcome ~ 1, 
+  data = data_24_7,
+  family = brms::bernoulli(link = "logit"),
+  prior = brms::prior("normal(0,1.8)", 
+                      class = "Intercept"),
+  iter = 50000,
+  warmup = 1000,
+  sample_prior = "yes"
+)
+
+```
+
+Then we call the function to test a point-valued or an interval-based hypothesis.
+NB: for interval-based hypotheses, the input has to be an inequality, but a ROPE-based hypothesis is easily translated into an inequality.
+
+```{r }
+# point-valued hypothesis test
+fit_logistic_post_and_prior |> brms::hypothesis(hypothesis = "Intercept = 0")
+
+# ROPE-valued hypothesis test
+fit_logistic_post_and_prior |> brms::hypothesis(hypothesis = "abs(Intercept -0.5) < 0.01")
+```
+
+
+Sadly, this function is fickle and its output can be misleading. 
+It may be good advice to just stay away from it.
+Here is why.
+
+First, if we test a point-valued hypothesis, and supply a model that has samples for *both* prior and posterior, it computes a Bayes Factor (using Savage-Dickey), which is displayed in the output as "Evidence Ratio".
+Unfortunately, this does not work for some parameters, for which BRMS does not provide samples from the prior (when using 'sample_prior = "yes"'; notice that we did extract prior sample using 'sample_prior="only"' before).
+This includes our current case of a (naively construed) intercept-only model.
+
+Second, when testing a directional hypothesis, the output shows the posterior odds in the field "Evidence Ratio" without taking the priors into account.
+This is misleading terminology and an unfortunate format of presentation.
+
+Indeed, for our current running example, the function is not useful at all.
 
 
 
