@@ -119,81 +119,175 @@ plotData |>
 # Prediction-based testing
 
 This is not a common approach (in fact, I have never seen this used in practive at all), but, in principle, we can use Bayesian $p$-values for hypothesis testing.
-Of course, if we consider a degenerate model with $\theta = \theta^*$, this is frequentist testing.
-Let's therefore explore a different route here and instead consider a Bayesian logistic regression model with a very strong prior assumption that $\theta$ is sampled randomly from our ROPE (thus implementing a "distributional hypothesis", but with a stupid, flat distribution over an interval) and then ask whether this model would be "surprised" by the 24/7 data.
+In the limiting case, for point-valued hypothesis $\theta = \theta^*$ this approach reduces to frequentist testing (in many cases).
+Let's therefore first recap how a "normal" $p$-value for the 24/7 data set is computed.
 
-First, we need to set up and obtain the model, from the prior point of view.
+## Frequentist $p$-value
 
-```{r}
-#| results: hide
+For a frequentist hypothesis test with the null hypothesis that $\theta = 0.5$, we can simply use:
 
-# data in a long format
-data_24_7 <- tibble(
-  outcome = c(rep(1, 7), rep(0, 17))
-)
-
-# run logistic intercept-only regression model 
-#    with very narrow prior, taking only samples from the prior
-fit_logistic_prior <- brms::brm(
-  formula = outcome ~ 1, 
-  data = data_24_7,
-  family = brms::bernoulli(link = "logit"),
-  # this is an extremely stupid "unBayesian prior" !!!
-  #   but it's the hypothesis we are interested in
-  prior = brms::prior("uniform(0.49,0.51)", 
-                      class = "Intercept", 
-                      ub = 0.51, lb = 0.49),
-  sample_prior = "only",
-  iter = 50000,
-  warmup = 1000
-)
+```{r frequentist-binomial-test}
+binom.test(k, 24)
 ```
 
-We then collect samples from the prior predictive, obtain the likelihood for all of these and compare these to the likelihood of the data.
+We can also approximate the $p$-value through Monte Carlo simulation, like so:
+
+- obtain samples of hypothetical observations $k_{rep}$ from the likelihood function given $\theta = 0.5$ and $N = 24$
+- obtain the likelihood for each $k_{rep}$
+- obtain the likelihood for the observed $k_{obs}$
+- determine the proportion of sampled $k_rep$ whose likelihood is at least as low as that of $k_{obs}$
+
+```{r point-valued-p-value-MC-approximation}
+n_samples <- 1e+7
+k_reps    <- rbinom(n_samples, 24, prob=0.5)
+LH_k_reps <- dbinom(k_reps, 24, prob=0.5)
+LH_k_obs  <- dbinom(7, 24, prob=0.5)
+mean(LH_k_reps <= LH_k_obs)
+```
+## Bayesian $p$-value
+
+To get a $p$ value from a Bayesian model (no matter whether prior or posterior), we follow the same recipe.
+The only complication is that, when using the likelihood as a test statistic as in the "exact test" above, we (usually) need to use Monte Carlo simulation to approximate the likelihood of each $k_{rep}$.
+
+### Without `BRMS`
+
+To more clearly see the logic of our sampling scheme, let's first look at how to compute a Bayesian $p$-value with MC sampling without using the `BRMS` package.
+Notice that the number of samples to approximate the likelihood need not be as big (it could even be 1), as long as we compute the likelihood based on an *independent* sample of paramters from the model.
+
 
 ```{r}
-# collect samples from the prior-predictive distribution
+
+logistic <- function(x) {
+  1 / (1 + exp(x))
+}
+
+logit <- function(x) {
+  log(x / (1-x))
+}
+
+epsilon <- 0.01
+ROPE = c(0.5 - epsilon, 0.5 + epsilon)
+
+get_prior_sample_theta <- function(n_samples=1) {
+  sample_prior_eta   <- runif(n_samples, logit(ROPE[1]), logit(ROPE[2]))
+  # sample_prior_eta   <- rep(0,n_samples)
+  sample_prior_theta <- logistic(sample_prior_eta)
+  # print(sample_prior_theta)
+  return(sample_prior_theta)
+}
+
+get_prior_sample_k <- function(n_samples=1) {
+  sample_prior_theta <- get_prior_sample_theta(n_samples)
+  sample_prior_k     <- map_dbl(sample_prior_theta, function(theta) rbinom(1, 24, theta))
+  return(sample_prior_k)
+}
+
+get_LH_approx <- function(k, n_samples=1) {
+  dbinom(k, 24, get_prior_sample_theta(n_samples), log = F) |> mean()
+}
+
+n_samples_k         <- 10000
+n_samples_LH_approx <- 100
+
+k_reps    <- get_prior_sample_k(n_samples_k)
+LH_k_reps <- map_dbl(k_reps, function(k) get_LH_approx(k, n_samples_LH_approx))
+LH_k_obs  <- get_LH_approx(k, 500000)
+mean(LH_k_reps <= LH_k_obs)
+
+```
+
+
+::: {.callout-caution collapse="false"}
+## Exercise 1: Exploring effects of the ROPE
+
+The Bayesian $p$-value for a ROPE-d hypothesis is different from the previous $p$-value for the point-valued hypothesis.
+Set a narrower ROPE to sanity-check if we retrieve the same value with this latter code as well.
+Can you epxlain to yourself why the wider ROPE has the categorical (!?) effect of moving the estimated $p$-value below the "magical" (!?!) boundary of 0.05?
+
+::: {.callout-tip collapse="true"}
+### Solution
+
+Values of $\theta$ higher than 0.5 make the observed data ever more unlikely.
+They therefore contribute strongly to the result.
+
+:::
+:::
+
+### With `BRMS`
+
+We can also implement the same sampling procedure with `BRMS`. 
+For the example at hand, this is actually overkill (in fact, rather inefficient).
+Nevertheless, this simple example shows how the logic of $p$-value testing can be implemented on top of `BRMS` also for more complicated models
+
+First, we need to set up and obtain the model, from the prior point of view.
+Crucially, we need to use a **binomial regression** model, because we want to use the binomial distribution as the likelihood function.
+(This is because under $\theta = 0.5$ every sequence of fails and success of a fixed length is exactly equally likely.
+It is only when we look at more global properties of the sequence (like the number of heads) that we can get a grip on whether this aspect of the sequence is compatible with $\theta = 0.5$.)
+
+
+```{r 24-7-binomial-regression-model}
+#| results: hide
+
+data_24_7_binomial <- 
+  tibble(k = 7, N = 24)
+
+fit_logistic_prior <- brms::brm(
+  formula = k | trials(N) ~ 1,
+  data = data_24_7_binomial,
+  family = binomial(link = "logit"),
+  # this is an extremely stupid "unBayesian prior" !!!
+  #   but it's the hypothesis we are interested in
+  prior = brms::prior("uniform(-0.04000533, 0.04000533)", 
+                      class = "Intercept", 
+                      lb = -0.04000533, ub = 0.04000533),
+  sample_prior = "only",
+  iter = 5000,
+  warmup = 1000
+)
+
+```
+
+We then collect samples from the prior predictive, obtain the likelihood for all of these and compare these to the likelihood of the data, just like we did before, but now using `BRMS` for sampling $k_{reps}$ and approximating their likelihood.
+
+```{r}
+
+n_samples_k         <- 1e+04
+n_samples_LH_approx <- 100
+
 priorPred_samples <- tidybayes::add_predicted_draws(
   fit_logistic_prior,
-  newdata = data_24_7,
-  ndraws = 500,
-  value = "prediction"
-) 
+  newdata = data_24_7_binomial |> select(-k),
+  ndraws = n_samples_k,
+  value = "k"
+) |> ungroup() |> 
+  select(.draw, k, N)
 
-# extract likelihood for observations (actual or repeat)
-get_LH <- function(observation, ndraws = 1000) {
-  LH_ys <- brms::log_lik(
+# extract likelihood for observations (approximated w/ MC sampling)
+get_LH <- function(k, N, ndraws = n_samples_LH_approx) {
+  brms::log_lik(
     object  = fit_logistic_prior,
-    newdata = tibble(outcome = observation),
-    ndraws  = ndraws)
-  mean(matrixStats::rowLogSumExps(LH_ys) - log(dim(LH_ys)[2]))
+    newdata = tibble(k = k, N = N),
+    ndraws  = ndraws) |> 
+    exp() |> 
+    mean()
 }
 
 # get likelihood of predictive samples
 # (this may take a while!!)
-LH_postPred <- priorPred_samples |> 
+LH_predictions <- priorPred_samples |> 
   group_by(.draw) |> 
-  summarize(LH_post_pred = get_LH(prediction)) |> 
+  summarize(LH_post_pred = get_LH(k, N)) |> 
   pull(LH_post_pred)
 
 # get likelihood of data
-LH_data <- get_LH(data_24_7$outcome)
+LH_data <- get_LH(k = 7, N = 24, ndraws = 16000)
 
 # Bayesian $p$-values with LH as test statistic
-print(mean(LH_postPred < LH_data))
-
-# plot the results
-tibble(
-  LH = LH_postPred
-) |> ggplot(aes(x = LH)) +
-  geom_density() +
-  geom_vline(aes(xintercept = LH_data), color = project_colors[2], size = 1.5)
+print(mean(LH_predictions <= LH_data))
 
 ```
 
-We find that, indeed, this model would be surprised by the data. 
-Most of the data that the model predicts, is more likely than the data (from the point of view of the model).
-This can be interpreted as generalization of a $p$-value to an interval-based hypothesis, approximate by Monte Carlo sampling.
+
 
 # Comparison-based testing
 
@@ -299,18 +393,6 @@ P_I1_posterior <- 1 - P_I0_posterior
 ```
 
 
-::: {.callout-caution collapse="false"}
-## Exercise 4: Predictive $p$-values w/ SD as test statistic
-
-Repeat these calculations for different priors on the intercept, in particular different standard deviations for the normal distribution. What do you see?
-
-::: {.callout-tip collapse="true"}
-### Solution
-
-Changing the standard deviation (moderately) affects the numerical value we obtain, but not in a manner that would suggest different qualitative conclusions.
-
-:::
-:::
 
 ## LOO
 

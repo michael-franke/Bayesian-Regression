@@ -38,7 +38,8 @@ library(faintr)
 library(cspplot)
 
 # these options help Stan run faster
-options(mc.cores = parallel::detectCores())
+options(mc.cores = parallel::detectCores(),
+        brms.backend = "cmdstanr")
 
 # use the CSP-theme for plotting
 theme_set(theme_csp())
@@ -72,7 +73,6 @@ ROPE <- c(0.49,0.51)
 hdi = HDInterval::hdi(qbeta , shape1 = 8 , shape2 = 18 )
 ROPE
 
-
 # plot
 hdiData <- tibble(
   theta = rep(hdi, each = 2),
@@ -93,11 +93,11 @@ tibble(
     y = latex2exp::TeX("Posterior probability $P_{M}(\\theta \\, | \\, D)$"),
     title = "Posterior"
   ) +
-  geom_line(data = hdiData, aes(x = theta, y = post), color = project_colors[2], size = 1.5) +
+  geom_line(data = hdiData, aes(x = theta, y = post), color = project_colors[2], linewidth = 1.5) +
   geom_label(x = 0.7, y = 0.5, label = "Cred.Int.: 0.14 - 0.48", color = project_colors[2], size = 5) +
-  geom_line(data = expData, aes(x = theta, y = post), color = project_colors[1], size = 1.5) +
+  geom_line(data = expData, aes(x = theta, y = post), color = project_colors[1], linewidth = 1.5) +
   geom_label(x = 0.52, y = dbeta(8/26, 8, 18 ), label = "expectation: 0.308", color = project_colors[1], size = 5) +
-  geom_line(color = "black", size = 2)
+  geom_line(color = "black", linewidth = 2)
 
 
 ##################################################
@@ -106,7 +106,6 @@ tibble(
 
 # posterior probability of the ROPE
 postProb_ROPE <- pbeta(ROPE[2],8,18) - pbeta(ROPE[1],8,18)
-
 
 # plot
 plotData <- tibble(
@@ -131,67 +130,120 @@ plotData |>
   ) 
 
 
-##################################################
-## Bayesian predictive p-values
-##################################################
+##############################
+## Frequentist p-value
+##############################
 
-# data in a long format
-data_24_7 <- tibble(
-  outcome = c(rep(1, 7), rep(0, 17))
-)
+binom.test(7,24,0.5)
 
-# run logistic intercept-only regression model 
-#    with very narrow prior, taking only samples from the prior
+n_samples <- 1e+7
+k_reps    <- rbinom(n_samples, 24, prob=0.5)
+LH_k_reps <- dbinom(k_reps, 24, prob=0.5)
+LH_k_obs  <- dbinom(7, 24, prob=0.5)
+mean(LH_k_reps <= LH_k_obs)
+
+##############################
+## Bayesian p w/o BRMS
+##############################
+
+logistic <- function(x) {
+  1 / (1 + exp(x))
+}
+
+logit <- function(x) {
+  log(x / (1-x))
+}
+
+epsilon <- 0.0000000000000000001
+ROPE = c(0.5 - epsilon, 0.5 + epsilon)
+
+get_prior_sample_theta <- function(n_samples=1) {
+  sample_prior_eta   <- runif(n_samples, logit(ROPE[1]), logit(ROPE[2]))
+  # sample_prior_eta   <- rep(0,n_samples)
+  sample_prior_theta <- logistic(sample_prior_eta)
+  # print(sample_prior_theta)
+  return(sample_prior_theta)
+}
+
+get_prior_sample_k <- function(n_samples=1) {
+  sample_prior_theta <- get_prior_sample_theta(n_samples)
+  sample_prior_k     <- map_dbl(sample_prior_theta, function(theta) rbinom(1, 24, theta))
+  return(sample_prior_k)
+}
+
+get_LH_approx <- function(k, n_samples=1) {
+  dbinom(k, 24, get_prior_sample_theta(n_samples), log = F) |> mean()
+}
+
+n_samples_k         <- 10000
+n_samples_LH_approx <- 100
+
+k_reps    <- get_prior_sample_k(n_samples_k)
+LH_k_reps <- map_dbl(k_reps, function(k) get_LH_approx(k, n_samples_LH_approx))
+LH_k_obs  <- get_LH_approx(k, 500000)
+mean(LH_k_reps <= LH_k_obs)
+
+##############################
+## Bayesian p w BRMS binomial
+##############################
+
+data_24_7_binomial <- 
+  tibble(k = 7, N = 24)
+
+# n_samples_k         <- 10e5
+n_samples_k         <- 1e+04
+n_samples_LH_approx <- 100
+
 fit_logistic_prior <- brms::brm(
-  formula = outcome ~ 1, 
-  data = data_24_7,
-  family = brms::bernoulli(link = "logit"),
+  formula = k | trials(N) ~ 1,
+  data = data_24_7_binomial,
+  family = binomial(link = "logit"),
   # this is an extremely stupid "unBayesian prior" !!!
   #   but it's the hypothesis we are interested in
-prior = brms::prior("uniform(0.49,0.51)", 
-                    class = "Intercept", 
-                    ub = 0.51, lb = 0.49),
-sample_prior = "only",
-iter = 50000,
-warmup = 1000
+  prior = brms::prior("uniform(-0.04000533, 0.04000533)", 
+                      class = "Intercept", 
+                      lb = -0.04000533, ub = 0.04000533),
+  sample_prior = "only",
+  iter = 5000,
+  warmup = 1000
 )
 
-# collect samples from the prior-predictive distribution
+# sanity check implied prior for expected value of a single flip
+fit_logistic_prior |> 
+  tidybayes::add_linpred_draws(newdata = data_24_7_binomial) |> 
+  ggplot(aes(x = logistic(.linpred))) + 
+  geom_density()
+
 priorPred_samples <- tidybayes::add_predicted_draws(
   fit_logistic_prior,
-  newdata = data_24_7,
-  ndraws = 500,
-  value = "prediction"
-) 
+  newdata = data_24_7_binomial |> select(-k),
+  ndraws = n_samples_k,
+  value = "k"
+) |> ungroup() |> 
+  select(.draw, k, N)
 
-# extract likelihood for observations (actual or repeat)
-get_LH <- function(observation, ndraws = 1000) {
-  LH_ys <- brms::log_lik(
+# extract likelihood for observations (approximated w/ MC sampling)
+get_LH <- function(k, N, ndraws = n_samples_LH_approx) {
+  brms::log_lik(
     object  = fit_logistic_prior,
-    newdata = tibble(outcome = observation),
-    ndraws  = ndraws)
-  mean(matrixStats::rowLogSumExps(LH_ys) - log(dim(LH_ys)[2]))
+    newdata = tibble(k = k, N = N),
+    ndraws  = ndraws) |> 
+    exp() |> 
+    mean()
 }
 
 # get likelihood of predictive samples
 # (this may take a while!!)
-LH_postPred <- priorPred_samples |> 
+LH_predictions <- priorPred_samples |> 
   group_by(.draw) |> 
-  summarize(LH_post_pred = get_LH(prediction)) |> 
+  summarize(LH_post_pred = get_LH(k, N)) |> 
   pull(LH_post_pred)
 
 # get likelihood of data
-LH_data <- get_LH(data_24_7$outcome)
+LH_data <- get_LH(k = 7, N = 24, ndraws = 16000)
 
 # Bayesian $p$-values with LH as test statistic
-print(mean(LH_postPred < LH_data))
-
-# plot the results
-tibble(
-  LH = LH_postPred
-) |> ggplot(aes(x = LH)) +
-  geom_density() +
-  geom_vline(aes(xintercept = LH_data), color = project_colors[2], size = 1.5)
+print(mean(LH_predictions <= LH_data))
 
 
 ##################################################
@@ -223,10 +275,10 @@ bf_ROPEd_hypothesis
 
 fit_logistic_posterior <- brms::brm(
   formula = outcome ~ 1, 
-  data = data_24_7,
+  data   = data_24_7,
   family = brms::bernoulli(link = "logit"),
-  prior = brms::prior("normal(0,1.8)", 
-                      class = "Intercept"),
+  prior  = brms::prior("normal(0,1.8)", 
+                        class = "Intercept"),
   iter = 50000,
   warmup = 1000
 )
@@ -250,11 +302,11 @@ posterior_samples_Intercept <- fit_logistic_posterior |>
   tidybayes::tidy_draws()
 
 # prior probs of ROPE and its negation
-P_I0_prior <- mean(prior_samples_Intercept >= lower & prior_samples_Intercept <= upper )
+P_I0_prior <- mean(prior_samples_Intercept >= logit(lower) & prior_samples_Intercept <= logit(upper) )
 P_I1_prior <- 1 - P_I0_prior
 
 # posterior probs of ROPE and its negation
-P_I0_posterior <- mean(posterior_samples_Intercept >= lower & posterior_samples_Intercept <= upper )
+P_I0_posterior <- mean(posterior_samples_Intercept >= logit(lower) & posterior_samples_Intercept <= logit(upper) )
 P_I1_posterior <- 1 - P_I0_posterior
 
 # Bayes factor
@@ -273,9 +325,9 @@ fit_logistic_null <- brms::brm(
   formula = outcome ~ 1, 
   data = data_24_7,
   family = brms::bernoulli(link = "logit"),
-  prior = brms::prior("uniform(0.49,0.51)", 
-                      class = "Intercept",
-                      lb=0.49, ub=0.51),
+  prior = brms::prior("uniform(-0.04000533, 0.04000533)", 
+                      class = "Intercept", 
+                      lb = -0.04000533, ub = 0.04000533),
   iter = 50000,
   warmup = 1000
 )
@@ -309,10 +361,12 @@ fit_logistic_post_and_prior <- brms::brm(
 )
 
 # point-valued hypothesis test
-fit_logistic_post_and_prior |> brms::hypothesis(hypothesis = "Intercept = 0")
+fit_logistic_post_and_prior |> 
+  brms::hypothesis(hypothesis = "Intercept = 0")
 
 # ROPE-valued hypothesis test
-fit_logistic_post_and_prior |> brms::hypothesis(hypothesis = "abs(Intercept -0.5) < 0.01")
+fit_logistic_post_and_prior |> 
+  brms::hypothesis(hypothesis = "abs(Intercept) < 0.01")
 
 
 
