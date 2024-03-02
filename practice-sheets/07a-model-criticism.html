@@ -501,7 +501,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#bayesian-p-values" id="toc-bayesian-p-values" class="nav-link" data-scroll-target="#bayesian-p-values">Bayesian <span class="math inline">\(p\)</span>-values</a>
   <ul class="collapse">
   <li><a href="#standard-deviation-as-test-statistics" id="toc-standard-deviation-as-test-statistics" class="nav-link" data-scroll-target="#standard-deviation-as-test-statistics">Standard deviation as test statistics</a></li>
-  <li><a href="#likelihood-as-a-test-statistics" id="toc-likelihood-as-a-test-statistics" class="nav-link" data-scroll-target="#likelihood-as-a-test-statistics">Likelihood as a test statistics</a></li>
+  <li><a href="#excursion-likelihood-as-a-test-statistics" id="toc-excursion-likelihood-as-a-test-statistics" class="nav-link" data-scroll-target="#excursion-likelihood-as-a-test-statistics">[Excursion:] Likelihood as a test statistics</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/michael-franke/Bayesian-Regression/edit/main/practice-sheets/07a-model-criticism.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/michael-franke/Bayesian-Regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -672,11 +672,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         [,1]     [,2]     [,3]     [,4]     [,5]
-[1,] 7.049063 7.740668 7.532810 7.269842 6.670946
-[2,] 7.140035 7.275541 7.538826 7.590586 8.158434
-[3,] 6.931586 7.242583 7.429644 7.388534 8.073946
-[4,] 7.154032 7.877168 7.046624 7.482067 7.912254
-[5,] 7.809531 7.428493 8.469088 7.633410 7.150208</code></pre>
+[1,] 7.074478 7.454911 6.633051 7.113664 7.155443
+[2,] 7.449695 7.659168 7.379796 7.304069 7.084542
+[3,] 7.672518 7.738930 7.652186 7.799965 7.381869
+[4,] 7.807242 6.854406 7.490582 7.435162 7.367614
+[5,] 7.691041 7.530517 7.190798 7.904615 7.758474</code></pre>
 </div>
 </div>
 <p>And then you can, for example, compare the distribution of some test statistic (here: the standard deviation), using a function like <code>ppc_stat</code>:</p>
@@ -787,7 +787,7 @@ Solution
 </section>
 <section id="bayesian-p-values" class="level1">
 <h1>Bayesian <span class="math inline">\(p\)</span>-values</h1>
-<p>Using model predictions, we can also compute Bayesian <span class="math inline">\(p\)</span>-values as handy summary statistics for visual predictive checks. A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).</p>
+<p>Using model predictions, we can also compute Bayesian <span class="math inline">\(p\)</span>-values as handy summary statistics for visual predictive checks. A single number never replaces the information we obtain from (good) plots, but numbers are easier to communicate and may help interpretation (though should never solely dominate decision making).</p>
 <p><strong>Caution:</strong> While Bayesian <span class="math inline">\(p\)</span>-values follow the same logic as frequentist <span class="math inline">\(p\)</span>-values, they are not necessarily “calibrated” for long-term Type-I error control, as frequentist <span class="math inline">\(p\)</span>-values are.</p>
 <section id="standard-deviation-as-test-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="standard-deviation-as-test-statistics">Standard deviation as test statistics</h2>
@@ -821,7 +821,7 @@ Solution
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&lt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>[1] 0.00025</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
@@ -857,9 +857,10 @@ Solution
 </div>
 </div>
 </section>
-<section id="likelihood-as-a-test-statistics" class="level2">
-<h2 class="anchored" data-anchor-id="likelihood-as-a-test-statistics">Likelihood as a test statistics</h2>
-<p>With some more effort, we can use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. Note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
+<section id="excursion-likelihood-as-a-test-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="excursion-likelihood-as-a-test-statistics">[Excursion:] Likelihood as a test statistics</h2>
+<p>With some more effort, we can use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. The calculation now becomes more intricate, because not only do we need to obtain samples of predicted data observations from the (fitted or prior) model, but we also need to approximate the likelihood for each predicted data observation with (a second set of) samples, thus using a nested Monte Carlo simulation. To implement the latter step, note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
+<p>(Another example of Bayesian <em>prior</em> <span class="math inline">\(p\)</span>-value computation is included in the chapter on hypothesis testing.)</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-11_c67f6fe6fe6f641c8163e2b40e8ebc8c">
 <details open="">
 <summary>Toggle code</summary>
@@ -890,7 +891,7 @@ Solution
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(LH_data <span class="sc">&gt;</span> LH_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.83</code></pre>
+<pre><code>[1] 0.79</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
