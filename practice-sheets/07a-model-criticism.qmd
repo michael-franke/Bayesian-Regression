@@ -163,7 +163,7 @@ bayesplot::ppc_stat(
 # Bayesian $p$-values
 
 Using model predictions, we can also compute Bayesian $p$-values as handy summary statistics for visual predictive checks.
-A single number never replaces the information we obtain from (good) plots, but is easier to communicate and may help interpretation (though should never solely dominate decision making).
+A single number never replaces the information we obtain from (good) plots, but numbers are easier to communicate and may help interpretation (though should never solely dominate decision making).
 
 **Caution:** While Bayesian $p$-values follow the same logic as frequentist $p$-values, they are not necessarily "calibrated" for long-term Type-I error control, as frequentist $p$-values are.
 
@@ -213,11 +213,13 @@ So in this case, we would clearly have ground of accusing the model to fail to p
 :::
 :::
 
-## Likelihood as a test statistics
+## [Excursion:] Likelihood as a test statistics
 
 With some more effort, we can use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
-Note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
+The calculation now becomes more intricate, because not only do we need to obtain samples of predicted data observations from the (fitted or prior) model, but we also need to approximate the likelihood for each predicted data observation with (a second set of) samples, thus using a nested Monte Carlo simulation. 
+To implement the latter step, note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
 
+(Another example of Bayesian *prior* $p$-value computation is included in the chapter on hypothesis testing.)
 
 ```{r}
 #| echo: true
