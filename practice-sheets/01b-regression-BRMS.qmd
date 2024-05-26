@@ -56,7 +56,7 @@ dolphin_agg <- dolphin |>
     MAD = scale(MAD)
   )
   
-# let's have a look
+# let's take a look
 head(dolphin_agg)
 ```
 
@@ -107,7 +107,7 @@ The only thing that is relevant for you at the moment is this: This compilation 
 ```{r fit-model}
 #| output: false
 
-# specify the model 
+# specify model 
 model1 = brm(
   # model formula
   AUC ~ MAD, 
@@ -133,6 +133,7 @@ If that happens, you need to increase the chains and / or the number of iteratio
 If we need the main summary output in a tidy tibble format, we can use this function from the `tidybayes` package:
 
 ```{r use-tidybayes-summary}
+# show summary in tidy format
 tidybayes::summarise_draws(model1)
 ```
 
@@ -146,6 +147,7 @@ To see how good a fit this is, we could manually draw this line into the graph f
 # extract model parameters:
 model_intercept <- summary(model1)$fixed[1,1]
 model_slope <- summary(model1)$fixed[2,1]
+
 
 # plot
 ggplot(data = dolphin_agg, 
