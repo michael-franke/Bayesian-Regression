@@ -604,7 +604,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="data-wrangling">Data wrangling</h2>
 <p>First, we will massage the data a little bit. We only want to look at those rows in which the participant selected the correct response. And instead of looking at all the data, we will only deal with the median values for each participant. In this way, we get a more robust signal (but really we do this here for more practical purposes (faster fitting, less clutter)). We will also scale both variables of interest, making the interpretation of slope coefficients easier (as otherwise the numbers are very large and possibly more confusing).</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/wrangle-data_9394e089f53b0e88b97ff4c108d5e28d">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/wrangle-data_a9eb6070fe52d66777f18d406966eb3e">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate</span></span>
@@ -620,7 +620,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAD =</span> <span class="fu">scale</span>(MAD)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># let's have a look</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># let's take a look</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dolphin_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -661,10 +661,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>So, to quantify evidence and uncertainty with posterior samples, let’s run a simple linear regression model using <code>brms</code>. We use R’s standard notation to specify a formula in which AUC is predicted by MAD. (NB: <code>brms</code> extends this syntax substantially for more complex models beyond R’s standard formula syntax).</p>
 <p><code>AUC ~ MAD</code></p>
 <p>When you run this code, the <code>brms</code> package generates Stan code and runs the Stan program in the background. Stan code is executed in C++, and the model will be ‘compiled’ (you get information about this in the console output). You we will want to learn later what this compilation does (spoiler: it computes gradients for all stochastic nodes in the model). The only thing that is relevant for you at the moment is this: This compilation can take quite a while (especially for complex models) before anything happens.</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/fit-model_1a6a7d936530580f1f5c7b19639dcfa8">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/fit-model_d1776286a2ccd5e85ebf42aa51436a65">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the model </span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model </span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">=</span> <span class="fu">brm</span>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model formula</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  AUC <span class="sc">~</span> MAD, </span>
@@ -688,12 +688,12 @@ Formula: AUC ~ MAD
 
 Population-Level Effects: 
           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept   486.29   1818.46 -3046.98  4015.71 1.00     3541     2605
-MAD         455.14     16.52   421.67   487.48 1.00     3843     2425
+Intercept     0.00      0.03    -0.07     0.07 1.00     3663     2793
+MAD           0.94      0.03     0.87     1.00 1.00     3863     2994
 
 Family Specific Parameters: 
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma 17189.13   1194.50 15016.38 19715.44 1.00     3734     2765
+sigma     0.35      0.02     0.31     0.40 1.00     3495     2428
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -702,38 +702,40 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>The output of such a model looks very familiar if you have worked with lm() before. We want to look at what is here called “Population-Level Effects”, which is a small table in this case. The first column contains the names of our coefficients; the <code>Estimate</code> column gives us the posterior mean of these coefficients; the <code>Est.Error</code> give us the standard error; the <code>l-95%</code>and <code>u-95%</code> give us the lower and upper limit of the 95% Credible Interval (henceforth CrI). The column <code>Rhat</code> (R^) which is a diagnostic of chain convergence and should not diverge much from 1 (rule of thumb: should by &lt;1.1). Again, more about that later. The <code>Bulk_ESS</code> and <code>Tail_ESS</code> columns give us numbers of “useful” samples. This number should be sufficiently high. If its not, <code>brms</code> will give you a convenient warning (more about that later, so don’t worry for now). If that happens, you need to increase the chains and / or the number of iterations in order to increase the overall number of samples (again, don’t worry for now).</p>
 <p>If we need the main summary output in a tidy tibble format, we can use this function from the <code>tidybayes</code> package:</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/use-tidybayes-summary_d54bb684186e3dca5bd753e696163a95">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/use-tidybayes-summary_dfac8ab496fc35a27491809450687e7b">
 <details open="">
 <summary>Toggle code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show summary in tidy format</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tidybayes<span class="sc">::</span><span class="fu">summarise_draws</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 10
-  variable       mean  median        sd       mad      q5     q95  rhat ess_bulk
-  &lt;chr&gt;         &lt;num&gt;   &lt;num&gt;     &lt;num&gt;     &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;    &lt;num&gt;
-1 b_Intercept   486.    528.  1818.     1808.     -2470.   3486.   1.00    3541.
-2 b_MAD         455.    455.    16.5      16.3      428.    482.   1.00    3843.
-3 sigma       17189.  17126.  1194.     1174.     15318.  19252.   1.00    3734.
-4 lprior        -22.3   -22.3    0.0293    0.0291   -22.4   -22.3  1.00    3600.
-5 lp__        -1218.  -1218.     1.22      1.01   -1221.  -1217.   1.00    2109.
+  variable        mean   median      sd     mad       q5      q95  rhat ess_bulk
+  &lt;chr&gt;          &lt;num&gt;    &lt;num&gt;   &lt;num&gt;   &lt;num&gt;    &lt;num&gt;    &lt;num&gt; &lt;num&gt;    &lt;num&gt;
+1 b_Intercept  7.94e-4 -5.50e-5 0.0344  0.0339   -0.0554   0.0572  1.00    3663.
+2 b_MAD        9.40e-1  9.40e-1 0.0337  0.0340    0.885    0.995   1.00    3863.
+3 sigma        3.50e-1  3.48e-1 0.0245  0.0243    0.312    0.391   1.00    3495.
+4 lprior      -3.16e+0 -3.16e+0 0.00241 0.00232  -3.16    -3.16    1.00    3545.
+5 lp__        -4.32e+1 -4.29e+1 1.28    1.01    -45.7    -41.8     1.00    1890.
 # ℹ 1 more variable: ess_tail &lt;num&gt;</code></pre>
 </div>
 </div>
 <p>The model output suggests that the posterior mean of the Intercept is around 500. The coefficient for MAD is estimated to be about 450.</p>
 <p>To see how good a fit this is, we could manually draw this line into the graph from above.</p>
-<div class="cell" data-hash="01b-regression-BRMS_cache/html/plot-model-fit_befe2eb58338ffa8284edc5931fef8f4">
+<div class="cell" data-hash="01b-regression-BRMS_cache/html/plot-model-fit_b794636e381fccb00b40a90e3e4ad836">
 <details open="">
 <summary>Toggle code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract model parameters:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>model_intercept <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">1</span>,<span class="dv">1</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>model_slope <span class="ot">&lt;-</span> <span class="fu">summary</span>(model1)<span class="sc">$</span>fixed[<span class="dv">2</span>,<span class="dv">1</span>]</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MAD, </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> model_intercept, <span class="at">slope =</span> model_slope, <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size  =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dolphin_agg, </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MAD, </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> AUC)) <span class="sc">+</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> model_intercept, <span class="at">slope =</span> model_slope, <span class="at">color =</span> project_colors[<span class="dv">2</span>], <span class="at">size  =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> project_colors[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="01b-regression-BRMS_files/figure-html/plot-model-fit-1.png" class="img-fluid" width="672"></p>
@@ -787,16 +789,16 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 4,000 × 2
    b_MAD b_Intercept
    &lt;dbl&gt;       &lt;dbl&gt;
- 1  469.       625. 
- 2  461.      1173. 
- 3  468.        49.6
- 4  440.       324. 
- 5  488.      -108. 
- 6  438.      -975. 
- 7  488.     -3396. 
- 8  465.      2096. 
- 9  459.      3796. 
-10  460.     -3225. 
+ 1 0.955    -0.0618 
+ 2 0.927     0.0575 
+ 3 0.982    -0.0646 
+ 4 0.943    -0.0379 
+ 5 0.941     0.0202 
+ 6 0.955     0.00394
+ 7 0.949     0.00947
+ 8 0.948     0.0121 
+ 9 0.833    -0.0762 
+10 0.906     0.0769 
 # ℹ 3,990 more rows</code></pre>
 </div>
 </div>
@@ -848,12 +850,12 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 # Groups:   parameter [1]
   parameter posterior
   &lt;chr&gt;         &lt;dbl&gt;
-1 b_MAD          469.
-2 b_MAD          461.
-3 b_MAD          468.
-4 b_MAD          440.
-5 b_MAD          488.
-6 b_MAD          438.</code></pre>
+1 b_MAD         0.955
+2 b_MAD         0.927
+3 b_MAD         0.982
+4 b_MAD         0.943
+5 b_MAD         0.941
+6 b_MAD         0.955</code></pre>
 </div>
 </div>
 <p>And then calculate the mean, the lower and the upper bound of a 90% CrI, using the function <code>tidybayes::hdi()</code>.</p>
@@ -874,7 +876,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 1 × 4
   parameter `90lowerCrI` mean_posterior `90higherCrI`
   &lt;chr&gt;            &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;
-1 b_MAD             424.           455.          489.</code></pre>
+1 b_MAD            0.875          0.940          1.00</code></pre>
 </div>
 </div>
 <p>Now we use this newly created data frame to plot the posterior distributions of all population-level coefficients. Again, we use our new best friend, the <code>tidybayes</code> package which offers some sweet extensions to <code>ggplot</code>’s <code>geom_</code> family of functions. We also add a reference point to compare the posteriors against. A common and reasonable reference point is 0. Remember a slope coefficient of zero would correspond to a flat regression line.</p>
@@ -908,10 +910,10 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <pre><code># A tibble: 1 × 1
   `90lowerCrI`
          &lt;dbl&gt;
-1         424.</code></pre>
+1        0.875</code></pre>
 </div>
 </div>
-<p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 423.77 and about 489.1 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
+<p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 0.87 and about 1 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
 <p>That’s helpful because we can relate this distribution to relevant values, for example the value 0 (dashed line). If you look at the coefficient, you can see that the posterior distribution does not include the value zero or any small-ish “Region of Practical Equivalence” around it. In fact, the posterior is really far away from zero. Thus, if we believe in the data and the model, we can be very certain that this coefficient is not zero. In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that ‘no relationship’ is not a very plausible scenario).</p>
 <p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s calculate the amount of posterior samples that are larger than 1. The following code chunk does this for us:</p>
 <div class="cell" data-hash="01b-regression-BRMS_cache/html/posterior_probability_eea750ea56d840b40e76bbcff0522923">
@@ -922,7 +924,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hypothesis Tests for class b:
      Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob Star
-1 (MAD)-(1) &gt; 0   454.14     16.52   426.64   481.44        Inf         1    *
+1 (MAD)-(1) &gt; 0    -0.06      0.03    -0.12    -0.01       0.04      0.04     
 ---
 'CI': 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
 '*': For one-sided hypotheses, the posterior probability exceeds 95%;
@@ -1150,12 +1152,12 @@ Solution
 <pre><code># A tibble: 6 × 2
   parameter posterior
   &lt;chr&gt;         &lt;dbl&gt;
-1 b_RT         -12.1 
-2 b_RT         -10.1 
-3 b_RT          -8.69
-4 b_RT          -3.54
-5 b_RT         -14.3 
-6 b_RT         -18.0 </code></pre>
+1 b_RT        -0.109 
+2 b_RT        -0.166 
+3 b_RT        -0.125 
+4 b_RT        -0.0696
+5 b_RT        -0.186 
+6 b_RT        -0.0239</code></pre>
 </div>
 </div>
 </div>
