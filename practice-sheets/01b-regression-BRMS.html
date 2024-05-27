@@ -94,6 +94,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -720,7 +722,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 # ℹ 1 more variable: ess_tail &lt;num&gt;</code></pre>
 </div>
 </div>
-<p>The model output suggests that the posterior mean of the Intercept is around 500. The coefficient for MAD is estimated to be about 450.</p>
+<p>The model output suggests that the posterior mean of the Intercept is around 0.8e-4. The coefficient for MAD is estimated to be about 0.94.</p>
 <p>To see how good a fit this is, we could manually draw this line into the graph from above.</p>
 <div class="cell" data-hash="01b-regression-BRMS_cache/html/plot-model-fit_b794636e381fccb00b40a90e3e4ad836">
 <details open="">
@@ -915,7 +917,7 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <p>Here you see density plots for our critical coefficients of the model. We care mostly about the slope coefficient (b_MAD) (the posterior of which is shown in red). Values between about 0.87 and about 1 are plausible (at the 90% level) and they are indicated by the thick black line in the density plot for this coefficient. The mean of the distribution is indicated by the thick black dot.</p>
 <p>That’s helpful because we can relate this distribution to relevant values, for example the value 0 (dashed line). If you look at the coefficient, you can see that the posterior distribution does not include the value zero or any small-ish “Region of Practical Equivalence” around it. In fact, the posterior is really far away from zero. Thus, if we believe in the data and the model, we can be very certain that this coefficient is not zero. In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that ‘no relationship’ is not a very plausible scenario).</p>
-<p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s calculate the amount of posterior samples that are larger than 1. The following code chunk does this for us:</p>
+<p>The <code>brms</code> package allows us to quickly evaluate how many posterior samples fall into a certain value range. Just for fun, let’s focus on the slope coefficient for <code>MAD</code> and ask whether this parameter is credibly larger than 1 in the posterior. We can estimate the posterior probability of <span class="math inline">\(P(\text{MAD}&gt;1 \mid D)\)</span> given the data by the proportion of posterior samples for this parameter that are larger than one. Notice that, alternatively, we can take all posterior samples, subtract one, and then consider the proportion of modified values which is bigger than 0. We could do this by hand, but we can also use the <code>hypothesis()</code> function from the <code>brms</code> package, which gives us even more information. (See the later chapter on hypothesis testing for pros and cons of using this function.)</p>
 <div class="cell" data-hash="01b-regression-BRMS_cache/html/posterior_probability_eea750ea56d840b40e76bbcff0522923">
 <details open="">
 <summary>Toggle code</summary>
@@ -932,7 +934,7 @@ for two-sided hypotheses, the value tested against lies outside the 95%-CI.
 Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
 </div>
 </div>
-<p>The results tell us that fewer than 5% of all posterior samples are larger than 1. It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here ‘MAD &gt; 1’).</p>
+<p>The results tell us that fewer than 5% of all posterior samples are larger than 1 (in the column “Post.Prob”. It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here ‘MAD &gt; 1’).</p>
 </section>
 </section>
 <section id="exercises" class="level1">
