@@ -137,8 +137,8 @@ If we need the main summary output in a tidy tibble format, we can use this func
 tidybayes::summarise_draws(model1)
 ```
 
-The model output suggests that the posterior mean of the Intercept is around 500.
-The coefficient for MAD is estimated to be about 450.
+The model output suggests that the posterior mean of the Intercept is around 0.8e-4.
+The coefficient for MAD is estimated to be about 0.94.
 
 To see how good a fit this is, we could manually draw this line into the graph from above.
 
@@ -311,8 +311,11 @@ Thus, if we believe in the data and the model, we can be very certain that this 
 In other words, we would be very certain that there is a positive relationship between AUC and MAD (and in turn that 'no relationship' is not a very plausible scenario).
 
 The `brms` package allows us to quickly evaluate how many posterior samples fall into a certain value range.
-Just for fun, let's calculate the amount of posterior samples that are larger than 1.
-The following code chunk does this for us:
+Just for fun, let's focus on the slope coefficient for `MAD` and ask whether this parameter is credibly larger than 1 in the posterior. 
+We can estimate the posterior probability of $P(\text{MAD}>1 \mid D)$ given the data by the proportion of posterior samples for this parameter that are larger than one.
+Notice that, alternatively, we can take all posterior samples, subtract one, and then consider the proportion of modified values which is bigger than 0. 
+We could do this by hand, but we can also use the `hypothesis()` function from the `brms` package, which gives us even more information. 
+(See the later chapter on hypothesis testing for pros and cons of using this function.)
 
 ```{r posterior_probability}
 
@@ -320,7 +323,7 @@ hypothesis(model1, 'MAD > 1')
 
 ```
 
-The results tell us that fewer than 5% of all posterior samples are larger than 1.
+The results tell us that fewer than 5% of all posterior samples are larger than 1 (in the column "Post.Prob".
 It also tells us the evidence ratio (more on this later), which is the odds of the hypothesis in question (here 'MAD \> 1').
 
 # Exercises
