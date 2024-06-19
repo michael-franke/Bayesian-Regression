@@ -672,7 +672,7 @@ Exercise 1
 </section>
 <section id="inferring-a-coin-flip-bias" class="level1">
 <h1>Inferring a coin-flip bias</h1>
-<p>This examples introduces a case where we infer a single latent continuous parameter. We flip a coin <span class="math inline">\(N\)</span> times and observed <span class="math inline">\(k\)</span> successes (heads). The coin has unknown bias <span class="math inline">\(\theta\)</span>. We want to infer <span class="math inline">\(\theta\)</span> from the data.</p>
+<p>This example looks at a case where we infer a single latent continuous parameter. We flipped a coin <span class="math inline">\(N\)</span> times and observed <span class="math inline">\(k\)</span> successes (heads). The coin has unknown bias <span class="math inline">\(\theta \in [0;1]\)</span>, which represents the probability of a single flip landing heads. We want to infer <span class="math inline">\(\theta\)</span> from the data.</p>
 <p>We start with a <a href="https://en.wikipedia.org/wiki/Beta_distribution">Beta distribution</a> to model the prior over <span class="math inline">\(\theta\)</span>. A uniform distribution over the unit interval is given by <code>beta(1,1)</code>.</p>
 <pre class="webppl">// observed data
 var k_obs = 7 // number of observed heads
@@ -742,7 +742,7 @@ Solution
 </section>
 <section id="the-big-bayesian-4" class="level1">
 <h1>The Big Bayesian 4</h1>
-<p>Given a Bayesian model of a data-generating process, and some data which is supposed to explain or predict, there are usually four things that we are interested in:</p>
+<p>Given a Bayesian model of a data-generating process, and some data which is supposed to be explained or predicted, there are usually four things that we are interested in:</p>
 <ol type="1">
 <li>The model’s <strong>priors</strong>, i.e., the distribution of the parameters <em>before</em> updating with the data.</li>
 <li>The model’s <strong>prior predictives</strong>, i.e., the predictions about likely data observations the model makes <em>ex ante</em>, that is <em>before</em> updating with the data.</li>
