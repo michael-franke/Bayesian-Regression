@@ -106,9 +106,9 @@ display(posterior_cards)
 
 # Inferring a coin-flip bias
 
-This examples introduces a case where we infer a single latent continuous parameter.
-We flip a coin $N$ times and observed $k$ successes (heads).
-The coin has unknown bias $\theta$.
+This example looks at a case where we infer a single latent continuous parameter.
+We flipped a coin $N$ times and observed $k$ successes (heads).
+The coin has unknown bias $\theta \in [0;1]$, which represents the probability of a single flip landing heads.
 We want to infer $\theta$ from the data.
 
 We start with a [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) to model the prior over $\theta$.
@@ -171,7 +171,7 @@ The true prior for `betat(1,1)` is a straight horizontal line, but for finite sa
 
 # The Big Bayesian 4
 
-Given a Bayesian model of a data-generating process, and some data which is supposed to explain or predict, there are usually four things that we are interested in:
+Given a Bayesian model of a data-generating process, and some data which is supposed to be explained or predicted, there are usually four things that we are interested in:
 
 1. The model's **priors**, i.e., the distribution of the parameters *before* updating with the data.
 2. The model's **prior predictives**, i.e., the predictions about likely data observations the model makes *ex ante*, that is *before* updating with the data.
