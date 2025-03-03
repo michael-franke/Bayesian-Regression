@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - Priors and predictivs in brms</title>
+<title>Bayesian Regression: Theory &amp; Practice - Priors and predictives in brms</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -508,7 +508,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Priors and predictivs in <code>brms</code></h1>
+<h1 class="title">Priors and predictives in <code>brms</code></h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -763,15 +763,15 @@ Solution
 <pre><code># A tibble: 9 × 5
   model   variable          q5    mean     q95
   &lt;chr&gt;   &lt;chr&gt;          &lt;num&gt;   &lt;num&gt;   &lt;num&gt;
-1 model 1 b_Intercept -2685.     465.   3491. 
-2 model 2 b_Intercept 14960.   22212.  29436. 
-3 model 3 b_Intercept -2551.     517.   3578. 
-4 model 1 b_MAD         428.     455.    482. 
-5 model 2 b_MAD           5.79    22.0    38.0
-6 model 3 b_MAD         428.     454.    482. 
-7 model 1 sigma       15388.   17193.  19267. 
-8 model 2 sigma       42085.   47338.  53323. 
-9 model 3 sigma       15362.   17178.  19233. </code></pre>
+1 model 1 b_Intercept -2559.     479.   3561. 
+2 model 2 b_Intercept 14626.   22216.  30018. 
+3 model 3 b_Intercept -2424.     583.   3497. 
+4 model 1 b_MAD         428.     455.    483. 
+5 model 2 b_MAD           4.55    21.6    38.3
+6 model 3 b_MAD         427.     453.    480. 
+7 model 1 sigma       15384.   17241.  19352. 
+8 model 2 sigma       42099.   47472.  53426. 
+9 model 3 sigma       15362.   17199.  19324. </code></pre>
 </div>
 </div>
 <p>We see that the Student-t prior in model 3 gives a very similar fit as for model 1. This is likely due to the heavier tails of the Student-t distribution.</p>
@@ -818,13 +818,13 @@ Solution
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 6
-  variable         mean      median       sd      mad       q5
-  &lt;chr&gt;           &lt;num&gt;       &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
-1 b_Intercept 14717.    14813.      73087.   37719.   -61413. 
-2 b_MAD          -0.134    -0.00763    10.1     10.1     -16.8
-3 sigma       35757.    25675.      39130.   23083.     2453. 
-4 lprior        -27.4     -26.9         1.74     1.36    -30.7
-5 lp__          -17.4     -17.0         1.63     1.31    -20.4</code></pre>
+  variable         mean    median       sd      mad       q5
+  &lt;chr&gt;           &lt;num&gt;     &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
+1 b_Intercept 14526.    14765.    52797.   39139.   -66221. 
+2 b_MAD           0.106     0.251     9.55     9.66    -15.7
+3 sigma       36088.    25518.    40930.   23280.     2452. 
+4 lprior        -27.3     -26.9       1.62     1.32    -30.7
+5 lp__          -17.4     -17.0       1.47     1.21    -20.4</code></pre>
 </div>
 </div>
 <p>It is also possible to obtain a posterior fit /and/ prior samples at the same time, but that is a bit more fickle, as the prior samples will have other names, and (AFAICS) other functions are required than for posterior samples, entailing other formatting of the returned samples.</p>
@@ -847,16 +847,16 @@ Solution
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 6
-  variable              mean     median       sd       mad        q5
-  &lt;chr&gt;                &lt;num&gt;      &lt;num&gt;    &lt;num&gt;     &lt;num&gt;     &lt;num&gt;
-1 b_Intercept     22311.     22271.      4515.    4603.     15071.  
-2 b_MAD              21.7       21.6       10.2     10.4        4.87
-3 sigma           47382.     47221.      3393.    3361.     42084.  
-4 prior_Intercept 15349.     14059.     55660.   39814.    -60965.  
-5 prior_b            -0.0959     0.0351    10.1     10.2      -17.0 
-6 prior_sigma     37971.     25452.     45590.   23776.      2050.  
-7 lprior            -29.3      -28.8        2.31     2.07     -33.7 
-8 lp__            -1335.     -1334.         1.21     0.981  -1337.  </code></pre>
+  variable             mean    median       sd      mad        q5
+  &lt;chr&gt;               &lt;num&gt;     &lt;num&gt;    &lt;num&gt;    &lt;num&gt;     &lt;num&gt;
+1 b_Intercept     22216.    22234.     4508.    4514.    14869.  
+2 b_MAD              21.5      21.3      10.2      9.91      5.43
+3 sigma           47430.    47282.     3401.    3314.    42050.  
+4 prior_Intercept 14653.    15396.    55792.   38039.   -67173.  
+5 prior_b            -0.193    -0.373    10.1     10.3     -16.6 
+6 prior_sigma     35986.    25249.    45545.   23883.     2176.  
+7 lprior            -29.3     -28.7       2.32     2.00    -33.9 
+8 lp__            -1335.    -1334.        1.21     1.01  -1337.  </code></pre>
 </div>
 <details open="">
 <summary>Toggle code</summary>
@@ -864,13 +864,13 @@ Solution
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>brms<span class="sc">::</span><span class="fu">prior_samples</span>(model2_priorAdded) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Intercept             b                 sigma         
- Min.   :-558085   Min.   :-40.40793   Min.   :     1.2  
- 1st Qu.: -11931   1st Qu.: -6.83035   1st Qu.: 12027.3  
- Median :  14059   Median :  0.03513   Median : 25452.1  
- Mean   :  15349   Mean   : -0.09590   Mean   : 37971.3  
- 3rd Qu.:  41601   3rd Qu.:  6.89005   3rd Qu.: 48406.1  
- Max.   : 486243   Max.   : 31.14966   Max.   :677048.6  </code></pre>
+<pre><code>   Intercept             b                sigma          
+ Min.   :-673877   Min.   :-35.0468   Min.   :      0.4  
+ 1st Qu.: -10848   1st Qu.: -7.0631   1st Qu.:  11685.0  
+ Median :  15396   Median : -0.3727   Median :  25249.3  
+ Mean   :  14652   Mean   : -0.1930   Mean   :  35985.8  
+ 3rd Qu.:  40355   3rd Qu.:  6.8809   3rd Qu.:  46537.7  
+ Max.   : 706521   Max.   : 32.8908   Max.   :1374258.5  </code></pre>
 </div>
 </div>
 <p>A third possibility is to use <code>stats::update()</code> to draw additional prior samples from an already fitted object, like so:</p>
@@ -889,13 +889,13 @@ Solution
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 6
-  variable         mean    median       sd      mad       q5
-  &lt;chr&gt;           &lt;num&gt;     &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
-1 b_Intercept 15002.    15430.    69846.   38872.   -68581. 
-2 b_MAD           0.360     0.491    10.1      9.97    -16.2
-3 sigma       36695.    24807.    41620.   24104.     1969. 
-4 lprior        -27.5     -27.0       1.80     1.41    -30.9
-5 lp__          -17.5     -17.1       1.67     1.32    -20.7</code></pre>
+  variable         mean    median        sd      mad       q5
+  &lt;chr&gt;           &lt;num&gt;     &lt;num&gt;     &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
+1 b_Intercept 15657.    15859.     52636.   36520.   -59016. 
+2 b_MAD          -0.325    -0.198      9.95     9.84    -16.9
+3 sigma       37291.    25178.    130315.   23155.     2167. 
+4 lprior        -27.3     -26.9        1.66     1.35    -30.6
+5 lp__          -17.4     -17.0        1.57     1.23    -20.5</code></pre>
 </div>
 </div>
 <div class="callout callout-style-simple callout-caution callout-titled">
@@ -1039,15 +1039,15 @@ Solution
 <pre><code># A tibble: 538,000 × 3
     year .draw avg_tmp
    &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
- 1  1750     1    7.55
- 2  1750     2    7.52
- 3  1750     3    7.44
- 4  1750     4    7.42
- 5  1750     5    7.47
+ 1  1750     1    7.56
+ 2  1750     2    7.34
+ 3  1750     3    7.46
+ 4  1750     4    7.31
+ 5  1750     5    7.40
  6  1750     6    7.44
  7  1750     7    7.48
- 8  1750     8    7.51
- 9  1750     9    7.40
+ 8  1750     8    7.44
+ 9  1750     9    7.50
 10  1750    10    7.38
 # ℹ 537,990 more rows</code></pre>
 </div>
@@ -1071,16 +1071,16 @@ Solution
 <pre><code># A tibble: 538,000 × 3
     year .draw avg_tmp
    &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
- 1  1750     1   7.68 
- 2  1750     2   2.92 
- 3  1750     3   5.08 
- 4  1750     4   8.84 
- 5  1750     5   8.67 
- 6  1750     6  -1.94 
- 7  1750     7   4.73 
- 8  1750     8   0.878
- 9  1750     9  12.2  
-10  1750    10  12.6  
+ 1  1750     1   8.98 
+ 2  1750     2   8.10 
+ 3  1750     3 -10.3  
+ 4  1750     4   6.08 
+ 5  1750     5  -0.463
+ 6  1750     6  18.4  
+ 7  1750     7  -8.16 
+ 8  1750     8  12.1  
+ 9  1750     9   2.53 
+10  1750    10   5.05 
 # ℹ 537,990 more rows</code></pre>
 </div>
 </div>
@@ -1250,16 +1250,16 @@ Solution
 <pre><code># A tibble: 269 × 3
     year .draw avg_tmp
    &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
- 1  1750     1    7.53
- 2  1751     1    7.83
- 3  1753     1    7.88
- 4  1754     1    7.12
- 5  1755     1    7.08
- 6  1756     1    7.81
- 7  1757     1    6.74
- 8  1758     1    7.02
- 9  1759     1    7.73
-10  1760     1    7.62
+ 1  1750     1    7.81
+ 2  1751     1    7.12
+ 3  1753     1    7.86
+ 4  1754     1    8.12
+ 5  1755     1    7.95
+ 6  1756     1    7.40
+ 7  1757     1    7.16
+ 8  1758     1    6.86
+ 9  1759     1    7.60
+10  1760     1    7.25
 # ℹ 259 more rows</code></pre>
 </div>
 </div>
