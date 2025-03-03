@@ -1,6 +1,7 @@
-# Bayesian-regression-course-2023
+# Bayesian regression modeling
 
 Course material for "Bayesian regression modeling: theory &amp; practice".
+This is an applied intermediate-level course.
 
 See rendered version of this material [here](https://michael-franke.github.io/Bayesian-Regression/).
 
