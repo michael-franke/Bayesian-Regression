@@ -27,7 +27,7 @@ include-before-body:
 
 # Simple regression 
 
-Let's loot at R's built-in data set `cars` for simple example of two paired metric measurements.
+Let's look at R's built-in data set `cars` for simple example of two paired metric measurements.
 Here, we have the speed a car was traveling and the distance before coming to a halt (from the 1920s):
 
 ```{r }

@@ -256,7 +256,7 @@ But since every datum is only a noisy measurement, the data points are generated
 
 <pre class="webppl">
 
-// 7 scientists measure the same quantity; some may better measurers than others
+// 7 scientists measure the same quantity; some may be better measurers than others
 var data = [-27.020, 3.570, 8.191, 9.898, 9.603, 9.945, 10.056]
 
 var model = function() {
@@ -285,7 +285,7 @@ Notice that the inference of `mu` seems heavily influenced by the first two meas
 To account for variable ability of the scientists to measure correctly, we can infer a *different* standard deviation `sigma` for each scientist.
 
 <pre class="webppl">
-// 7 scientists measure the same quantity; some may better measurers than others
+// 7 scientists measure the same quantity; some may be better measurers than others
 var data = [-27.020, 3.570, 8.191, 9.898, 9.603, 9.945, 10.056]
 
 var model = function() {
@@ -331,7 +331,7 @@ We can do this with a so-called *finite-mixture model* which has a discrete late
 
 <pre class="webppl">
 
-// 7 scientists measure the same quantity; some may better measurers than others
+// 7 scientists measure the same quantity; some may be better measurers than others
 var data = [-27.020, 3.570, 8.191, 9.898, 9.603, 9.945, 10.056]
 
 var model = function() {

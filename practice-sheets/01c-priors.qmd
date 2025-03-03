@@ -1,5 +1,5 @@
 ---
-title: "Priors and predictivs in `brms`"
+title: "Priors and predictives in `brms`"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
