@@ -113,7 +113,6 @@ fit_dolphin <-
     prior   = brms::prior(prior = "normal(0,10)", class = "b")
   )
 
-
 ##################################################
 ## sampling parameters from the prior distribution 
 ##################################################
@@ -209,6 +208,12 @@ dataPred_samples |>
   ggplot(aes(x = MAD, y = .prediction, color = .draw)) +
   geom_point(alpha = 0.7)
 
+#### Exercise
+## 1. What do you see in the plots?
+## 2. Plot 10 samples of prior predictions of the linear predictor
+##    for the input value MAD = 0.5. Interpret what you see.
+## 3. Plot 30 samples of prior predictions of the linear predictor
+##    for the input value MAD = 0.5. Interpret what you see.
 
 ##################################################
 ## samples from the posterior predictives
@@ -241,3 +246,8 @@ dataPred_samples |>
   ggplot(aes(x = MAD, y = .prediction, color = .draw)) +
   geom_point(alpha = 0.7)
 
+#### Exercise
+## 1. Compare the plots of samples of linear predictors from the prior
+##    and the posterior. Explain the difference.
+## 2. Compare the plots of samples of data predictions from the prior
+##    and the posterior. Explain the difference.

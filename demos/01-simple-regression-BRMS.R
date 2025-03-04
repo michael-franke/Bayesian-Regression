@@ -89,15 +89,22 @@ dolphin_agg |>
 ## fitting a model
 ##################################################
 
-
 fit_dolphin <- 
   brms::brm(
     formula = AUC ~ MAD,
     data    = dolphin_agg,
-    # prior   = brms::prior(prior = "normal(0,10)", class = "b"),
   )
 
 summary(fit_dolphin)
+
+#### Exercise:
+## 1. What do the coefficients tell you?
+## 2. Check the function documentation of `brms::brm` to find
+##    out what the default configuration is for the MCMC sampling
+##    (number of chains, iterations, warmup and thinning rate).
+## 3. Rerun the model with different parameters for the MCMC sampler
+##    so that MCMC sampling with UNreliable. Inspect the warnings
+##    and diagnostics in the summary of the fit.
 
 ##################################################
 ## inspect the fit
@@ -119,6 +126,11 @@ tidybayes::tidy_draws(fit_dolphin) |>
 
 # explore via shinystan
 shinystan::launch_shinystan(fit_dolphin)
+
+#### Exercise:
+## Explore the shinystan interface. What do you understand? 
+## What don't you understand? What might be useful for you?
+
 
 ##################################################
 ## plotting w/ package 'bayesplot'
@@ -156,87 +168,32 @@ fit_dolphin |>
                lty = "dashed") +
   theme(legend.position="none")
 
+
 ##################################################
 ## samples from the posterior predictive
 ##################################################
 
-# we use the original x-values to generate predictions for
-data_to_predict <- tibble(
+# we use the original x-values to generate "new predictions for old values"
+data_input_for_prediction <- tibble(
   MAD = dolphin_agg$MAD
 )
 
 # samples from the linear predictor
 tidybayes::linpred_draws(
   object  = fit_dolphin,
-  newdata = data_to_predict,
+  newdata = data_input_for_prediction,
   ndraws  = 1
 )
 
 # samples of predicted data points
 tidybayes::predicted_draws(
   object  = fit_dolphin,
-  newdata = data_to_predict,
+  newdata = data_input_for_prediction,
   ndraws  = 1
 )  
 
-
-##################################################
-## samples from the prior predictive
-##################################################
-
-fit_dolphin_prior <- 
-  stats::update(fit_dolphin, sample_prior = "only")
-
-tidybayes::predicted_draws(
-  object  = fit_dolphin_prior,
-  newdata = data_to_predict,
-  ndraws  = 1
-)  
-
-tidybayes::linpred_draws(
-  object  = fit_dolphin_prior,
-  newdata = data_to_predict,
-  ndraws  = 1
-)
-
-tidybayes::epred_draws(
-  object  = fit_dolphin_prior,
-  newdata = data_to_predict,
-  ndraws  = 1
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### Exercise:
+## Get four samples of possible AUC values for each MAD value 0, 1 and 10.
 
 
 
