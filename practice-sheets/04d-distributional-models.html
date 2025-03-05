@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - XX: Distributional models</title>
+<title>Bayesian Regression: Theory &amp; Practice - Distributional models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -503,7 +503,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">XX: Distributional models</h1>
+<h1 class="title">Distributional models</h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -653,7 +653,7 @@ y &amp; \sim \mathcal{N}(\mu, \sigma) \\
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sd_data <span class="sc">&gt;</span> sd_postPred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
+<pre><code>[1] 0.9995</code></pre>
 </div>
 </div>
 <p>If we care about faithful prediction in this early period, including accuracy about the noisiness of the data, the vanilla linear model is clearly bad.</p>
@@ -714,10 +714,10 @@ Formula: avg_temp ~ year
 
 Population-Level Effects: 
                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept          -5.07      0.67    -6.42    -3.79 1.00     3149     2915
-sigma_Intercept     4.08      1.00     2.12     6.06 1.00     2929     2745
-year                7.09      0.35     6.42     7.79 1.00     3191     2938
-sigma_year         -2.67      0.53    -3.71    -1.64 1.00     2916     2728
+Intercept          -5.04      0.68    -6.41    -3.74 1.00     3368     3082
+sigma_Intercept     4.03      0.99     2.11     6.03 1.00     3431     2726
+year                7.08      0.35     6.40     7.79 1.00     3398     3071
+sigma_year         -2.64      0.53    -3.70    -1.63 1.00     3439     2712
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential

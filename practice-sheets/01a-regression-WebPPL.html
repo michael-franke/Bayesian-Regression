@@ -605,7 +605,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Here is an example of a simple Bayesian regression model for this data set in WebPPL.</p>
-<pre class="webppl">// R's 'cars' data set: 50 paired measurements of speed and distance (after breaking)
+<pre class="webppl">// R's 'cars' data set: 50 paired measurements of 
+//  speed and distance (after breaking)
 var speed = [4, 4, 7, 7, 8, 9, 10, 10, 
              10, 11, 11, 12, 12, 12, 
              12, 13, 13, 13, 13, 14, 
@@ -641,10 +642,11 @@ var model = function() {
     speed,
     dist);
 
-  return {Intercept,slope, sigma};
+  return {Intercept, slope, sigma};
 }
 
-viz.marginals(Infer({method: 'MCMC', samples: 20000, burn: 10000, lag: 2}, model));
+viz.marginals(Infer({method: 'MCMC', samples: 20000, 
+                     burn: 10000, lag: 2}, model));
 </pre>
 <div class="callout callout-style-simple callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
@@ -721,7 +723,8 @@ var model = function() {
   
 }
 
-viz.marginals(Infer({method: 'MCMC', samples: 15000, lag: 2, burn: 5000}, model));
+viz.marginals(Infer({method: 'MCMC', samples: 15000, lag: 2, 
+                     burn: 5000}, model));
 
 </pre>
 <div class="callout callout-style-simple callout-caution callout-titled">

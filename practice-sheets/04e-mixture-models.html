@@ -8,7 +8,7 @@
 
 <meta name="author" content="Michael Franke">
 
-<title>Bayesian Regression: Theory &amp; Practice - XX: Mixture models</title>
+<title>Bayesian Regression: Theory &amp; Practice - Mixture models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -509,7 +509,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">XX: Mixture models</h1>
+<h1 class="title">Mixture models</h1>
 <p class="subtitle lead">Bayesian regression: theory &amp; practice</p>
 </div>
 
@@ -775,21 +775,21 @@ Solution
 post-warmup draws per chain=1000, total post-warmup draws=4000.
 
             mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff
-p           0.54    0.01 0.14    0.25    0.46    0.54    0.63    0.82   692
-mu[1]      10.42    0.03 0.85    8.96    9.84   10.34   10.92   12.38   712
-mu[2]      15.70    0.02 0.63   14.05   15.39   15.79   16.12   16.64   812
-sigma[1]    2.08    0.02 0.58    1.12    1.67    2.01    2.44    3.35   753
-sigma[2]    1.41    0.02 0.50    0.68    1.08    1.34    1.65    2.77   727
-lp__     -127.32    0.07 2.02 -132.54 -128.37 -126.86 -125.81 -124.77   739
+p           0.54    0.01 0.14    0.25    0.45    0.55    0.63    0.83   625
+mu[1]      10.38    0.04 0.93    8.85    9.80   10.35   10.93   12.32   646
+mu[2]      15.70    0.03 0.67   13.94   15.41   15.79   16.12   16.67   452
+sigma[1]    2.07    0.02 0.60    1.10    1.65    2.02    2.45    3.37   873
+sigma[2]    1.41    0.02 0.50    0.71    1.08    1.33    1.63    2.84   504
+lp__     -127.33    0.12 2.20 -133.41 -128.27 -126.76 -125.81 -124.79   350
          Rhat
-p           1
-mu[1]       1
-mu[2]       1
-sigma[1]    1
-sigma[2]    1
-lp__        1
+p        1.01
+mu[1]    1.01
+mu[2]    1.00
+sigma[1] 1.00
+sigma[2] 1.01
+lp__     1.00
 
-Samples were drawn using NUTS(diag_e) at Sat Feb 10 10:26:55 2024.
+Samples were drawn using NUTS(diag_e) at Wed Mar  5 13:56:12 2025.
 For each parameter, n_eff is a crude measure of effective sample size,
 and Rhat is the potential scale reduction factor on split chains (at 
 convergence, Rhat=1).</code></pre>
@@ -886,7 +886,7 @@ sigma[1] 1.18
 sigma[2] 1.16
 lp__     1.00
 
-Samples were drawn using NUTS(diag_e) at Sat Feb 10 10:27:17 2024.
+Samples were drawn using NUTS(diag_e) at Wed Mar  5 13:56:32 2025.
 For each parameter, n_eff is a crude measure of effective sample size,
 and Rhat is the potential scale reduction factor on split chains (at 
 convergence, Rhat=1).</code></pre>
@@ -1032,15 +1032,15 @@ Formula: y ~ 1
 
 Population-Level Effects: 
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-mu1_Intercept    10.48      0.97     8.86    12.49 1.01      711      618
-mu2_Intercept    15.63      0.76    13.48    16.67 1.00     1106      574
+mu1_Intercept    10.47      1.00     8.89    12.59 1.00      723      643
+mu2_Intercept    15.69      1.17    13.47    16.76 1.01      755      418
 
 Family Specific Parameters: 
        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma1     2.22      0.65     1.20     3.60 1.00      847     1299
-sigma2     1.56      0.71     0.76     3.19 1.00      853      579
-theta1     0.54      0.15     0.21     0.85 1.00      859      698
-theta2     0.46      0.15     0.15     0.79 1.00      859      698
+sigma1     2.24      0.68     1.19     3.60 1.00      785     1179
+sigma2     1.58      0.98     0.76     3.27 1.00      877      505
+theta1     0.54      0.16     0.19     0.88 1.01      722      565
+theta2     0.46      0.16     0.12     0.81 1.01      722      565
 
 Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
