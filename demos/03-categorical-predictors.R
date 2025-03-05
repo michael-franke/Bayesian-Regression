@@ -121,19 +121,33 @@ brms::conditional_effects(fit_polite, method = "posterior_predict")
 ## extract and construct by hand
 ##################################################
 
-tidybayes::tidy_draws(fit_polite) |> 
+samples_per_design_cell <- tidybayes::tidy_draws(fit_polite) |> 
   select(starts_with("b_")) |> 
   mutate(
     female_informal = b_Intercept,
     female_polite   = b_Intercept + b_contextpol,
     male_informal   = b_Intercept + b_genderM,
     male_polite     = b_Intercept + b_contextpol + 
-      b_genderM + `b_contextpol:genderM`
+                      b_genderM   + `b_contextpol:genderM`
   ) |> 
-  select(5:8) |> 
+  select(5:8)
+  
+samples_per_design_cell |>   
   pivot_longer(cols = everything()) |> 
   ggplot(aes(x = value, y = name)) +
   tidybayes::stat_halfeye()
+
+#### Exercise
+## Suppose we wanted to compare the estimated means for the "male+informal"
+## and the "female+polite" cells. How would you do that?
+##
+## 1. Add a new column to the data frame `samples_per_design_cell` that
+##    contains samples of the differences between the two relevant cells:
+##    "female+polite" - "male+informal".
+## 2. Calculate the proportion of samples where the difference is positive.
+## 3. Interpret the result. What did you just calculate? Hint: It's an
+##    estimate of a posterior expectation.
+
 
 ##################################################
 ## use 'faintr' package
@@ -151,7 +165,7 @@ faintr::extract_cell_draws(
 faintr::compare_groups(
   fit = fit_polite,
   higher = gender == "F" & context == "inf",
-  lower  = gender == "F" & context == "pol"
+  lower  = gender == "M" & context == "pol"
 )
 
 

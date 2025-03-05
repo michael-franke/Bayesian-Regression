@@ -40,7 +40,7 @@ library(cspplot)
 # these options help Stan run faster
 
 #BEFORE
-# options(mc.cores = parallel::detectCores(),         
+# options(mc.cores = parallel::detectCores(),
 #         brms.backend = "cmdstanr")
 
 # AFTER

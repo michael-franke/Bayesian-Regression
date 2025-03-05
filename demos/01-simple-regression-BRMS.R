@@ -92,7 +92,7 @@ dolphin_agg |>
 fit_dolphin <- 
   brms::brm(
     formula = AUC ~ MAD,
-    data    = dolphin_agg,
+    data    = dolphin_agg
   )
 
 summary(fit_dolphin)
@@ -103,7 +103,7 @@ summary(fit_dolphin)
 ##    out what the default configuration is for the MCMC sampling
 ##    (number of chains, iterations, warmup and thinning rate).
 ## 3. Rerun the model with different parameters for the MCMC sampler
-##    so that MCMC sampling with UNreliable. Inspect the warnings
+##    so that MCMC sampling is UNreliable. Inspect the warnings
 ##    and diagnostics in the summary of the fit.
 
 ##################################################
@@ -112,7 +112,7 @@ summary(fit_dolphin)
 
 # extract samples for regression coefficients 
 # and compute Bayesian summary stats
-tidybayes::tidy_draws(fit_dolphin) |> 
+tidybayes::tidy_draws(fit_dolphin) |>
   select(starts_with("b_")) |> 
   pivot_longer(cols = everything()) |> 
   group_by(name) |> 
