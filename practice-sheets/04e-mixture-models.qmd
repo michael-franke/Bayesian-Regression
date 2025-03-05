@@ -1,5 +1,5 @@
 ---
-title: "XX: Mixture models"
+title: "Mixture models"
 subtitle: "Bayesian regression: theory & practice"
 author: "Michael Franke"
 format: html
