@@ -85,17 +85,26 @@ fit_prior <- stats::update(
 )
 
 ##################################################
-## visual PCs
+## basic visual PCs
 ##################################################
 
 # prior PC
 brms::pp_check(fit_prior, ndraws = 50)
 
+#### Exercise
+## Do you think that this prior predictive check is worrisome?
+
+
 # posterior PC
 brms::pp_check(fit_posterior, ndraws = 50)
 
+#### Exercise
+## Do you think that this posterior predictive check is worrisome?
 
+##################################################
 ## More specific VPCs
+##################################################
+
 predictive_samples <- brms::posterior_predict(fit_posterior, ndraws = 1000)
 predictive_samples[1:5, 1:5] 
 
@@ -103,6 +112,9 @@ bayesplot::ppc_stat(
   y    = aida::data_WorldTemp$avg_temp, 
   yrep = predictive_samples,
   stat = sd)
+
+#### Exercise
+## Do you think that this posterior predictive check is worrisome?
 
 ##################################################
 ## Bayesian $p$-values
@@ -126,18 +138,22 @@ sd_postPred <- postPred_y |>
 
 # calculate the SD of the $y$-measurements in
 #   the data (up to 1800)
-sd_data <- aida::data_WorldTemp |> filter(year <= 1800) |> pull(avg_temp) |> sd()
+sd_data <- aida::data_WorldTemp |> 
+  filter(year <= 1800) |> 
+  pull(avg_temp) |> 
+  sd()
 
 # approx. p-value <- proportion of samples that have
 #   value of the test statistic that is more extreme
 #   than that of the data
 mean(sd_data < sd_postPred)
 
+#### Exercise
+## What does this number mean? What does it tell you about the model?
 
 ##################################################
 ## Likelihood as a test statistics
 ##################################################
-
 
 get_LH <- function(avg_temp, ndraws = 1000) {
   LH_ys <- brms::log_lik(
@@ -164,8 +180,9 @@ LH_postPred <- postPred_y |>
 LH_data <- get_LH(aida::data_WorldTemp$avg_temp)
 
 mean(LH_data > LH_postPred)
-
-
+ 
+#### Exercise
+## What does this number mean? What does it tell you about the model?
 
 
 
