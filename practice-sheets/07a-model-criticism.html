@@ -791,7 +791,7 @@ Solution
 <p><strong>Caution:</strong> While Bayesian <span class="math inline">\(p\)</span>-values follow the same logic as frequentist <span class="math inline">\(p\)</span>-values, they are not necessarily “calibrated” for long-term Type-I error control, as frequentist <span class="math inline">\(p\)</span>-values are.</p>
 <section id="standard-deviation-as-test-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="standard-deviation-as-test-statistics">Standard deviation as test statistics</h2>
-<p>Let’s focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for all data recorded up to 1800.</p>
+<p>Let’s focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for all data recorded up to 1800. We know from plotting our data that the early measurements seem to have a lower accuracy, so would require a higher standard deviation. Here, we ask: if we use the predictions from our regression model (fitted to all of the data), will we make predictions for the data from 1800 or before that have a credibly different (lower) standard deviation than what we actually see in this subset of the data?</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-10_c8e10839bce31fe669bccba7911bfadd">
 <details open="">
 <summary>Toggle code</summary>
@@ -849,7 +849,7 @@ Solution
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We see an estimated <span class="math inline">\(p\)</span>-value of (close to) zero, which is really bad (for the chosen test statistic). It means that the model never predicts data with a value of the test statistic that is that extreme. Notice that “extremeness” here means “very high or very low”. So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.</p>
+<p>We see an estimated <span class="math inline">\(p\)</span>-value of (close to) zero, which is really bad (for the chosen test statistic and manner of comparison). The test statistic we chose was the standard deviation, and we wanted to see if the posterior predictions of data points would have have more extreme values of the test statistic, where “more extreme” means “even higher” in the current context. The posterior predictive <span class="math inline">\(p\)</span>-value or (close to) zero means that the model (almost) never predicts data with a value of the test statistic that is as extreme as that in (the relevant subset of) the data. So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.</p>
 </div>
 </div>
 </div>
@@ -859,7 +859,7 @@ Solution
 </section>
 <section id="excursion-likelihood-as-a-test-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="excursion-likelihood-as-a-test-statistics">[Excursion:] Likelihood as a test statistics</h2>
-<p>With some more effort, we can use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data is the test statistic. The calculation now becomes more intricate, because not only do we need to obtain samples of predicted data observations from the (fitted or prior) model, but we also need to approximate the likelihood for each predicted data observation with (a second set of) samples, thus using a nested Monte Carlo simulation. To implement the latter step, note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior)</p>
+<p>With some more effort, we can use the code above to calculate a Bayesian <span class="math inline">\(p\)</span> value for the same data and model but assuming that the likelihood of the data (observed or predicted) is the test statistic. The calculation now becomes more intricate, because not only do we need to obtain samples of predicted data observations from the (fitted or prior) model, but we also need to approximate the likelihood for each predicted data observation with (a second set of) samples, thus using a nested Monte Carlo simulation. To implement the latter step, note that <code>brms::log_lik</code> is a handy function for obtaining the likelihood of some <span class="math inline">\(y'\)</span> –be it observed, predicted or made up– given a model (prior or posterior).</p>
 <p>(Another example of Bayesian <em>prior</em> <span class="math inline">\(p\)</span>-value computation is included in the chapter on hypothesis testing.)</p>
 <div class="cell" data-hash="07a-model-criticism_cache/html/unnamed-chunk-11_c67f6fe6fe6f641c8163e2b40e8ebc8c">
 <details open="">
@@ -919,13 +919,19 @@ Solution
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The Bayesian posterior predictive <span class="math inline">\(p\)</span> value for likelihood as a test statistic is around 0.8. We should <em>not</em> interpret in the same binary style as in the frequentist domain: we are <em>not</em> looking for a hard cut-off at which to reject the model / assumption. In this case, a value of about 0.8 is not concerning. It means that in about 80% of the samples, the likelihood of data samples was lower than that of the data itself (from the point of view of the posterior model). Predicting data which is frequently less likely is actually good: it means that the data iself lies in a high-likelihood region of the model’s posterior predictive.</p>
+<p>The Bayesian posterior predictive <span class="math inline">\(p\)</span> value for likelihood as a test statistic is around 0.8. We should <em>not</em> interpret it in the same binary style as in the frequentist domain: we are <em>not</em> looking for a hard cut-off at which to reject the model / assumption. In this case, a value of about 0.8 is not concerning. It means that in about 80% of the samples, the likelihood of data samples was lower than that of the data itself (from the point of view of the posterior model). Predicting data which is frequently less likely is actually good: it means that the data iself lies in a high-likelihood region of the model’s posterior predictive.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
+<p>Taken together, the last two results of model criticism in terms of Bayesian <span class="math inline">\(p\)</span>-value yields the following picture:</p>
+<ol type="1">
+<li>The model does <em>not</em> seem problematic when we focus on whether the likelihood of the observed data appears to be extreme as compared to the distribution of the likelihood of generated data from the posterior predictive. This suggests that there is nothing objectionable at this abstract, holistic way of looking at the model and its predictions.</li>
+<li>If we look more closely at a particular aspect of the observed data, the high spread of data points in early measurement, the model <em>does</em> seem to have trouble to capture this aspect.</li>
+</ol>
+<p>In practical applications of such model criticism, the important question is therefore: which aspects of the data are particularly relevant to be captured (for whatever it is that we want to do with the model). It is for those aspects that we should run visual or <span class="math inline">\(p\)</span>-value based model criticism.</p>
 <!-- ## Snippets -->
 <!-- Here is the mouse-tracking data set we used previously for simple linear regression. -->
 <!-- ```{r} -->
