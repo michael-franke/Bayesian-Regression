@@ -113,6 +113,8 @@ fit_dolphin <-
     prior   = brms::prior(prior = "normal(0,10)", class = "b")
   )
 
+brms::prior_summary(fit_dolphin)
+
 ##################################################
 ## sampling parameters from the prior distribution 
 ##################################################
@@ -135,6 +137,9 @@ fit_dolphin_prior_1 <- stats::update(
   fit_dolphin,
   sample_prior = "only"
 )
+
+fit_dolphin |> 
+  tidybayes::get_variables()
 
 fit_dolphin_prior_1 |> 
   tidybayes::get_variables()
@@ -176,6 +181,27 @@ fit_dolphin_prior_3 |>
 fit_dolphin_prior_3 |> 
   extract_and_summarize()
 
+##################################################
+## work with prior samples
+##################################################
+
+fit_dolphin_prior_1 |> 
+  tidybayes::tidy_draws() |> 
+  select(b_Intercept, b_MAD, sigma) |> 
+  pivot_longer(cols = everything(),
+               names_to = "parameter", values_to = "posterior") |> 
+  ggplot(aes(x = posterior, y = parameter, fill = parameter)) + 
+  # plot density w/ 91.2345% credible interval
+  tidybayes::stat_halfeye(.width = 0.912345) +
+  # add axes titles
+  xlab("") +
+  ylab("") +
+  # adjust the x-axis 
+  # scale_x_continuous(limits = c(-0.25,1.5)) +
+  # add line for the value zero
+  geom_segment(x = 0, xend = 0, y = Inf, yend = -Inf,
+               lty = "dashed") +
+  theme(legend.position="none")
 
 ##################################################
 ## samples from the prior predictives
@@ -186,7 +212,7 @@ fit_dolphin_prior_3 |>
 linPred_samples <- fit_dolphin_prior_1 |> 
   tidybayes::add_linpred_draws(
     newdata = dolphin_agg |> select(MAD),
-    ndraws = 5
+    ndraws = 500
   )
 
 linPred_samples |> 
@@ -224,7 +250,7 @@ dataPred_samples |>
 linPred_samples <- fit_dolphin |> 
   tidybayes::add_linpred_draws(
     newdata = dolphin_agg |> select(MAD),
-    ndraws = 5
+    ndraws = 3
   )
 
 linPred_samples |> 

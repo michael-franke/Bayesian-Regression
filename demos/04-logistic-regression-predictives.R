@@ -85,7 +85,7 @@ summary_stats |>
 ##   2. The 'typical' trials had higher accuracy in the 'click' group.
 ##   3. The 'typical' trials had higher accuracy in the 'touch' group.
 ##   4. The difference in 'accuracy' between 'atypical' and 'typical' cases
-##      is larger in the 'click' group than in the 'touch'group.
+##      is larger in the 'click' group than in the 'touch' group.
 
 ##################################################
 ## run a Bayesian logistic regression model
@@ -116,12 +116,12 @@ samples_linear_predictor <- faintr::extract_cell_draws(
 )
 
 # compute samples of the estimated accuracy
-samples_linear_predictor <- 
+samples_central_tendency <- 
   samples_linear_predictor |> 
   mutate(across(everything(), plogis))
   
 #### Exercise
-## 1. Test whether the he 'typical' trials had higher accuracy than the
+## 1. Test whether the 'typical' trials had higher accuracy than the
 ##    'atypical' trials.
 ## 2. Test whether the accuracy in the 'touch:Atypical' condition is credibly 
 ##    higher than in the 'click:typical' condition.
