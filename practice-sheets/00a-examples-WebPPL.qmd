@@ -95,7 +95,7 @@ display(posterior_cards)
     Do not worry about how exactly the `Infer()` or the `condition()` function works.
     Everything else should be reasonably intuitive.
 
-(2) Try out the differ output formats suggested in the commented-out part of the code above.
+(2) Try out the different output formats suggested in the commented-out part of the code above.
 
 (3) Change the priors `prior_cards` for drawing each card.
     Make a mental prediction of how that will affect the posterior before you run the code.
