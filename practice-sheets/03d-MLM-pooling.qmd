@@ -43,7 +43,7 @@ empirical_mean
 ```
 
 But should we not, somehow, also take into account that these measurements are from different counties?
-Okay, so let's just calculate the mean log-random measured for each county, and then take the mean of all those means:
+Okay, so let's just calculate the mean log-radon measured for each county, and then take the mean of all those means:
 
 ```{r}
 # empirical mean of means: 1.38
