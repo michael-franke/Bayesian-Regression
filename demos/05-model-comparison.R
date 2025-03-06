@@ -117,19 +117,6 @@ prep_summary <- function(fit, model) {
 rbind(prep_summary(fit_n, "normal"), prep_summary(fit_r, "robust"))
 
 ##################################################
-## compare models w/ LOO
-##################################################
-
-loo_comp <- loo_compare(
-  list(normal = loo(fit_n, moment_match = TRUE), 
-       robust = loo(fit_r, moment_match = TRUE)))
-loo_comp
-
-# Lambert's test
-1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
-
-
-##################################################
 ## compare models w/ BF
 ##################################################
 
@@ -150,15 +137,28 @@ if (rerun_models) {
     save_pars = save_pars(all = TRUE)
   )
   normal_bridge <- bridge_sampler(fit_n_4Bridge, silent = T)
-  write_rds(normal_bridge, "04-normal_bridge.rds")
+  write_rds(normal_bridge, "05-normal_bridge.rds")
   robust_bridge <- bridge_sampler(fit_r_4Bridge, silent = T)  
-  write_rds(robust_bridge, "04-robust_bridge.rds")
+  write_rds(robust_bridge, "05-robust_bridge.rds")
 } else {
-  normal_bridge <- read_rds("04-normal_bridge.rds")  
-  robust_bridge <- read_rds("04-robust_bridge.rds")
+  normal_bridge <- read_rds("05-normal_bridge.rds")  
+  robust_bridge <- read_rds("05-robust_bridge.rds")
 }
 
 # calculating the bridge 
 bf_bridge <- bridgesampling::bf(robust_bridge, normal_bridge)
 bf_bridge
+
+##################################################
+## compare models w/ LOO
+##################################################
+
+loo_comp <- loo_compare(
+  list(normal = loo(fit_n, moment_match = TRUE), 
+       robust = loo(fit_r, moment_match = TRUE)))
+loo_comp
+
+# Lambert's test
+1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
+
 
