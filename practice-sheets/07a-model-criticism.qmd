@@ -170,6 +170,8 @@ A single number never replaces the information we obtain from (good) plots, but 
 ## Standard deviation as test statistics
 
 Let's focus on the posterior model for the temperature data and apply a rigorous (data-informed) test statistic: the standard deviation for all data recorded up to 1800.
+We know from plotting our data that the early measurements seem to have a lower accuracy, so would require a higher standard deviation.
+Here, we ask: if we use the predictions from our regression model (fitted to all of the data), will we make predictions for the data from 1800 or before that have a credibly different (lower) standard deviation than what we actually see in this subset of the data?
 
 ```{r}
 # get 4000 sets of posterior predictive samples;
@@ -206,18 +208,18 @@ Make sure you understand how the code in the last code block works. Interpret th
 ::: {.callout-tip collapse="true"}
 ### Solution
 
-We see an estimated $p$-value of (close to) zero, which is really bad (for the chosen test statistic).
-It means that the model never predicts data with a value of the test statistic that is that extreme.
-Notice that "extremeness" here means "very high or very low".
+We see an estimated $p$-value of (close to) zero, which is really bad (for the chosen test statistic and manner of comparison).
+The test statistic we chose was the standard deviation, and we wanted to see if the posterior predictions of data points would have have more extreme values of the test statistic, where "more extreme" means "even higher" in the current context. 
+The posterior predictive $p$-value or (close to) zero means that the model (almost) never predicts data with a value of the test statistic that is as extreme as that in (the relevant subset of) the data.
 So in this case, we would clearly have ground of accusing the model to fail to predict the aspect captured by this test statistic.
 :::
 :::
 
 ## [Excursion:] Likelihood as a test statistics
 
-With some more effort, we can use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data is the test statistic.
+With some more effort, we can use the code above to calculate a Bayesian $p$ value for the same data and model but assuming that the likelihood of the data (observed or predicted) is the test statistic.
 The calculation now becomes more intricate, because not only do we need to obtain samples of predicted data observations from the (fitted or prior) model, but we also need to approximate the likelihood for each predicted data observation with (a second set of) samples, thus using a nested Monte Carlo simulation. 
-To implement the latter step, note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior)
+To implement the latter step, note that `brms::log_lik` is a handy function for obtaining the likelihood of some $y'$ --be it observed, predicted or made up-- given a model (prior or posterior).
 
 (Another example of Bayesian *prior* $p$-value computation is included in the chapter on hypothesis testing.)
 
@@ -261,7 +263,7 @@ Interpret the result you get (also in relation to the results from the previous 
 ### Solution
 
 The Bayesian posterior predictive $p$ value for likelihood as a test statistic is around 0.8.
-We should *not* interpret in the same binary style as in the frequentist domain: we are *not* looking for a hard cut-off at which to reject the model / assumption.
+We should *not* interpret it in the same binary style as in the frequentist domain: we are *not* looking for a hard cut-off at which to reject the model / assumption.
 In this case, a value of about 0.8 is not concerning.
 It means that in about 80% of the samples, the likelihood of data samples was lower than that of the data itself (from the point of view of the posterior model).
 Predicting data which is frequently less likely is actually good: it means that the data iself lies in a high-likelihood region of the model's posterior predictive.
@@ -269,6 +271,14 @@ Predicting data which is frequently less likely is actually good: it means that 
 :::
 :::
 
+
+Taken together, the last two results of model criticism in terms of Bayesian $p$-value yields the following picture:
+
+1. The model does *not* seem problematic when we focus on whether the likelihood of the observed data appears to be extreme as compared to the distribution of the likelihood of generated data from the posterior predictive. This suggests that there is nothing objectionable at this abstract, holistic way of looking at the model and its predictions.
+2. If we look more closely at a particular aspect of the observed data, the high spread of data points in early measurement, the model *does* seem to have trouble to capture this aspect.
+
+In practical applications of such model criticism, the important question is therefore: which aspects of the data are particularly relevant to be captured (for whatever it is that we want to do with the model). 
+It is for those aspects that we should run visual or $p$-value based model criticism.
 
 <!-- ## Snippets -->
 
