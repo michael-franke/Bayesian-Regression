@@ -57,7 +57,7 @@ scale_fill_discrete <- function(...) {
 }
 
 ##################################################
-## data & hypothesis
+## data & hypothesis: 24 / 7
 ##################################################
 
 k <- 7
@@ -65,13 +65,24 @@ N <- 24
 
 ROPE <- c(0.49,0.51)
 
+##############################
+## Frequentist p-value
+##############################
+
+binom.test(7,24,0.5)
+
+n_samples <- 1e+7
+k_reps    <- rbinom(n_samples, 24, prob=0.5)
+LH_k_reps <- dbinom(k_reps, 24, prob=0.5)
+LH_k_obs  <- dbinom(7, 24, prob=0.5)
+mean(LH_k_reps <= LH_k_obs)
+
 ##################################################
 ## estimation w/ credible intervals
 ##################################################
 
 # ROPE and CredInt
 hdi = HDInterval::hdi(qbeta , shape1 = 8 , shape2 = 18 )
-ROPE
 
 # plot
 hdiData <- tibble(
@@ -101,7 +112,7 @@ tibble(
 
 
 ##################################################
-## posterior probability
+## posterior probability of ROPE
 ##################################################
 
 # posterior probability of the ROPE
@@ -112,6 +123,7 @@ plotData <- tibble(
   theta = seq(0,1, length.out = 200),
   posterior = dbeta(theta, 8, 18)
 )
+
 plotData |> 
   ggplot(aes(x = theta, y = posterior)) + 
   geom_ribbon(aes(ymin=0, ymax=posterior), 
@@ -129,18 +141,35 @@ plotData |>
     title = "Posterior"
   ) 
 
+##################################################
+## posterior probability of ROPE w/ BRMS
+##################################################
 
-##############################
-## Frequentist p-value
-##############################
+data_24_7_binomial <- 
+  tibble(k = 7, N = 24)
 
-binom.test(7,24,0.5)
+fit_logistic_posterior <- brms::brm(
+  formula = k | trials(N) ~ 1,
+  data = data_24_7_binomial,
+  family = binomial(link = "logit")
+)
 
-n_samples <- 1e+7
-k_reps    <- rbinom(n_samples, 24, prob=0.5)
-LH_k_reps <- dbinom(k_reps, 24, prob=0.5)
-LH_k_obs  <- dbinom(7, 24, prob=0.5)
-mean(LH_k_reps <= LH_k_obs)
+samples_posterior_Intercept <- fit_logistic_posterior |> 
+  tidybayes::tidy_draws() |> 
+  pull(b_Intercept) 
+
+
+ROPE <- c(0.49,0.51)
+posterior_prob_ropedNull <- 
+  mean(samples_posterior_Intercept >= logit(ROPE[1]) & 
+       samples_posterior_Intercept <= logit(ROPE[2]))
+
+#### Exercise
+## 1. How does the posterior probability of the ROPE compare to the 
+##    frequentist p-value?
+## 2. Will the posterior probability of the roped null hypothesis
+##    change when we increase or decrease the ROPE size? (sensitivity!)
+
 
 ##############################
 ## Bayesian p w/o BRMS
