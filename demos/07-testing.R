@@ -38,8 +38,7 @@ library(faintr)
 library(cspplot)
 
 # these options help Stan run faster
-options(mc.cores = parallel::detectCores(),
-        brms.backend = "cmdstanr")
+options(mc.cores = parallel::detectCores())
 
 # use the CSP-theme for plotting
 theme_set(theme_csp())
@@ -302,6 +301,9 @@ bf_ROPEd_hypothesis
 ## Bayes factors w/ Savage-Dickey & log. regress.
 ##################################################
 
+data_24_7 <- 
+  tibble(outcome = c(rep(1,7), rep(0,17)))
+
 fit_logistic_posterior <- brms::brm(
   formula = outcome ~ 1, 
   data   = data_24_7,
@@ -369,8 +371,6 @@ loo_comp
 
 # significance test
 1 - pnorm(-loo_comp[2,1], loo_comp[2,2])
-
-
 
 
 ##################################################
