@@ -117,6 +117,9 @@ fit_polite <-
 brms::conditional_effects(fit_polite)
 brms::conditional_effects(fit_polite, method = "posterior_predict")
 
+#### Exercise
+## What do these plots show? What is the difference between the two plots?
+
 ##################################################
 ## extract and construct by hand
 ##################################################
